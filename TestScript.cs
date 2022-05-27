@@ -18,7 +18,10 @@ public class TestScript : MonoBehaviour
 
     }
 
-    public class Operator {
+    public class OpsAndCircles {
+        //Vector2 position;
+    }
+    public class Operator : OpsAndCircles {
         public string type;
         int numberOfThisTypeThatExist;
         int IDnumber;
@@ -37,7 +40,7 @@ public class TestScript : MonoBehaviour
         }
 
     }
-    public class Circle {
+    public class Circle : OpsAndCircles {
         public float value;
         public bool trueInt_falseFraction;
         public int numerator;
@@ -104,16 +107,16 @@ public class TestScript : MonoBehaviour
         if (negativesAllowed && fractionsAllowed) {
             // 
             toReturn.Add(-0.7500f);   // -3/4
-            toReturn.Add(-0.6666f);   // -2/3
+            toReturn.Add(-2f/3f);   // -2/3
             toReturn.Add(-0.5f);    // -1/2
-            toReturn.Add(-0.3333f);   // -1/3
+            toReturn.Add(-1f/3f);   // -1/3
             toReturn.Add(-0.25f);   // -1/4
         }
         if (fractionsAllowed) {
             toReturn.Add(0.25f);
-            toReturn.Add(0.3333f);
+            toReturn.Add(1f/3f);
             toReturn.Add(0.5f);
-            toReturn.Add(0.6666f);
+            toReturn.Add(2f/3f);
             toReturn.Add(0.75f);
         }
         if (oneAllowed) {
@@ -179,22 +182,22 @@ public class TestScript : MonoBehaviour
         {
             toReturn.Add(-1);
         }
-        if (negativesAllowed && fractionsAllowed)
-        {
-            //toReturn.Add(-0.7500f);   // -3/4
-            //toReturn.Add(-0.6666f);   // -2/3
-            //toReturn.Add(-0.5f);    // -1/2     
-            //toReturn.Add(-0.3333f);   // -1/3
-            //toReturn.Add(-0.25f);   // -1/4
-        }
-        if (fractionsAllowed)
-        {
-            //toReturn.Add(0.25f);
-            //toReturn.Add(0.3333f);
-            //toReturn.Add(0.5f);
-            //toReturn.Add(0.6666f);
-            //toReturn.Add(0.75f);
-        }
+        //if (negativesAllowed && fractionsAllowed)
+        //{
+        //    //toReturn.Add(-0.7500f);   // -3/4
+        //    //toReturn.Add(-0.6666f);   // -2/3
+        //    //toReturn.Add(-0.5f);    // -1/2     
+        //    //toReturn.Add(-0.3333f);   // -1/3
+        //    //toReturn.Add(-0.25f);   // -1/4
+        //}
+        //if (fractionsAllowed)
+        //{
+        //    //toReturn.Add(0.25f);
+        //    //toReturn.Add(0.3333f);
+        //    //toReturn.Add(0.5f);
+        //    //toReturn.Add(0.6666f);
+        //    //toReturn.Add(0.75f);
+        //}
         if (oneAllowed)
         {
             toReturn.Add(1);
@@ -242,22 +245,22 @@ public class TestScript : MonoBehaviour
         {
             toReturn.Add(-1);
         }
-        if (negativesAllowed && fractionsAllowed)
-        {
-            //toReturn.Add(-0.7500f);   // -3/4
-            //toReturn.Add(-0.6666f);   // -2/3
-            //toReturn.Add(-0.5f);    // -1/2     
-            //toReturn.Add(-0.3333f);   // -1/3
-            //toReturn.Add(-0.25f);   // -1/4
-        }
-        if (fractionsAllowed)
-        {
-            //toReturn.Add(0.25f);
-            //toReturn.Add(0.3333f);
-            //toReturn.Add(0.5f);
-            //toReturn.Add(0.6666f);
-            //toReturn.Add(0.75f);
-        }
+        //if (negativesAllowed && fractionsAllowed)
+        //{
+        //    //toReturn.Add(-0.7500f);   // -3/4
+        //    //toReturn.Add(-0.6666f);   // -2/3
+        //    //toReturn.Add(-0.5f);    // -1/2     
+        //    //toReturn.Add(-0.3333f);   // -1/3
+        //    //toReturn.Add(-0.25f);   // -1/4
+        //}
+        //if (fractionsAllowed)
+        //{
+        //    //toReturn.Add(0.25f);
+        //    //toReturn.Add(0.3333f);
+        //    //toReturn.Add(0.5f);
+        //    //toReturn.Add(0.6666f);
+        //    //toReturn.Add(0.75f);
+        //}
         if (oneAllowed)
         {
             toReturn.Add(1);
@@ -297,13 +300,13 @@ public class TestScript : MonoBehaviour
             if (Mathf.Abs(0.75f - Mathf.Abs(num)) < margin) {
                 numerator = 3;
                 denominator = 4;
-            } else if (Mathf.Abs(0.6666f - Mathf.Abs(num)) < margin) {
+            } else if (Mathf.Abs(0.666666f - Mathf.Abs(num)) < margin) {
                 numerator = 2;
                 denominator = 3;
             } else if (Mathf.Abs(0.5f - Mathf.Abs(num)) < margin) {
                 numerator = 1;
                 denominator = 2;
-            } else if (Mathf.Abs(0.3333f - Mathf.Abs(num)) < margin) {
+            } else if (Mathf.Abs(0.333333f - Mathf.Abs(num)) < margin) {
                 numerator = 1;
                 denominator = 3;
             } else if (Mathf.Abs(0.25f - Mathf.Abs(num)) < margin) {
@@ -340,7 +343,7 @@ public class TestScript : MonoBehaviour
                 numerator = 3;
                 denominator = 4;
             }
-            else if (Mathf.Abs(0.66f - Mathf.Abs(num)) < margin)
+            else if (Mathf.Abs(0.666666f - Mathf.Abs(num)) < margin)
             {
                 numerator = 2;
                 denominator = 3;
@@ -350,7 +353,7 @@ public class TestScript : MonoBehaviour
                 numerator = 1;
                 denominator = 2;
             }
-            else if (Mathf.Abs(0.33f - Mathf.Abs(num)) < margin)
+            else if (Mathf.Abs(0.333333f - Mathf.Abs(num)) < margin)
             {
                 numerator = 1;
                 denominator = 3;
@@ -444,52 +447,278 @@ public class TestScript : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public List<Operator> WhichOperatorsAreEligibleGivenCircle1(Circle newCircle1) {
+    public void CreatePartB_GivenInitial(Circle newCircle1) {
+
+        // List<OpsAndCircles>
+
+
+        List<OpsAndCircles> toReturn = new List<OpsAndCircles>();
+
+        // this function should be named something like,
+        //
+        // GivenCircle1HereIsOperatorAndCircle2()
+        // or
+        // CreatePartB()
+        //
+        // and it can return an ArrayList that contains the operator & the circle2
+
+        // former name:     public List<Operator> WhichOperatorsAreEligibleGivenCircle1(Circle newCircle1) {
+
+
         // this function will be used when Part A is already created, and we need to create Part B
         // circle 1, in this case, is the Result of Part A
         // circle 1 can be integers within the range of -225 to 225, and can include simple fractions between -3/4 and 3/4
 
-        List<Operator> operatorList = new List<Operator>();
-        bool additionOK = false;
-        bool subtractionOK = false;
-        bool multiplicationOK = false;
-        bool divisionOK = false;
-        bool exponent2OK = false;
-        bool exponent3OK = false;
-        bool squareRootOK = false;
-        bool cubeRootOK = false;
-
-
-        // we want the Result to be inside a given range
-        //      so, look at each operator and make a list of possible outcomes
-        //      if the list for a given operator is length == 0, then we can't include that operator to be randomly selected
-        //      while we're doing this:
-        //          each operator should come with its own list of Circle2 values that are eligible
+        List<string> operatorList = new List<string>();
 
 
         //  start with newCircle1
         //      look at each operator
-        //      
+        //          given newCircle1, and given this operator, which newCircle2 values will give us ***int*** Results that lie within the acceptable range?
+        //          the newCircle2 values themselves must also be acceptable
+
+        // define acceptable Result range
+        //      between -225 & 225, for now
+
+        // define acceptable newCircle2 range
+
+
+        List<float> usableCircle2Values_Addition = new List<float>();
+        List<float> usableCircle2Values_Subtraction = new List<float>();
+        List<float> usableCircle2Values_Multiplication = new List<float>();
+        List<float> usableCircle2Values_Division = new List<float>();
 
 
 
+        List<float> circle2PossibleValues_Arithmetic = CreateListOfPossibleCircleValues_forArithmetic(225, true, true, true);
+        void ConsiderAddition(Circle circle1) {
+            float value = circle1.value;
+
+            for (int i = 0; i < circle2PossibleValues_Arithmetic.Count; i++) {
+                float result = value + circle2PossibleValues_Arithmetic[i];
+                if (result > -225 && result < 225 && TestIfIsInteger(result)) {
+                    usableCircle2Values_Addition.Add(circle2PossibleValues_Arithmetic[i]);
+                }
+            }
+            if (usableCircle2Values_Addition.Count > 0) {
+                operatorList.Add("addition");
+            }
+        }
+        void ConsiderSubtraction(Circle circle1) {
+            float value = circle1.value;
+
+            for (int i = 0; i < circle2PossibleValues_Arithmetic.Count; i++) {
+                float result = value - circle2PossibleValues_Arithmetic[i];
+                if (result > -225 && result < 225 && TestIfIsInteger(result)) {
+                    usableCircle2Values_Subtraction.Add(circle2PossibleValues_Arithmetic[i]);
+                }
+            }
+            if (usableCircle2Values_Subtraction.Count > 0) {
+                operatorList.Add("subtraction");
+            }
+
+        }
+        void ConsiderMultiplication(Circle circle1)
+        {
+            float value = circle1.value;
+
+            for (int i = 0; i < circle2PossibleValues_Arithmetic.Count; i++)
+            {
+                float result = value * circle2PossibleValues_Arithmetic[i];
+                if (result > -225 && result < 225 && TestIfIsInteger(result))
+                {
+                    usableCircle2Values_Multiplication.Add(circle2PossibleValues_Arithmetic[i]);
+                }
+            }
+            if (usableCircle2Values_Multiplication.Count > 0)
+            {
+                operatorList.Add("multiplication");
+            }
+
+        }
+        void ConsiderDivision(Circle circle1)
+        {
+            float value = circle1.value;
+
+            for (int i = 0; i < circle2PossibleValues_Arithmetic.Count; i++)
+            {
+                float result = value / circle2PossibleValues_Arithmetic[i];
+                if (result > -225 && result < 225 && TestIfIsInteger(result))
+                {
+                    usableCircle2Values_Division.Add(circle2PossibleValues_Arithmetic[i]);
+                }
+            }
+            if (usableCircle2Values_Division.Count > 0)
+            {
+                operatorList.Add("division");
+            }
+
+        }
+
+        void ConsiderExponent2(Circle circle1) {
+            float value = circle1.value;
+            // see if *value* is on the list of usable circle1s for exponent2
+            List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(225, true, true, true);
+            if (usableCircle1ValuesForExponent2.Contains(value)) {
+                operatorList.Add("exponent2");
+            }
+        }
+        void ConsiderExponent3(Circle circle1) {
+            float value = circle1.value;
+            // see if *value* is on the list of usable circle1s for exponent3
+            List<float> usableCircle1ValuesForExponent3 = CreateListOfPossibleCircleValues_forExponent3(225, true, true, true);
+            if (usableCircle1ValuesForExponent3.Contains(value)) {
+                operatorList.Add("exponent3");
+            }
+        }
+        void ConsiderSquareRoot(Circle circle1) {
+            float value = circle1.value;
+
+            List<float> usableCircle1ValuesForSquareRoot = CreateListOfPossibleCircleValues_forSquareRoot(15, true, true, true);
+            if (usableCircle1ValuesForSquareRoot.Contains(value)) {
+                operatorList.Add("squareRoot");
+            }
+        }
+        void ConsiderCubeRoot(Circle circle1) {
+            float value = circle1.value;
+            List<float> usableCircle1ValuesForCubeRoot = CreateListOfPossibleCircleValues_forCubeRoot(6, true, true, true);
+            if (usableCircle1ValuesForCubeRoot.Contains(value)) {
+                operatorList.Add("cubeRoot");
+            }
+        }
+
+        void ConsiderAllOperators(Circle circle1) {
+            ConsiderAddition(circle1);
+            ConsiderSubtraction(circle1);
+            ConsiderMultiplication(circle1);
+            ConsiderDivision(circle1);
+            ConsiderExponent2(circle1);
+            ConsiderExponent3(circle1);
+            ConsiderSquareRoot(circle1);
+            ConsiderCubeRoot(circle1);
+        }
+        ConsiderAllOperators(newCircle1);
+
+        // select the operator from operatorList, and add it to toReturn
+        string operatorToUse = "";
+        int rando = Random.Range(0, operatorList.Count);
+        operatorToUse = operatorList[rando];
+        Operator newOperator = new Operator(operatorToUse, 'B');
 
 
+        Debug.Log("PartB operatorToUse: " + newOperator.type);
 
-        if (newCircle1.value == -225) { 
-            // addition    OK, but don't want to add a negative number
-            // subtract    OK, but don't want to subtract a positive number
-            // multiplic   OK, but only if multiplying with a fraction & we end up with an integer 
-            // division    OK
-            // expone2 NOT OK, 
+        float value = 0;
+        // select the newCircle2, and add it to toReturn
+        if (operatorToUse == "addition") {
+            int randomm = Random.Range(0, usableCircle2Values_Addition.Count);
+            value = usableCircle2Values_Addition[randomm];
+        } else if (operatorToUse == "subtraction") {
+            int randomm = Random.Range(0, usableCircle2Values_Subtraction.Count);
+            value = usableCircle2Values_Subtraction[randomm];
+        } else if (operatorToUse == "multiplication") {
+            int randomm = Random.Range(0, usableCircle2Values_Multiplication.Count);
+            value = usableCircle2Values_Multiplication[randomm];
+        } else if (operatorToUse == "division") {
+            int randomm = Random.Range(0, usableCircle2Values_Division.Count);
+            value = usableCircle2Values_Division[randomm];
+        } else if (operatorToUse == "exponent2") { 
+            // no circle 2 needed
+        } else if (operatorToUse == "exponent3") {
+            // no circle 2 needed
+        } else if (operatorToUse == "squareRoot") {
+            // no circle 2 needed
+        } else if (operatorToUse == "cubeRoot") {
+            // no circle 2 needed
+        }
+
+        Circle newCircle2 = null;
+        if (operatorToUse == "addition" || operatorToUse == "subtraction" || operatorToUse == "multiplication" || operatorToUse == "division") {
+            newCircle2 = CreateSpecificCircle(value);
+            Debug.Log("PartB newCircle2 value: " + newCircle2.value);
         }
 
 
+        // obtain result
+        Circle partBresult = CreateResultCircle(newCircle1, newCircle2, newOperator);
+        Debug.Log("final result: " + partBresult.value);
 
 
 
 
-        return operatorList;
+
+        //return toReturn;
+    }
+
+    public void CreatePartA_GivenInitial(Circle potentialResultA, Circle potentialResultB)
+    {
+        Debug.Log("about to start building PartA");
+
+        // which of these two circles will we choose as the Result of PartA, which is what we're about to create
+
+        // we want to pick the one that gives us the most options
+
+        // let's look at potentialResultA
+        //      which operators can give us this as a result?
+
+        // GIVEN THAT WE KNOW the operator and the Result:
+        //      go thru all possible circle1 values, and see if any of them can get us to Result
+
+
+        List<string> operatorList = new List<string>();
+
+        List<float> usableCircle1Values_Addition = new List<float>();
+        List<float> usableCircle1Values_Subtraction = new List<float>();
+        List<float> usableCircle1Values_Multiplication = new List<float>();
+        List<float> usableCircle1Values_Division = new List<float>();
+
+        List<float> circle1PossibleValues_Arithmetic = CreateListOfPossibleCircleValues_forArithmetic(225, true, true, true);
+        float valueOfResultA = potentialResultA.value;
+        int tallyForResultA = 0;
+
+        int ConsiderAddition(float resultValue)
+        {
+            int tally = 0;
+            for (int i = 0; i < circle1PossibleValues_Arithmetic.Count; i++)
+            {
+                float circle1value = circle1PossibleValues_Arithmetic[i];
+                for (int j = 0; j < circle1PossibleValues_Arithmetic.Count; j++)
+                {
+                    float circle2value = circle1PossibleValues_Arithmetic[j];
+                    if (circle1value + circle2value == resultValue)
+                    {
+                        // that's a bingo
+                        tally++;
+                        usableCircle1Values_Addition.Add(circle1value);
+                        Debug.Log(circle1value + " + " + circle2value + " = " + (circle1value + circle2value));
+                        Debug.Log("******************************************************** added value to usableCircle1Values: " + circle1value);
+                        if (!operatorList.Contains("addition"))
+                        {
+                            operatorList.Add("addition");
+                        }
+                        break;
+                    } else {
+                        Debug.Log("these values won't work: " + circle1value + " + " + circle2value + " = " + (circle1value + circle2value));
+                    }
+                }
+            }
+            return tally;
+        }
+        int ConsiderSubtraction(float resultValue)
+        {
+            int tally = 0;
+
+
+
+
+
+            return tally;
+        }
+
+        tallyForResultA += ConsiderAddition(valueOfResultA);
+        Debug.Log("tallyForResultA: " + tallyForResultA);
+
+
     }
 
 
@@ -498,7 +727,36 @@ public class TestScript : MonoBehaviour
 
 
 
-    public void CreateProblem() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void CreateProblem() 
+    {
+
+        // this could be renamed:
+        //
+        // CreatePart_Initial()
+
         int ABC = Random.Range(1, 4);
         char A_B_C = 'x';
         if (ABC == 1) {
@@ -508,12 +766,17 @@ public class TestScript : MonoBehaviour
         } else if (ABC == 3) {
             A_B_C = 'C';
         }
-        //Operator operator1 = PickRandomOperator(8, A_B_C);
-        Operator operator1 = new Operator("addition", 'A');
+        Operator operator1 = PickRandomOperator(8, 'B');
+        //Operator operator1 = new Operator("addition", 'A');
+        Circle inputCircleA = null;
+        Circle inputCircleB = null;
+        Circle outputCircle = null;
+
+
 
         if (operator1.type == "addition" || operator1.type == "subtraction" || operator1.type == "multiplication" || operator1.type == "division") {
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(50.0f, true, true, true);
-            Circle inputCircleA = CreateRandomCircle(stuff);
+            inputCircleA = CreateRandomCircle(stuff);
             //Circle inputCircleA = new Circle(1, 3);
 
             //Debug.Log("for circle 1: possible values: ");
@@ -523,57 +786,65 @@ public class TestScript : MonoBehaviour
             Debug.Log("first value: " + inputCircleA.value);
             Debug.Log("operator: " + operator1.type);
 
-            Circle inputCircleB = CreateRandomSecondCircleThatResultsInInt(operator1, inputCircleA, 216, 50.0f, true, true, true);
-            Circle outputCircle = CreateResultCircle(inputCircleA, inputCircleB, operator1);
+            inputCircleB = CreateRandomSecondCircleThatResultsInInt(operator1, inputCircleA, 216, 50.0f, true, true, true);
+            outputCircle = CreateResultCircle(inputCircleA, inputCircleB, operator1);
 
             Debug.Log("second value: " + inputCircleB.value);
             Debug.Log("result: " + outputCircle.value);
+            
+            //CreatePartB_GivenInitial(outputCircle);
 
         } else if (operator1.type == "exponent2") {
             List<float> stuff = CreateListOfPossibleCircleValues_forExponent2(225, true, true, true);
-            Circle inputCircleA = CreateRandomCircle(stuff);
+            inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
             Debug.Log("operator: " + operator1.type);
 
-            Circle outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
+            outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
 
             Debug.Log("result: " + outputCircle.value);
 
+            //CreatePartB_GivenInitial(outputCircle);
 
         } else if (operator1.type == "exponent3") {
             List<float> stuff = CreateListOfPossibleCircleValues_forExponent3(225, true, true, true);
-            Circle inputCircleA = CreateRandomCircle(stuff);
+            inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
             Debug.Log("operator: " + operator1.type);
 
-            Circle outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
+            outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
 
             Debug.Log("result: " + outputCircle.value);
+
+            //CreatePartB_GivenInitial(outputCircle);
+
         } else if (operator1.type == "squareRoot") {
             List<float> stuff = CreateListOfPossibleCircleValues_forSquareRoot(15, true, true, true);
-            Circle inputCircleA = CreateRandomCircle(stuff);
+            inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
             Debug.Log("operator: " + operator1.type);
 
-            Circle outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
+            outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
 
             Debug.Log("result: " + outputCircle.value);
 
-
+            //CreatePartB_GivenInitial(outputCircle);
 
         } else if (operator1.type == "cubeRoot") {
             List<float> stuff = CreateListOfPossibleCircleValues_forCubeRoot(6, true, true, true);
-            Circle inputCircleA = CreateRandomCircle(stuff);
+            inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
             Debug.Log("operator: " + operator1.type);
 
-            Circle outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
+            outputCircle = CreateResultCircle(inputCircleA, inputCircleA, operator1);
 
             Debug.Log("result: " + outputCircle.value);
+
+            //CreatePartB_GivenInitial(outputCircle);
         }
 
         // for testing purposes, part A of the problem will be ADDITION
@@ -586,8 +857,8 @@ public class TestScript : MonoBehaviour
         //          for example, if circle.value == 100, then we know we can't use cubeRoot (as it will result in 100^(1/3) = 4.641588....
 
 
-
-
+        //CreatePartB_GivenInitial(outputCircle);
+        CreatePartA_GivenInitial(inputCircleA, inputCircleB);
 
     }
 
