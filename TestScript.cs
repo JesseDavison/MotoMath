@@ -523,7 +523,7 @@ public class TestScript : MonoBehaviour
             for (int i = 0; i < circle2ValuesToConsider_Mult_Divide.Count; i++)
             {
                 float result = value * circle2ValuesToConsider_Mult_Divide[i];
-                if (result > -225 && result < 225 && TestIfIsInteger(result))
+                if (result > -125 && result < 125 && TestIfIsInteger(result))
                 {
                     usableCircle2Values_Multiplication.Add(circle2ValuesToConsider_Mult_Divide[i]);
                 }
@@ -541,7 +541,7 @@ public class TestScript : MonoBehaviour
             for (int i = 0; i < circle2ValuesToConsider_Mult_Divide.Count; i++)
             {
                 float result = value / circle2ValuesToConsider_Mult_Divide[i];
-                if (result > -225 && result < 225 && TestIfIsInteger(result))
+                if (result > -125 && result < 125 && TestIfIsInteger(result))
                 {
                     usableCircle2Values_Division.Add(circle2ValuesToConsider_Mult_Divide[i]);
                 }
@@ -863,100 +863,191 @@ public class TestScript : MonoBehaviour
                 }
             }
         }
-        void ConsiderExponent2(float resultValue) {
-            // this should be pretty easy, as there's no circle2 needed
+        void ConsiderExponent2(float resultValue)
+        {
+            List<float> usableResults = new List<float> { 0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
 
-            // let's be smart:
-            //      IF RESULTVALUE IS NEGATIVE, THERE IS NO CIRCLE1 VALUE WHICH, IF SQUARED, WILL GIVE US THAT NEGATIVE NUMBER
-
-            // let's be even smarter:
-            //      if the operator is exponent2, then the only results that are compatible are:
-            //      1/4, 1 (if we want it to), 4, 9, 16, 25, 36, 49, 64, 81, 100, 121           that's it
-            //      if resultValue isn't ONE OF THOSE THINGS, then we're done
-
-            List<float> usableResults = new List<float> {0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121};
-            
-            if (usableResults.Contains(resultValue)) {
-                bool doneWithLoop = false;
-                List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forExponent2(121, false, false, true);
-                while (doneWithLoop == false)
-                {
-                    // step 1: pick a random circle1 value, within the acceptable range 
-                    int rando = Random.Range(0, circle1ValuesToConsider.Count);
-                    float potentialCircle1Value = circle1ValuesToConsider[rando];
-                    Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
-                    circle1ValuesToConsider.Remove(potentialCircle1Value);
-                    // step 2: see if it can work, to get us the predetermined result
-                    //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
-                    //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
-                    if (Mathf.Pow(potentialCircle1Value, 2) == resultValue)
-                    {
-                        Debug.Log("exponent2 is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
-                        operatorList.Add("exponent2");
-                        exponent2_circle1ValueToUse = potentialCircle1Value;
-                        doneWithLoop = true;
-                    }
-                    else
-                    {
-                        Debug.Log("this won't work: " + potentialCircle1Value + " squared = " + resultValue);
-                        if (circle1ValuesToConsider.Count == 0)
-                        {
-                            Debug.Log("*****************************exponent2 will not work... we've tried every option");
-                            doneWithLoop = true;
-                        }
-                    }
+            if (usableResults.Contains(resultValue))
+            {
+                // randomly assign circle1 to be either negative or positive
+                int rando = Random.Range(1, 3);
+                if (rando == 1) {
+                    exponent2_circle1ValueToUse = Mathf.Pow(resultValue, 0.5f);
+                } else {
+                    exponent2_circle1ValueToUse = -Mathf.Pow(resultValue, 0.5f);
                 }
-            } else {
-                Debug.Log("the resultValue isn't on the (short) pre-approved list, so exponent2 can be ignored");
+                Debug.Log("exponent2 is viable: " + exponent2_circle1ValueToUse + " as circle1 gives us result of " + resultValue);
+                operatorList.Add("exponent2");
+            }
+            else
+            {
+                Debug.Log("the resultValue isn't on the pre-approved list, so exponent2 can be ignored");
             }
         }
         void ConsiderExponent3(float resultValue)
         {
-            // this should be pretty easy, as there's no circle2 needed
-
-            // let's be smart:
-            //      if the operator is exponent3, then the only results that are compatible are:
-            //      -125, -64, -27, -8, 8, 27, 64, 125
-            //      if resultValue isn't ONE OF THOSE THINGS, then we're done
-
             List<float> usableResults = new List<float> { -125, -64, -27, -8, 8, 27, 64, 125 };
 
             if (usableResults.Contains(resultValue))
             {
-                bool doneWithLoop = false;
-                List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forExponent3(125, false, true, true);
-                while (doneWithLoop == false)
-                {
-                    // step 1: pick a random circle1 value, within the acceptable range 
-                    int rando = Random.Range(0, circle1ValuesToConsider.Count);
-                    float potentialCircle1Value = circle1ValuesToConsider[rando];
-                    Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
-                    circle1ValuesToConsider.Remove(potentialCircle1Value);
-                    // step 2: see if it can work, to get us the predetermined result
-                    //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
-                    //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
-                    if (Mathf.Pow(potentialCircle1Value, 3) == resultValue)
-                    {
-                        Debug.Log("exponent3 is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
-                        operatorList.Add("exponent3");
-                        exponent3_circle1ValueToUse = potentialCircle1Value;
-                        doneWithLoop = true;
-                    }
-                    else
-                    {
-                        Debug.Log("this won't work: " + potentialCircle1Value + " cubed = " + resultValue);
-                        if (circle1ValuesToConsider.Count == 0)
-                        {
-                            Debug.Log("*****************************exponent3 will not work... we've tried every option");
-                            doneWithLoop = true;
-                        }
-                    }
+                if (resultValue < 0) {
+                    exponent3_circle1ValueToUse = -Mathf.Pow(-resultValue, 1f / 3f);
+                } else {
+                    exponent3_circle1ValueToUse = Mathf.Pow(resultValue, 1f / 3f);
                 }
+                Debug.Log("exponent3 is viable: " + exponent3_circle1ValueToUse + " as circle1 gives us result of " + resultValue);
+                operatorList.Add("exponent3");
             }
             else
             {
                 Debug.Log("the resultValue isn't on the pre-approved list, so exponent3 can be ignored");
             }
+        }
+        void oldConsider() {
+            //void ConsiderExponent2(float resultValue) {
+            //    // this should be pretty easy, as there's no circle2 needed
+
+            //    // let's be smart:
+            //    //      IF RESULTVALUE IS NEGATIVE, THERE IS NO CIRCLE1 VALUE WHICH, IF SQUARED, WILL GIVE US THAT NEGATIVE NUMBER
+
+            //    // let's be even smarter:
+            //    //      if the operator is exponent2, then the only results that are compatible are:
+            //    //      1/4, 1 (if we want it to), 4, 9, 16, 25, 36, 49, 64, 81, 100, 121           that's it
+            //    //      if resultValue isn't ONE OF THOSE THINGS, then we're done
+
+            //    List<float> usableResults = new List<float> {0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121};
+
+            //    if (usableResults.Contains(resultValue)) {
+            //        bool doneWithLoop = false;
+            //        List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forExponent2(121, false, false, true);
+            //        while (doneWithLoop == false)
+            //        {
+            //            // step 1: pick a random circle1 value, within the acceptable range 
+            //            int rando = Random.Range(0, circle1ValuesToConsider.Count);
+            //            float potentialCircle1Value = circle1ValuesToConsider[rando];
+            //            Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
+            //            circle1ValuesToConsider.Remove(potentialCircle1Value);
+            //            // step 2: see if it can work, to get us the predetermined result
+            //            //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
+            //            //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
+            //            if (Mathf.Pow(potentialCircle1Value, 2) == resultValue)
+            //            {
+            //                Debug.Log("exponent2 is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
+            //                operatorList.Add("exponent2");
+            //                exponent2_circle1ValueToUse = potentialCircle1Value;
+            //                doneWithLoop = true;
+            //            }
+            //            else
+            //            {
+            //                Debug.Log("this won't work: " + potentialCircle1Value + " squared = " + resultValue);
+            //                if (circle1ValuesToConsider.Count == 0)
+            //                {
+            //                    Debug.Log("*****************************exponent2 will not work... we've tried every option");
+            //                    doneWithLoop = true;
+            //                }
+            //            }
+            //        }
+            //    } else {
+            //        Debug.Log("the resultValue isn't on the (short) pre-approved list, so exponent2 can be ignored");
+            //    }
+            //}
+            //void ConsiderExponent3(float resultValue)
+            //{
+            //    // this should be pretty easy, as there's no circle2 needed
+
+            //    // let's be smart:
+            //    //      if the operator is exponent3, then the only results that are compatible are:
+            //    //      -125, -64, -27, -8, 8, 27, 64, 125
+            //    //      if resultValue isn't ONE OF THOSE THINGS, then we're done
+
+            //    List<float> usableResults = new List<float> { -125, -64, -27, -8, 8, 27, 64, 125 };
+
+            //    if (usableResults.Contains(resultValue))
+            //    {
+            //        bool doneWithLoop = false;
+            //        List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forExponent3(125, false, true, true);
+            //        while (doneWithLoop == false)
+            //        {
+            //            // step 1: pick a random circle1 value, within the acceptable range 
+            //            int rando = Random.Range(0, circle1ValuesToConsider.Count);
+            //            float potentialCircle1Value = circle1ValuesToConsider[rando];
+            //            Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
+            //            circle1ValuesToConsider.Remove(potentialCircle1Value);
+            //            // step 2: see if it can work, to get us the predetermined result
+            //            //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
+            //            //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
+            //            if (Mathf.Pow(potentialCircle1Value, 3) == resultValue)
+            //            {
+            //                Debug.Log("exponent3 is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
+            //                operatorList.Add("exponent3");
+            //                exponent3_circle1ValueToUse = potentialCircle1Value;
+            //                doneWithLoop = true;
+            //            }
+            //            else
+            //            {
+            //                Debug.Log("this won't work: " + potentialCircle1Value + " cubed = " + resultValue);
+            //                if (circle1ValuesToConsider.Count == 0)
+            //                {
+            //                    Debug.Log("*****************************exponent3 will not work... we've tried every option");
+            //                    doneWithLoop = true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("the resultValue isn't on the pre-approved list, so exponent3 can be ignored");
+            //    }
+            //}
+
+            //void ConsiderCubeRoot(float resultValue)
+            //{
+            //    // this should be pretty easy, as there's no circle2 needed
+
+            //    // let's be smart:
+            //    //      if the operator is cubeRoot, then the only results that are compatible are:
+            //    //      -5, -4, -3, -2, 2, 3, 4, 5
+            //    //      if resultValue isn't ONE OF THOSE THINGS, then we're done
+
+            //    List<float> usableResults = new List<float> { -5, -4, -3, -2, 2, 3, 4, 5 };
+
+            //    if (usableResults.Contains(resultValue))
+            //    {
+            //        bool doneWithLoop = false;
+            //        List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forCubeRoot(5, false, true, true);
+            //        while (doneWithLoop == false)
+            //        {
+            //            // step 1: pick a random circle1 value, within the acceptable range
+            //            int rando = Random.Range(0, circle1ValuesToConsider.Count);
+            //            float potentialCircle1Value = circle1ValuesToConsider[rando];
+            //            Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
+            //            circle1ValuesToConsider.Remove(potentialCircle1Value);
+            //            // step 2: see if it can work, to get us the predetermined result
+            //            //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
+            //            //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
+            //            if (Mathf.Pow(potentialCircle1Value, 1f/3f) == resultValue)
+            //            {
+            //                Debug.Log("cubeRoot is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
+            //                operatorList.Add("cubeRoot");
+            //                cubeRoot_circle1ValueToUse = potentialCircle1Value;
+            //                doneWithLoop = true;
+            //            }
+            //            else
+            //            {
+            //                Debug.Log("this won't work: " + potentialCircle1Value + " ^(1/3) = " + resultValue);
+            //                if (circle1ValuesToConsider.Count == 0)
+            //                {
+            //                    Debug.Log("*****************************cubeRoot will not work... we've tried every option");
+            //                    doneWithLoop = true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("the resultValue isn't on the pre-approved list, so cubeRoot can be ignored");
+            //    }
+            //}
         }
         void ConsiderSquareRoot(float resultValue) {
             List<float> usableResults = new List<float> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
@@ -966,11 +1057,6 @@ public class TestScript : MonoBehaviour
                 squareRoot_circle1ValueToUse = Mathf.Pow(resultValue, 2);
                 Debug.Log("squareRoot is viable: " + squareRoot_circle1ValueToUse + " as circle1 gives us result of " + resultValue);
                 operatorList.Add("squareRoot");
-
-
-
-
-
 
                 //bool doneWithLoop = false;
                 //List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forSquareRoot(11, false, false, true);
@@ -1009,46 +1095,13 @@ public class TestScript : MonoBehaviour
         }
         void ConsiderCubeRoot(float resultValue)
         {
-            // this should be pretty easy, as there's no circle2 needed
-
-            // let's be smart:
-            //      if the operator is cubeRoot, then the only results that are compatible are:
-            //      -5, -4, -3, -2, 2, 3, 4, 5
-            //      if resultValue isn't ONE OF THOSE THINGS, then we're done
-
             List<float> usableResults = new List<float> { -5, -4, -3, -2, 2, 3, 4, 5 };
 
             if (usableResults.Contains(resultValue))
             {
-                bool doneWithLoop = false;
-                List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forCubeRoot(5, false, true, true);
-                while (doneWithLoop == false)
-                {
-                    // step 1: pick a random circle1 value, within the acceptable range
-                    int rando = Random.Range(0, circle1ValuesToConsider.Count);
-                    float potentialCircle1Value = circle1ValuesToConsider[rando];
-                    Debug.Log(" ... length of circle1ValuesToConsider: " + circle1ValuesToConsider.Count);
-                    circle1ValuesToConsider.Remove(potentialCircle1Value);
-                    // step 2: see if it can work, to get us the predetermined result
-                    //      so we're considering exponent2... meaning we'll have a^2 = c, and we know c, therefore c = a^(1/2)
-                    //      so all we need to do is see if this circle1 value satisfies c = a^(1/2)
-                    if (Mathf.Pow(potentialCircle1Value, 1f/3f) == resultValue)
-                    {
-                        Debug.Log("cubeRoot is viable: " + potentialCircle1Value + " as circle1 gives us result of " + resultValue);
-                        operatorList.Add("cubeRoot");
-                        cubeRoot_circle1ValueToUse = potentialCircle1Value;
-                        doneWithLoop = true;
-                    }
-                    else
-                    {
-                        Debug.Log("this won't work: " + potentialCircle1Value + " ^(1/3) = " + resultValue);
-                        if (circle1ValuesToConsider.Count == 0)
-                        {
-                            Debug.Log("*****************************cubeRoot will not work... we've tried every option");
-                            doneWithLoop = true;
-                        }
-                    }
-                }
+                cubeRoot_circle1ValueToUse = Mathf.Pow(resultValue, 3);
+                Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse + " as circle1 gives us result of " + resultValue);
+                operatorList.Add("cubeRoot");
             }
             else
             {
@@ -1171,7 +1224,7 @@ public class TestScript : MonoBehaviour
             Debug.Log("result: " + outputCircle.value);
 
         } else if (operator1.type == "exponent2") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forExponent2(121, true, true, true);
+            List<float> stuff = CreateListOfPossibleCircleValues_forExponent2(121, false, true, true);
             inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
@@ -1182,7 +1235,7 @@ public class TestScript : MonoBehaviour
             Debug.Log("result: " + outputCircle.value);
 
         } else if (operator1.type == "exponent3") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forExponent3(125, true, true, true);
+            List<float> stuff = CreateListOfPossibleCircleValues_forExponent3(125, false, true, true);
             inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
@@ -1193,7 +1246,7 @@ public class TestScript : MonoBehaviour
             Debug.Log("result: " + outputCircle.value);
 
         } else if (operator1.type == "squareRoot") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forSquareRoot(11, true, true, true);
+            List<float> stuff = CreateListOfPossibleCircleValues_forSquareRoot(11, false, true, true);
             inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
@@ -1204,7 +1257,7 @@ public class TestScript : MonoBehaviour
             Debug.Log("result: " + outputCircle.value);
 
         } else if (operator1.type == "cubeRoot") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forCubeRoot(5, true, true, true);
+            List<float> stuff = CreateListOfPossibleCircleValues_forCubeRoot(5, false, true, true);
             inputCircleA = CreateRandomCircle(stuff);
 
             Debug.Log("first value: " + inputCircleA.value);
