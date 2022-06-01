@@ -1,15 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class TestScript : MonoBehaviour
+public class PuzzleManager : MonoBehaviour
 {
+    public static PuzzleManager instance;
+    
+    public GameObject CircleA;
+    public GameObject CircleB;
+    public GameObject CircleC;
+    public GameObject MathInProgress;
+    public GameObject OperatorA;
+    public GameObject OperatorB;
+    public GameObject Goal;
+
+    public List<Circle> listOfAllCircles;
+    public List<Operator> listOfAllOperators;
+
+
+    // for performing math operations as the player attempts to solve puzzles
+    bool circle1selected = false;
+    GameObject highlightedCircle1;
+    float value1;
+
+    bool operatorSelected = false;
+    GameObject highlightedOperator;
+
+    bool circle2selected = false;
+    GameObject highlightedCircle2;
+    float value2;
+
+    Color whiteColor = new Color(1, 1, 1, 1);
+    Color highlightedColor = new Color(0.4f, 0.6f, 0.4f, 1);
+
+    bool math_oneCircle_IsComplete = false;
+    bool math_twoCircle_IsComplete = false;
+
+
+
+
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-
+        instance = this;
+        listOfAllCircles = new List<Circle>();
+        listOfAllOperators = new List<Operator>();
     }
 
     // Update is called once per frame
@@ -23,13 +63,14 @@ public class TestScript : MonoBehaviour
     }
     public class Operator : OpsAndCircles {
         public string type;
-        int numberOfThisTypeThatExist;
-        int IDnumber;
+        public static int numberOfThisTypeThatExist;
+        public int IDnumber;
         Vector2 position;
         float input1;
         float input2;
         float output;
         public char AorBorC;
+        public string operatorGameObject_associatedWith;
 
         public Operator(string name, char ABC) {
             type = name;
@@ -45,9 +86,10 @@ public class TestScript : MonoBehaviour
         public bool trueInt_falseFraction;
         public int numerator;
         public int denominator;
-        int numberOfThisTypeThatExist;
-        int IDnumber;
+        public static int numberOfThisTypeThatExist;
+        public int IDnumber;
         Vector2 position;
+        public string circleGameObject_associatedWith;
 
         public Circle(float val) {
             value = val;
@@ -90,6 +132,7 @@ public class TestScript : MonoBehaviour
                 name = "cubeRoot"; break;
         }
         Operator temp = new Operator(name, ABC);
+        listOfAllOperators.Add(temp);
         return temp;
     }
 
@@ -315,12 +358,15 @@ public class TestScript : MonoBehaviour
             }
             if (isNegative) {
                 temp = new Circle(-1 * numerator, denominator);
+                listOfAllCircles.Add(temp);
             } else {
                 temp = new Circle(numerator, denominator);
+                listOfAllCircles.Add(temp);
             }
 
         } else {
             temp = new Circle(num);
+            listOfAllCircles.Add(temp);
         }
         return temp;
     }
@@ -365,11 +411,14 @@ public class TestScript : MonoBehaviour
 
             if (isNegative) {
                 temp = new Circle(-1 * numerator, denominator);
+                listOfAllCircles.Add(temp);
             } else {
                 temp = new Circle(numerator, denominator);
+                listOfAllCircles.Add(temp);
             }
         } else {
             temp = new Circle(num);
+            listOfAllCircles.Add(temp);
         }
         return temp;
     }
@@ -443,7 +492,7 @@ public class TestScript : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public List<OpsAndCircles> CreatePartB_GivenInitial(Circle newCircle1) {
+    public List<OpsAndCircles> CreatePartB_GivenInitial(Circle newCircle1, Operator operatorAlreadyUsed) {
 
         // List<OpsAndCircles>
 
@@ -481,15 +530,15 @@ public class TestScript : MonoBehaviour
         List<float> usableCircle2Values_Multiplication = new List<float>();
         List<float> usableCircle2Values_Division = new List<float>();
 
-        List<float> circle2ValuesToConsider_Add_Subtract = CreateListOfPossibleCircleValues_forArithmetic(20f, true, true, true);
-        List<float> circle2ValuesToConsider_Mult_Divide = CreateListOfPossibleCircleValues_forArithmetic(20f, false, true, true);
+        List<float> circle2ValuesToConsider_Add_Subtract = CreateListOfPossibleCircleValues_forArithmetic(25f, true, true, true);
+        List<float> circle2ValuesToConsider_Mult_Divide = CreateListOfPossibleCircleValues_forArithmetic(25f, false, true, true);
 
         void ConsiderAddition(Circle circle1) {
             float value = circle1.value;
 
             for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++) {
                 float result = value + circle2ValuesToConsider_Add_Subtract[i];
-                if (result >= -225 && result <= 225 && TestIfIsInteger(result)) {
+                if (result >= -225 && result <= 225 && TestIfIsInteger(result) && result != 0) {
                     usableCircle2Values_Addition.Add(circle2ValuesToConsider_Add_Subtract[i]);
                 }
             }
@@ -502,7 +551,7 @@ public class TestScript : MonoBehaviour
 
             for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++) {
                 float result = value - circle2ValuesToConsider_Add_Subtract[i];
-                if (result >= -225 && result <= 225 && TestIfIsInteger(result)) {
+                if (result >= -225 && result <= 225 && TestIfIsInteger(result) && result != 0) {
                     usableCircle2Values_Subtraction.Add(circle2ValuesToConsider_Add_Subtract[i]);
                 }
             }
@@ -518,7 +567,7 @@ public class TestScript : MonoBehaviour
             for (int i = 0; i < circle2ValuesToConsider_Mult_Divide.Count; i++)
             {
                 float result = value * circle2ValuesToConsider_Mult_Divide[i];
-                if (result >= -125 && result <= 125 && TestIfIsInteger(result))
+                if (result >= -125 && result <= 125 && TestIfIsInteger(result) && result != 0)
                 {
                     usableCircle2Values_Multiplication.Add(circle2ValuesToConsider_Mult_Divide[i]);
                 }
@@ -536,7 +585,7 @@ public class TestScript : MonoBehaviour
             for (int i = 0; i < circle2ValuesToConsider_Mult_Divide.Count; i++)
             {
                 float result = value / circle2ValuesToConsider_Mult_Divide[i];
-                if (result >= -125 && result <= 125 && TestIfIsInteger(result))
+                if (result >= -125 && result <= 125 && TestIfIsInteger(result) && result != 0)
                 {
                     usableCircle2Values_Division.Add(circle2ValuesToConsider_Mult_Divide[i]);
                 }
@@ -579,14 +628,23 @@ public class TestScript : MonoBehaviour
             }
         }
         void ConsiderAllOperators(Circle circle1) {
+            string otherOperator = operatorAlreadyUsed.type;
             ConsiderAddition(circle1);
             ConsiderSubtraction(circle1);
             ConsiderMultiplication(circle1);
             ConsiderDivision(circle1);
-            ConsiderExponent2(circle1);
-            ConsiderExponent3(circle1);
-            ConsiderSquareRoot(circle1);
-            ConsiderCubeRoot(circle1);
+            if (otherOperator != "squareRoot") {
+                ConsiderExponent2(circle1);
+            }
+            if (otherOperator != "cubeRoot") {
+                ConsiderExponent3(circle1);
+            }
+            if (otherOperator != "exponent2") {
+                ConsiderSquareRoot(circle1);
+            }
+            if (otherOperator != "exponent3") {
+                ConsiderCubeRoot(circle1);
+            }
         }
         ConsiderAllOperators(newCircle1);
 
@@ -595,6 +653,7 @@ public class TestScript : MonoBehaviour
         int rando = Random.Range(0, operatorList.Count);
         operatorToUse = operatorList[rando];
         Operator newOperator = new Operator(operatorToUse, 'B');
+        listOfAllOperators.Add(newOperator);
 
 
         float value = 0;
@@ -639,7 +698,7 @@ public class TestScript : MonoBehaviour
         return toReturn;
     }
 
-    public List<OpsAndCircles> CreatePartA_GivenInitial(Circle potentialResult1, Circle potentialResult2)
+    public List<OpsAndCircles> CreatePartA_GivenInitial(Circle potentialResult1, Circle potentialResult2, Operator operatorAlreadyUsed)
     {
         Debug.Log("about to start building PartA, given PartB");
 
@@ -684,8 +743,8 @@ public class TestScript : MonoBehaviour
         float squareRoot_circle1ValueToUse_2 = 0;
         float cubeRoot_circle1ValueToUse_2 = 0;
 
-        List<float> circle2ValuesToConsider_Add_Subtract = CreateListOfPossibleCircleValues_forArithmetic(20f, true, true, true);
-        List<float> circle2ValuesToConsider_Mult_Divide = CreateListOfPossibleCircleValues_forArithmetic(20f, false, true, true);
+        List<float> circle2ValuesToConsider_Add_Subtract = CreateListOfPossibleCircleValues_forArithmetic(25f, true, true, true);
+        List<float> circle2ValuesToConsider_Mult_Divide = CreateListOfPossibleCircleValues_forArithmetic(25f, false, true, true);
 
         void ConsiderAddition(float resultValue, char ABC)
         {
@@ -700,7 +759,7 @@ public class TestScript : MonoBehaviour
             // if the resultValue is a fraction, then the ONLY POSSIBLE circle1 value is also a fraction, and we don't need to waste time looking at integers
             // conversely, if resultValue is an integer, the we don't need to look at fractions
             
-            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(20f, true, true, true);
+            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(25f, true, true, true);
 
             //if (TestIfIsInteger(resultValue)) { 
             //    // if resultValue is an integer, then circle1 will be an integer, and we can ignore fractions
@@ -758,7 +817,7 @@ public class TestScript : MonoBehaviour
         }
         void ConsiderSubtraction(float resultValue, char ABC)
         {
-            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(20f, true, true, true);
+            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(25f, true, true, true);
 
             bool doneWithLoop = false;
             while (doneWithLoop == false)
@@ -819,7 +878,7 @@ public class TestScript : MonoBehaviour
         {
             // this is multiplication, so if the RESULT is a PRIME NUMBER, then we already know we don't want to use multiplication, because multiplying by 1 is boring
 
-            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(20f, false, true, true);
+            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(25f, false, true, true);
 
             bool doneWithLoop = false;
             while (doneWithLoop == false)
@@ -864,7 +923,7 @@ public class TestScript : MonoBehaviour
         }
         void ConsiderDivision(float resultValue, char ABC)
         {
-            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(20f, false, true, true);
+            List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(25f, false, true, true);
 
             bool doneWithLoop = false;
             while (doneWithLoop == false)
@@ -1210,56 +1269,42 @@ public class TestScript : MonoBehaviour
             }
         }
 
-        void ConsiderAllOperators_A() {
+        void ConsiderAllOperators(Circle potentialResult_1or2, char AorB) {
 
-            float value = potentialResult1.value;
+            string otherOperator = operatorAlreadyUsed.type;
+            float value = potentialResult_1or2.value;
 
             if (Mathf.Abs(value) <= 40) {
-                ConsiderAddition(value, 'A');
-                ConsiderSubtraction(value, 'A');
+                ConsiderAddition(value, AorB);
+                ConsiderSubtraction(value, AorB);
             } else {
                 Debug.Log(value + " is too big, so we're skipping addition & subtraction");
             }
             // if valueOfResultA is a PRIME NUMBER, then we don't want to consider multiplication or division, because *1 and /1 are boring
             if (!IsThisNumberPrime(value)) {
-                ConsiderMultiplication(value, 'A');
-                ConsiderDivision(value, 'A');
+                ConsiderMultiplication(value, AorB);
+                ConsiderDivision(value, AorB);
             } else {
                 Debug.Log(value + " is a prime number, so we're skipping multiplication & division");
             }
-            ConsiderExponent2(value, 'A');
-            ConsiderExponent3(value, 'A');
-            ConsiderSquareRoot(value, 'A');
-            ConsiderCubeRoot(value, 'A');
-        }
-        void ConsiderAllOperators_B() {
-
-            float value = potentialResult2.value;
-
-            if (Mathf.Abs(value) <= 40) {
-                ConsiderAddition(value, 'B');
-                ConsiderSubtraction(value, 'B');
-            } else {
-                Debug.Log(value + " is too big, so we're skipping addition & subtraction");
+            if (otherOperator != "squareRoot") {
+                ConsiderExponent2(value, AorB);
             }
-            // if valueOfResultA is a PRIME NUMBER, then we don't want to consider multiplication or division, because *1 and /1 are boring
-            if (!IsThisNumberPrime(value)) {
-                ConsiderMultiplication(value, 'B');
-                ConsiderDivision(value, 'B');
-            } else {
-                Debug.Log(value + " is a prime number, so we're skipping multiplication & division");
+            if (otherOperator != "cubeRoot") {
+                ConsiderExponent3(value, AorB);
             }
-            ConsiderExponent2(value, 'B');
-            ConsiderExponent3(value, 'B');
-            ConsiderSquareRoot(value, 'B');
-            ConsiderCubeRoot(value, 'B');
+            if (otherOperator != "exponent2") {
+                ConsiderSquareRoot(value, AorB);
+            }
+            if (otherOperator != "exponent3") {
+                ConsiderCubeRoot(value, AorB);
+            }
         }
 
-        ConsiderAllOperators_A();
+        ConsiderAllOperators(potentialResult1, 'A');
         if (potentialResult2 != null) {
-            ConsiderAllOperators_B();
+            ConsiderAllOperators(potentialResult2, 'B');
         }
-
 
         Operator partA_operator = null;
         Circle partA_circle1 = null;
@@ -1278,6 +1323,7 @@ public class TestScript : MonoBehaviour
             if (operatorWeUse == "addition")
             {
                 partA_operator = new Operator("addition", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = addition_circle1ValueToUse_1;
                 circle2Value = addition_circle2ValueToUse_1;
                 resultPartA = circle1Value + circle2Value;
@@ -1285,6 +1331,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "subtraction")
             {
                 partA_operator = new Operator("subtraction", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = subtraction_circle1ValueToUse_1;
                 circle2Value = subtraction_circle2ValueToUse_1;
                 resultPartA = circle1Value - circle2Value;
@@ -1292,6 +1339,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "multiplication")
             {
                 partA_operator = new Operator("multiplication", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = multiplication_circle1ValueToUse_1;
                 circle2Value = multiplication_circle2ValueToUse_1;
                 resultPartA = circle1Value * circle2Value;
@@ -1299,6 +1347,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "division")
             {
                 partA_operator = new Operator("division", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = division_circle1ValueToUse_1;
                 circle2Value = division_circle2ValueToUse_1;
                 resultPartA = circle1Value / circle2Value;
@@ -1306,26 +1355,35 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "exponent2")
             {
                 partA_operator = new Operator("exponent2", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_1;
                 resultPartA = Mathf.Pow(circle1Value, 2);
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_1;
                 resultPartA = Mathf.Pow(circle1Value, 3);
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_1;
                 resultPartA = Mathf.Pow(circle1Value, 0.5f);
             }
             else if (operatorWeUse == "cubeRoot")
             {
                 partA_operator = new Operator("cubeRoot", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_1;
-                resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                if (circle1Value < 0) {
+                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
+                } else if (circle1Value > 0) {
+                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                }
+
             }
 
             partA_circle1 = CreateSpecificCircle(circle1Value);
@@ -1349,6 +1407,7 @@ public class TestScript : MonoBehaviour
             if (operatorWeUse == "addition")
             {
                 partA_operator = new Operator("addition", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = addition_circle1ValueToUse_2;
                 circle2Value = addition_circle2ValueToUse_2;
                 resultPartA = circle1Value + circle2Value;
@@ -1356,6 +1415,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "subtraction")
             {
                 partA_operator = new Operator("subtraction", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = subtraction_circle1ValueToUse_2;
                 circle2Value = subtraction_circle2ValueToUse_2;
                 resultPartA = circle1Value - circle2Value;
@@ -1363,6 +1423,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "multiplication")
             {
                 partA_operator = new Operator("multiplication", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = multiplication_circle1ValueToUse_2;
                 circle2Value = multiplication_circle2ValueToUse_2;
                 resultPartA = circle1Value * circle2Value;
@@ -1370,6 +1431,7 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "division")
             {
                 partA_operator = new Operator("division", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = division_circle1ValueToUse_2;
                 circle2Value = division_circle2ValueToUse_2;
                 resultPartA = circle1Value / circle2Value;
@@ -1377,26 +1439,34 @@ public class TestScript : MonoBehaviour
             else if (operatorWeUse == "exponent2")
             {
                 partA_operator = new Operator("exponent2", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_2;
                 resultPartA = Mathf.Pow(circle1Value, 2);
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_2;
                 resultPartA = Mathf.Pow(circle1Value, 3);
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_2;
                 resultPartA = Mathf.Pow(circle1Value, 0.5f);
             }
             else if (operatorWeUse == "cubeRoot")
             {
                 partA_operator = new Operator("cubeRoot", 'A');
+                listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_2;
-                resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                if (circle1Value < 0) {
+                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
+                } else if (circle1Value > 0) {
+                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                }
             }
 
             partA_circle1 = CreateSpecificCircle(circle1Value);
@@ -1423,7 +1493,7 @@ public class TestScript : MonoBehaviour
         } else {
             int rando = Random.Range(1, 3);
             if (rando == 1) {
-                Debug.Log("going with ResultA");
+                Debug.Log("going with ResultA, chosen randomly because the lists are the same size");
                 GoWithResult_1();
             } else {
                 Debug.Log("going with ResultB, chosen randomly because the lists are the same size");
@@ -1443,8 +1513,149 @@ public class TestScript : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public void CreateProblem() 
+    public int SetCircle(GameObject circleGameObject, Circle circleData, int numberOfValidCircles)
     {
+        if (circleData == null || circleData.value == 0)
+        {
+            //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
+            circleGameObject.SetActive(false);
+        }
+        else
+        {
+            if (TestIfIsInteger(circleData.value))
+            {
+                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = circleData.value.ToString();
+            }
+            else
+            {
+                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = circleData.value.ToString("F2");
+            }
+
+            circleGameObject.SetActive(true);
+            circleGameObject.GetComponent<Clickable>().valueOfThisCircle = circleData.value;
+            circleGameObject.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
+
+            if (circleGameObject == CircleA) {
+                circleData.circleGameObject_associatedWith = "CircleA";                                                 // this marks the circleData Circle class object
+            } else if (circleGameObject == CircleB) {
+                circleData.circleGameObject_associatedWith = "CircleB";
+            } else if (circleGameObject == CircleC) {
+                circleData.circleGameObject_associatedWith = "CircleC";
+            }
+
+            numberOfValidCircles += 1;
+        }
+        return numberOfValidCircles;
+    }
+    public void SetOperator(GameObject opAorB, Operator oppy)
+    {
+        if (oppy.type == "addition")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "addition";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "+";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        else if (oppy.type == "subtraction")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "subtraction";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "-";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        else if (oppy.type == "multiplication")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "multiplication";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "*";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        else if (oppy.type == "division")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "division";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "/";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        else if (oppy.type == "exponent2")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "exponent2";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(true);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(true);                   // exponent_X
+        }
+        else if (oppy.type == "exponent3")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "exponent3";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+            opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(true);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(true);                   // exponent_X
+        }
+        else if (oppy.type == "squareRoot")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "squareRoot";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+            opAorB.transform.GetChild(1).gameObject.SetActive(true);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(true);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        else if (oppy.type == "cubeRoot")
+        {
+            opAorB.GetComponent<Clickable>().typeOfThisOperator = "cubeRoot";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+            opAorB.transform.GetChild(1).gameObject.SetActive(true);                   // squareRootImage
+            opAorB.transform.GetChild(2).gameObject.SetActive(true);                   // squareRoot_X
+            opAorB.transform.GetChild(3).gameObject.SetActive(true);                   // cubeRoot3
+            opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
+            opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
+            opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        }
+        opAorB.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis = oppy.IDnumber;                  // this marks the GameObject
+        if (opAorB == OperatorA) {                                                                              // this marks the Operator class object
+            oppy.operatorGameObject_associatedWith = "OperatorA";
+        } else if (opAorB == OperatorB) {
+            oppy.operatorGameObject_associatedWith = "OperatorB";
+        }
+    }
+
+    public void CreateNewPuzzle() 
+    {
+        // get rid of all the Circles & Operators we created in past puzzles
+        Circle.numberOfThisTypeThatExist = 0;
+        listOfAllCircles.Clear();
+        Operator.numberOfThisTypeThatExist = 0;
+        listOfAllOperators.Clear();
+
+        ResetColorsAndMath_Circles_Operators();
+
+
         int ABC = Random.Range(1, 3);   // this will determine whether we're starting by creating PartA, or starting by creating PartB
         char A_B_C = 'x';
         if (ABC == 1) {
@@ -1458,7 +1669,7 @@ public class TestScript : MonoBehaviour
             Debug.Log("we start by creating PartC");        // this isn't currently supported
         }
         Operator oppy = PickRandomOperator(8, A_B_C);
-        //Operator operator1 = new Operator("addition", 'A');
+
         Circle inputCircleA = null;
         Circle inputCircleB = null;
         Circle outputCircle = null;
@@ -1517,18 +1728,24 @@ public class TestScript : MonoBehaviour
         // depending on what A_B_C is, will affect which of the following we choose:
         if (A_B_C == 'A') {
             // we already created PartA, so now we create PartB
-            List<OpsAndCircles> PartBStuff = CreatePartB_GivenInitial(outputCircle);
+            List<OpsAndCircles> PartBStuff = CreatePartB_GivenInitial(outputCircle, oppy);
             circle1 = inputCircleA;
-            circle2 = inputCircleB; // might be null
-            circle3 = (Circle)PartBStuff[1]; // might be null
+            //if (inputCircleB != null) {
+                circle2 = inputCircleB; // might be null
+            //}
+            //if ((Circle)PartBStuff[1] != null) {
+                circle3 = (Circle)PartBStuff[1]; // might be null
+            //}
             operator1 = oppy;
             operator2 = (Operator)PartBStuff[0];
             result = (Circle)PartBStuff[2];
         } else if (A_B_C == 'B') {
             // we already created PartB, so now we create PartA
-            List<OpsAndCircles> PartAStuff = CreatePartA_GivenInitial(inputCircleA, inputCircleB);
+            List<OpsAndCircles> PartAStuff = CreatePartA_GivenInitial(inputCircleA, inputCircleB, oppy);
             circle1 = (Circle)PartAStuff[1];
-            circle2 = (Circle)PartAStuff[2]; // might be null
+            //if ((Circle)PartAStuff[2] != null) {
+                circle2 = (Circle)PartAStuff[2]; // might be null
+            //}
             // the above function will tell us which PartA result was used as the first input for PartB
             //      we need to identify which PartA result was used, and then make the OTHER ONE appear in the puzzle
             Circle resultFromPartA = (Circle)PartAStuff[3];
@@ -1542,6 +1759,7 @@ public class TestScript : MonoBehaviour
             result = outputCircle;
         }
 
+        Debug.Log("******************************************");
         Debug.Log("circle1: " + circle1.value);
         if (circle2 != null) {
             Debug.Log("circle2: " + circle2.value);
@@ -1554,11 +1772,274 @@ public class TestScript : MonoBehaviour
         Debug.Log("final result: " + result.value);
 
 
+        void PutPuzzleIntoGame() {
+            // put the puzzle into the game for the user to see
+
+            // how many valid circles do we have? 1 or 2 or 3?
+
+            // also, if the value of a circle is zero, as far as we're concerned it's null, so don't show that circle
+
+            int numberOfValidCircles = 0;
+            numberOfValidCircles += SetCircle(CircleA, circle1, numberOfValidCircles);
+            numberOfValidCircles += SetCircle(CircleB, circle2, numberOfValidCircles);
+            numberOfValidCircles += SetCircle(CircleC, circle3, numberOfValidCircles);
+
+            // change positions depending on how many valid circles (for visual symmetry)
+            //      do this later
+
+            MathInProgress.GetComponent<TextMeshPro>().text = "";
+
+            SetOperator(OperatorA, operator1);
+            SetOperator(OperatorB, operator2);
+
+            Goal.transform.GetChild(0).GetComponent<TextMeshPro>().text = result.value.ToString();
+        }
+
+        GameManager.instance.DisplayLevel();
+        PutPuzzleIntoGame();
+
+
+
+
+
+
+
 
 
 
     }
-    
-    
+
+    // ************************************************************************************************************
+    // ************************************************************************************************************
+
+    public void ResetColorsAndMath_Circles_Operators() {
+        CircleA.GetComponent<SpriteRenderer>().color = whiteColor;
+        CircleB.GetComponent<SpriteRenderer>().color = whiteColor;
+        CircleC.GetComponent<SpriteRenderer>().color = whiteColor;
+        OperatorA.GetComponent<SpriteRenderer>().color = whiteColor;
+        OperatorB.GetComponent<SpriteRenderer>().color = whiteColor;
+
+        circle1selected = false;
+        highlightedCircle1 = null;
+        value1 = 0;
+
+        operatorSelected = false;
+        highlightedOperator = null;
+
+        circle2selected = false;
+        highlightedCircle2 = null;
+        value2 = 0;
+
+        math_oneCircle_IsComplete = false;
+        math_twoCircle_IsComplete = false;
+    }
+    public void HighlightCircleGameObject(GameObject obby) {
+        highlightedCircle1 = obby;
+        // make it the highlighted color
+        highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
+    }
+    public void UNHighlightCircleGameObject(GameObject obby) {
+        // stop the highlight animation and/or reverse the highlighted color and make it the normal color
+        obby.GetComponent<SpriteRenderer>().color = whiteColor;
+    }
+    public void HighLightOperatorGameObject(GameObject obby) {
+        highlightedOperator = obby;
+        highlightedOperator.GetComponent<SpriteRenderer>().color = highlightedColor;
+    }
+    public void UNHighlightOperatorGameObject(GameObject obby) {
+        obby.GetComponent<SpriteRenderer>().color = whiteColor;
+    }
+
+
+    public void AcceptClickedCircleOrOperator(GameObject gameObjectClicked) {
+        if (circle1selected == false && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
+        {
+            // this is the stage where we select the first Circle... the player can change which one they want up until they click an operator
+            if (gameObjectClicked.CompareTag("circle"))
+            {
+                value1 = GetValueOfClickedCircle(gameObjectClicked);
+                HighlightCircleGameObject(gameObjectClicked);
+                circle1selected = true;
+            }
+            else if (gameObjectClicked.CompareTag("operator"))
+            {
+                // do nothing
+            }
+        } else if (circle1selected == true && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false) {
+            if (gameObjectClicked.CompareTag("circle")) {
+                if (gameObjectClicked != highlightedCircle1)
+                {
+                    // simply change which circle is highlighted
+                    value1 = GetValueOfClickedCircle(gameObjectClicked);
+                    UNHighlightCircleGameObject(highlightedCircle1);
+                    HighlightCircleGameObject(gameObjectClicked);
+                }
+                else if (gameObjectClicked == highlightedCircle1)
+                {
+                    // the highlighted circle is no longer highlighted
+                    value1 = 0;
+                    UNHighlightCircleGameObject(highlightedCircle1);
+                    circle1selected = false;
+                    highlightedCircle1 = null;
+                }
+            } else if (gameObjectClicked.CompareTag("operator")) {
+                highlightedOperator = gameObjectClicked;
+                HighLightOperatorGameObject(gameObjectClicked);
+                operatorSelected = true;    // this prevents the player from quickly clicking the other operator while the animation plays out, and causing a glitch
+                DetermineWhether_oneCircle_MathIsComplete();
+                if (math_oneCircle_IsComplete) {
+                    ExecuteCompletionOf_oneCircle_Math();
+                }
+            }
+        } else if (circle1selected == true && operatorSelected == true && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false) { 
+            // ready to accept circle2... CANNOT change circle1 at this point... but CAN CHANGE operator
+            if (gameObjectClicked.CompareTag("circle")) { 
+                if (gameObjectClicked == highlightedCircle1) {
+                    // buuuut... you CANNOT click the same circle because it has already disappeared
+                    // but if you COULD click it: 
+                    // undo EVERYTHING
+                    value1 = 0;
+                    UNHighlightCircleGameObject(highlightedCircle1);
+                    circle1selected = false;
+                    highlightedCircle1 = null;
+                    UNHighlightOperatorGameObject(highlightedOperator);
+                    highlightedOperator = null;
+                    operatorSelected = false;
+                } else {
+                    value2 = GetValueOfClickedCircle(gameObjectClicked);
+                    // the math is now complete?
+                    DetermineWhether_twoCircle_MathIsComplete();
+                    if (math_twoCircle_IsComplete) {
+                        ExecuteCompletionOf_twoCircle_Math();
+                    }
+                }
+            } else if (gameObjectClicked.CompareTag("operator")) { 
+                if (gameObjectClicked == highlightedOperator) {
+                    // you CANNOT CLICK on this operator because it has already disappeared
+                    // unhighlight
+                    UNHighlightOperatorGameObject(highlightedOperator);
+                    highlightedOperator = null;
+                    operatorSelected = false;
+                } else {
+                    // change the operator
+                    UNHighlightOperatorGameObject(highlightedOperator);
+                    highlightedOperator = gameObjectClicked;
+                    HighLightOperatorGameObject(gameObjectClicked);
+                    DetermineWhether_oneCircle_MathIsComplete();
+                    if (math_oneCircle_IsComplete) {
+                        ExecuteCompletionOf_oneCircle_Math();
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+    }
+
+    public float GetValueOfClickedCircle(GameObject circleClicked) {
+        float value = 0;
+        if (circleClicked == CircleA) {
+            Debug.Log("CircleA was clicked");
+            Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
+            Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
+            // find the circleData associated with CircleA... we can find it because we previously marked both the GameObject and the Circle so we know they're associated
+            int IDnum = CircleA.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            for (int i = 0; i < listOfAllCircles.Count; i++) { 
+                if (listOfAllCircles[i].IDnumber == IDnum) {
+                    value = listOfAllCircles[i].value;
+                }
+            }
+            Debug.Log("value of CircleA: " + value);
+
+        } else if (circleClicked == CircleB) {
+            Debug.Log("CircleB was clicked");
+            Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
+            Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
+            int IDnum = CircleB.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            for (int i = 0; i < listOfAllCircles.Count; i++)
+            {
+                if (listOfAllCircles[i].IDnumber == IDnum)
+                {
+                    value = listOfAllCircles[i].value;
+                }
+            }
+            Debug.Log("value of CircleB: " + value);
+        } else if (circleClicked == CircleC) {
+            Debug.Log("CircleC was clicked");
+            Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
+            Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
+            int IDnum = CircleC.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            for (int i = 0; i < listOfAllCircles.Count; i++)
+            {
+                if (listOfAllCircles[i].IDnumber == IDnum)
+                {
+                    value = listOfAllCircles[i].value;
+                }
+            }
+            Debug.Log("value of CircleC: " + value);
+        }
+        return value;
+
+    }
+
+    //public void AcceptClickedOperator(GameObject operatorClicked) {
+    //    // i dooooon't think i need this
+    //    if (operatorClicked == OperatorA) {
+    //        Debug.Log("OperatorA was clicked");
+    //        int IDnum = OperatorA.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis;
+    //        for (int i = 0; i < listOfAllOperators.Count; i++) { 
+    //            if (listOfAllOperators[i].IDnumber == IDnum) {
+    //                highlightedOperator = listOfAllOperators[i];
+    //            }
+    //        }
+    //        Debug.Log("operator type: " + highlightedOperator.type);
+    //    } else if (operatorClicked == OperatorB)
+    //    {
+    //        Debug.Log("OperatorB was clicked");
+    //        int IDnum = OperatorB.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis;
+    //        for (int i = 0; i < listOfAllOperators.Count; i++)
+    //        {
+    //            if (listOfAllOperators[i].IDnumber == IDnum)
+    //            {
+    //                highlightedOperator = listOfAllOperators[i];
+    //            }
+    //        }
+    //        Debug.Log("operator type: " + highlightedOperator.type);
+    //    }
+    //}
+
+    public void DetermineWhether_oneCircle_MathIsComplete() {
+        // if the operator is ADD/SUBT/MULT/DIVI, then a second Circle must be clicked
+        //      otherwise, just 1 circle and then 1 operator is enough
+
+        //math_oneCircle_IsComplete = true;
+    }
+    public void DetermineWhether_twoCircle_MathIsComplete()
+    {
+        // if the operator is ADD/SUBT/MULT/DIVI, then a second Circle must be clicked
+        //      otherwise, just 1 circle and then 1 operator is enough
+
+        //math_twoCircle_IsComplete = true;
+    }
+
+    public void ExecuteCompletionOf_oneCircle_Math() { 
+        // bring the circle and the operator together, then they disappear, then the partial math equation is turned on
+    }
+    public void ExecuteCompletionOf_twoCircle_Math()
+    {
+        // 
+    }
+    public void CombineCircle1_and_Operator() { 
+
+    }
+    public void Reverse_CombineCircle1_and_Operator() { 
+
+    }
+
+
 
 }
