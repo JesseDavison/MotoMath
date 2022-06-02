@@ -8,7 +8,7 @@ public class Clickable : MonoBehaviour
 
 
     // this script is used for both circles & operators, so we have the following:
-    public float valueOfThisCircle;
+    public float valueOfThisCircle_orGoal;
     public int IDnumberOfCircleDataAttachedToThis;
 
 

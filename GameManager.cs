@@ -22,12 +22,19 @@ public class GameManager : MonoBehaviour
     float value_2;
 
 
+    public GameObject GlobalTimer;
+    public GameObject PuzzleTimer;
+    TimerGlobal timerGlobal;
+    TimerPuzzle timerPuzzle;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
+        timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
+        timerPuzzle = PuzzleTimer.GetComponent<TimerPuzzle>();
         DisplayMainMenu();
     }
 
@@ -52,6 +59,19 @@ public class GameManager : MonoBehaviour
         MathInProgress.SetActive(true);
         OperatorsParent.SetActive(true);
         GoalParent.SetActive(true);
+    }
+    public void StartGame() {
+        PuzzleManager.instance.CreateNewPuzzle();
+        DisplayLevel();
+        timerPuzzle.UnpausePuzzleTimer();
+        timerGlobal.UnpauseGlobalTimer();
+    }
+    public void EndGameEarly() {        // tie this to the "Main Menu" button in the level UI
+        DisplayMainMenu();
+        timerPuzzle.PausePuzzleTimer();
+        timerGlobal.PauseGlobalTimer();
+        timerGlobal.ResetTimeRemaining();
+
     }
 
 
