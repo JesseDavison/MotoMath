@@ -11,10 +11,17 @@ public class PuzzleManager : MonoBehaviour
     public GameObject CircleA;
     public GameObject CircleB;
     public GameObject CircleC;
+    public Clickable CircleAScript;
+    public Clickable CircleBScript;
+    public Clickable CircleCScript;
     public GameObject MathInProgress;
     public GameObject OperatorA;
     public GameObject OperatorB;
+    public Clickable OperatorAScript;
+    public Clickable OperatorBScript;
     public GameObject Goal;
+    public GameObject ExplosionImage;
+    public Explosion explosion;
 
     public List<Circle> listOfAllCircles;
     public List<Operator> listOfAllOperators;
@@ -61,6 +68,12 @@ public class PuzzleManager : MonoBehaviour
         listOfAllOperators = new List<Operator>();
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
         timerPuzzle = PuzzleTimer.GetComponent<TimerPuzzle>();
+        CircleAScript = CircleA.GetComponent<Clickable>();
+        CircleBScript = CircleB.GetComponent<Clickable>();
+        CircleCScript = CircleC.GetComponent<Clickable>();
+        OperatorAScript = OperatorA.GetComponent<Clickable>();
+        OperatorBScript = OperatorB.GetComponent<Clickable>();
+        explosion = ExplosionImage.GetComponent<Explosion>();
     }
 
     // Update is called once per frame
@@ -610,7 +623,7 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderExponent2(Circle circle1) {
             float value = circle1.value;
             // see if *value* is on the list of usable circle1s for exponent2
-            List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(121, true, true, true);
+            List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(121, true, true, false);
             if (usableCircle1ValuesForExponent2.Contains(value)) {
                 operatorList.Add("exponent2");
             }
@@ -1530,20 +1543,51 @@ public class PuzzleManager : MonoBehaviour
         {
             //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
             circleGameObject.SetActive(false);
+            //return false;       // this circle is active = FALSE
         }
         else
         {
-            if (TestIfIsInteger(circleData.value))
+            float value = circleData.value;
+            if (TestIfIsInteger(value))
             {
-                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = circleData.value.ToString();
+                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString();
+                // turn off all the fraction stuff
+                for (int i = 1; i <= 7; i++) {
+                    circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
+                }
             }
             else
             {
-                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = circleData.value.ToString("F2");
+                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+                for (int i = 1; i <= 7; i++) {
+                    circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                if (value < 0) {
+                    circleGameObject.transform.GetChild(1).gameObject.SetActive(true);      // numerator_negative
+                } else {
+                    circleGameObject.transform.GetChild(1).gameObject.SetActive(false);     // numerator_negative
+                }
+                float absValue = Mathf.Abs(value);
+                if (absValue == 0.25f) {
+                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+                    circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
+                } else if (absValue == 1f / 3f) {
+                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+                    circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
+                } else if (absValue == 0.5f) {
+                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+                    circleGameObject.transform.GetChild(5).gameObject.SetActive(true);      // denominator_2
+                } else if (absValue == 2f / 3f) {
+                    circleGameObject.transform.GetChild(3).gameObject.SetActive(true);      // numerator_2
+                    circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
+                } else if (absValue == 0.75f) {
+                    circleGameObject.transform.GetChild(4).gameObject.SetActive(true);      // numerator_3
+                    circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
+                }
             }
 
             circleGameObject.SetActive(true);
-            circleGameObject.GetComponent<Clickable>().valueOfThisCircle_orGoal = circleData.value;
+            circleGameObject.GetComponent<Clickable>().valueOfThisCircle_orGoal = value;
             circleGameObject.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
 
             if (circleGameObject == CircleA) {
@@ -1555,6 +1599,7 @@ public class PuzzleManager : MonoBehaviour
             }
 
         }
+        //return true;
     }
     public void SetOperator(GameObject opAorB, Operator oppy)
     {
@@ -1656,6 +1701,89 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    public void UpdateDefaultPositionsOfCircles() {
+        // need to know how many circles are active, and which ones are active
+        int tally = 0;
+        if (CircleA.activeSelf) {
+            tally += 1;
+        }
+        if (CircleB.activeSelf) {
+            tally += 1;
+        }
+        if (CircleC.activeSelf) {
+            tally += 1;
+        }
+        if (tally == 3) {
+            CircleAScript.defaultPosition = new Vector2(-5, 2.5f);
+            CircleBScript.defaultPosition = new Vector2(-5, 0);
+            CircleCScript.defaultPosition = new Vector2(-5, -2.5f);
+        } else if (tally == 2) {
+            if (CircleA.activeSelf && CircleB.activeSelf)
+            {
+                CircleAScript.defaultPosition = new Vector2(-5, 1.5f);
+                CircleBScript.defaultPosition = new Vector2(-5, -1.5f);
+            }
+            else if (CircleA.activeSelf && CircleC.activeSelf)
+            {
+                CircleAScript.defaultPosition = new Vector2(-5, 1.5f);
+                CircleCScript.defaultPosition = new Vector2(-5, -1.5f);
+            }
+            else if (CircleB.activeSelf && CircleC.activeSelf)
+            {
+                CircleBScript.defaultPosition = new Vector2(-5, 1.5f);
+                CircleCScript.defaultPosition = new Vector2(-5, -1.5f);
+            }
+        }
+        else if (tally == 1)
+        {
+            if (CircleA.activeSelf) { CircleAScript.defaultPosition = new Vector2(-5, 0); }
+            else if (CircleB.activeSelf) { CircleBScript.defaultPosition = new Vector2(-5, 0); }
+            else if (CircleC.activeSelf) { CircleCScript.defaultPosition = new Vector2(-5, 0); }
+        }
+        else if (tally == 0)
+        {
+            Debug.Log("problem: we have tally of 0");
+        }
+
+
+
+
+
+    }
+    public void SendAllCirclesToDefaultPositions() {
+        CircleAScript.BeginMovementToDefaultPosition();
+        CircleBScript.BeginMovementToDefaultPosition();
+        CircleCScript.BeginMovementToDefaultPosition();
+
+    }
+    public void TeleportAllCirclesToDefaultPositions() {
+        CircleAScript.TeleportToDefaultPosition();
+        CircleBScript.TeleportToDefaultPosition();
+        CircleCScript.TeleportToDefaultPosition();
+    }
+
+    public void UpdateDefaultPositionsOfOperators() {
+        //int tally = 0;
+        //if (OperatorA.activeSelf) { tally += 1; }
+        //if (OperatorB.activeSelf) { tally += 1; }
+        //if (tally == 2) {
+            OperatorAScript.defaultPosition = new Vector2(1.5f, 1.5f);
+            OperatorBScript.defaultPosition = new Vector2(1.5f, -1.5f);
+        //} else if (tally == 1) { 
+            //if (OperatorA.activeSelf) {
+            //    OperatorAScript.defaultPosition = new Vector2(1.5f, 0);
+            //} else if (OperatorB.activeSelf) {
+            //    OperatorBScript.defaultPosition = new Vector2(1.5f, 0);
+            //}
+        //}
+    }
+    public void SendAllOperatorsToDefaultPositions() { 
+
+    }
+    public void TeleportAllOperatorsToDefaultPositions() {
+        OperatorAScript.TeleportToDefaultPosition();
+        OperatorBScript.TeleportToDefaultPosition();
+    }
     public void CreateNewPuzzle() 
     {
         // get rid of all the Circles & Operators we created in past puzzles
@@ -1791,18 +1919,36 @@ public class PuzzleManager : MonoBehaviour
             // how many valid circles do we have? 1 or 2 or 3?
 
             // also, if the value of a circle is zero, as far as we're concerned it's null, so don't show that circle
-
+            //bool circleA_active = false;
+            //bool circleB_active = false;
+            //bool circleC_active = false;
             SetCircle(CircleA, circle1);
             SetCircle(CircleB, circle2);
             SetCircle(CircleC, circle3);
 
-            // change positions depending on how many valid circles (for visual symmetry)
-            //      do this later
+            //bool A_active = CircleA.activeSelf;
+            //bool B_active = CircleB.activeSelf;
+            //bool C_active = CircleC.activeSelf;
+
+            UpdateDefaultPositionsOfCircles();
+            //CircleA.SetActive(false);
+            //CircleB.SetActive(false);
+            //CircleC.SetActive(false);
+            //SendAllCirclesToDefaultPositions();
+            TeleportAllCirclesToDefaultPositions();
+            //CircleA.SetActive(A_active);
+            //CircleB.SetActive(B_active);
+            //CircleC.SetActive(C_active);
+
+
 
             MathInProgress.GetComponent<TextMeshPro>().text = "";
 
             SetOperator(OperatorA, operator1);
             SetOperator(OperatorB, operator2);
+            UpdateDefaultPositionsOfOperators();
+            TeleportAllOperatorsToDefaultPositions();
+
 
             Goal.transform.GetChild(0).GetComponent<TextMeshPro>().text = result.value.ToString("F0");      // goal is always an int anyway
             Goal.GetComponent<Clickable>().valueOfThisCircle_orGoal = result.value;
@@ -1866,26 +2012,45 @@ public class PuzzleManager : MonoBehaviour
 
         math_oneCircle_IsComplete = false;
         math_twoCircle_IsComplete = false;
+
+        CircleAScript.rotating = false;
+        CircleBScript.rotating = false;
+        CircleCScript.rotating = false;
+        OperatorAScript.rotating = false;
+        OperatorBScript.rotating = false;
     }
     public void HighlightCircleGameObject(GameObject obby, int oneORtwo) {
         if (oneORtwo == 1) {
             highlightedCircle1 = obby;
             highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
+            // move the circle over to -3.9f on x axis
+            //highlightedCircle1.GetComponent<Clickable>().defaultPosition = new Vector2(-4, transform.position.y);
+            // and the circle "wiggles" a bit
+            //highlightedCircle1.GetComponent<Clickable>().wiggling = true;
+            highlightedCircle1.GetComponent<Clickable>().BeginRotating();
+
         } else if (oneORtwo == 2) {
             highlightedCircle2 = obby;
             highlightedCircle2.GetComponent<SpriteRenderer>().color = highlightedColor;
+            highlightedCircle2.GetComponent<Clickable>().BeginRotating();
         }
     }
     public void UNHighlightCircleGameObject(GameObject obby) {
         // stop the highlight animation and/or reverse the highlighted color and make it the normal color
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
+        //highlightedCircle1.GetComponent<Clickable>().wiggling = false;
+        //highlightedCircle1.GetComponent<Clickable>().BeginMovementToDefaultPosition();
+        obby.GetComponent<Clickable>().EndRotating();
     }
     public void HighLightOperatorGameObject(GameObject obby) {
         highlightedOperator = obby;
         highlightedOperator.GetComponent<SpriteRenderer>().color = highlightedColor;
+        highlightedOperator.GetComponent<Clickable>().BeginRotating();
     }
     public void UNHighlightOperatorGameObject(GameObject obby) {
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
+        obby.GetComponent<Clickable>().EndRotating();
+
     }
 
     // ************************************************************************************************************
@@ -1927,7 +2092,7 @@ public class PuzzleManager : MonoBehaviour
                 operatorSelected = true;    // this prevents the player from quickly clicking the other operator while the animation plays out, and causing a glitch
                 DetermineWhether_oneCircle_MathIsComplete();
                 if (math_oneCircle_IsComplete) {
-                    ExecuteCompletionOf_oneCircle_Math();
+                    ExecuteCompletionOf_oneCircle_Math(false);
                     DetermineWhetherPuzzleIsSolved();
                 }
             }
@@ -1969,7 +2134,7 @@ public class PuzzleManager : MonoBehaviour
                     HighLightOperatorGameObject(gameObjectClicked);
                     DetermineWhether_oneCircle_MathIsComplete();
                     if (math_oneCircle_IsComplete) {
-                        ExecuteCompletionOf_oneCircle_Math();
+                        ExecuteCompletionOf_oneCircle_Math(false);
                     }
                 }
             }
@@ -2091,19 +2256,33 @@ public class PuzzleManager : MonoBehaviour
 
     }
 
-    public void ExecuteCompletionOf_oneCircle_Math() {
-        // for now, make circle1 & operator disappear, and then circle1 is rebuilt with the new value
-        highlightedCircle1.SetActive(false);
-        highlightedOperator.SetActive(false);
-        Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
-        Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
+    public void ExecuteCompletionOf_oneCircle_Math(bool circleDoneMovingToOperator) {
 
-        Circle result = CreateResultCircle(c1, c1, oppy);
-        SetCircle(highlightedCircle1, result);
+        // move the circle to the operator
+        if (circleDoneMovingToOperator == false) {
+            highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator, "operator");
+        }
 
-        highlightedCircle1.SetActive(true);
+        if (circleDoneMovingToOperator == true) {
+            // when the circle gets to a certain point, it disappears
+            highlightedCircle1.SetActive(false);
+            highlightedOperator.SetActive(false);
+            Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
+            Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
 
-        ResetColorsAndMath_Circles_Operators();
+            Circle result = CreateResultCircle(c1, c1, oppy);
+            SetCircle(highlightedCircle1, result);
+
+            highlightedCircle1.SetActive(true);
+            ResetColorsAndMath_Circles_Operators();
+            //highlightedCircle1.GetComponent<Clickable>().BeginMovementToDefaultPosition();
+            UpdateDefaultPositionsOfCircles();
+            SendAllCirclesToDefaultPositions();
+            DetermineWhetherPuzzleIsSolved();
+
+
+        }
+
 
     }
     public void ExecuteCompletionOf_twoCircle_Math()
@@ -2154,7 +2333,7 @@ public class PuzzleManager : MonoBehaviour
             float goalValue = GetValueOfGoal();
             if (circleValue == goalValue) {
                 Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
-                AnimatePuzzleSolved();
+                AnimatePuzzleSolved(temp, false, false);
             } else {
                 Debug.Log("there is 1 circle and 0 operators------------------------------------------ but the goal is not reached! you FAIL!");
                 AnimatePuzzleFailed();
@@ -2165,23 +2344,30 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-    public void AnimatePuzzleSolved() {
-        // stop the timers
-        timerGlobal.PauseGlobalTimer();
-        timerPuzzle.PausePuzzleTimer();
-        timerGlobal.AddToGlobalTimer(timerPuzzle.GetPuzzleTimeRemaining());
+    public void AnimatePuzzleSolved(GameObject finalCircle, bool circleHasReachedGoal, bool explosionFinished) {
+  
+        if (circleHasReachedGoal == false) {
+            // stop the timers
+            timerGlobal.PauseGlobalTimer();
+            timerPuzzle.PausePuzzleTimer();
+            timerGlobal.AddToGlobalTimer(timerPuzzle.GetPuzzleTimeRemaining());
 
-        // to do: put in animations & sounds
+            finalCircle.GetComponent<Clickable>().BeginMovementToTarget(Goal, "goal");
 
+        } else {
+            // begin "animating" the explosion
+            if (explosionFinished) {
+                // then load a new puzzle
+                if (timerGlobal.GetTimeRemaining() > 0)
+                {
+                    Debug.Log("AnimatePuzzleSolved() is now about to CreateNewPuzzle()");
+                    CreateNewPuzzle();
+                }
 
-
-        // then load a new puzzle
-        if (timerGlobal.GetTimeRemaining() > 0) {
-            CreateNewPuzzle();
+            } else {
+                explosion.StartExplosion();
+            }
         }
-
-
-        // then 
     }
     public void AnimatePuzzleFailed() {
         // stop the timers
@@ -2198,7 +2384,6 @@ public class PuzzleManager : MonoBehaviour
             CreateNewPuzzle();
         }
     }
-
 
 
 
