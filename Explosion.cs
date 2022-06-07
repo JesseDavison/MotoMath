@@ -31,8 +31,8 @@ public class Explosion : MonoBehaviour
 
             if (transform.localScale.x > 11.9f) {
                 explosionInMotion = false;
-                gameObject.SetActive(false);
                 PuzzleManager.instance.AnimatePuzzleSolved(null, true, true);
+                gameObject.SetActive(false);
 
             }
         }

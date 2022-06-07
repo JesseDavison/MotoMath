@@ -21,15 +21,36 @@ public class Clickable : MonoBehaviour
     public float speed = 1;
     public float defaultSpeed = 1;
     public float speedMultiplier = 1.05f;
+    public float speedForCurve = 5;
+    public float speedForCurveDefault = 5;
+    public float curveSpeedMultiplier = 1;
     public float speedCap = 25;
     public bool destinationReached = false;
+    public Vector2 startPosition;
+    float time;
+    //float destinationXPosition;
+    float midwayX;
     public Vector2 defaultPosition;
 
-    public bool rotating = false;
+    public AnimationCurve curve;
 
-    public void BeginMovementToTarget(GameObject target, string targetName) {
+
+
+
+    public bool rotating = false;
+    public bool curvePath;
+    public bool curveUpIfTrue;
+
+    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
+        curvePath = curvedPath;
+        curveUpIfTrue = curveUp;
         speed = defaultSpeed;
-        destination = target.transform.position;
+        startPosition = transform.position;
+        time = 0;
+        //destination = target.transform.position;
+        destination = targetDestination;
+        //destinationXPosition = destination.x;
+        //midwayX = destinationXPosition - transform.position.x;
         destinationText = targetName;
         readyToMove = true;
     }
@@ -39,9 +60,15 @@ public class Clickable : MonoBehaviour
         destination = defaultPosition;
         readyToMove = true;
     }
-    public void BeginMovementToDefaultPosition() {
+    public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp) {
+        curvePath = curvedPath;
+        curveUpIfTrue = curveUp;
         speed = defaultSpeed;
+        startPosition = transform.position;
+        time = 0;
         destination = defaultPosition;
+        //destinationXPosition = destination.x;
+        //midwayX = destinationXPosition - transform.position.x;
         readyToMove = true;
     }
     public void TeleportToDefaultPosition() {
@@ -55,7 +82,7 @@ public class Clickable : MonoBehaviour
     }
     public void EndRotating() {
         rotating = false;
-        BeginMovementToDefaultPosition();
+        BeginMovementToDefaultPosition(false, true);
     }
 
  
@@ -65,8 +92,23 @@ public class Clickable : MonoBehaviour
     {
         if (readyToMove) {
             rotating = false;
-            transform.position = Vector2.MoveTowards(transform.position, destination, Time.deltaTime * speed);
+            if (curvePath == false) {
+                transform.position = Vector2.MoveTowards(transform.position, destination, Time.deltaTime * speed);
+            } else
+            {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
+
+                time += Time.deltaTime * speedForCurve;
+                Vector2 pos = Vector2.Lerp(startPosition, destination, time);
+                if (curveUpIfTrue) {
+                    pos.y += curve.Evaluate(time);      // for curve DOWNWARDS, just subtract instead of add
+                } else {
+                    pos.y -= curve.Evaluate(time);      
+                }
+                transform.position = pos;
+            }
+
             speed *= speedMultiplier;
+            speedForCurve *= curveSpeedMultiplier;
             if (speed > speedCap) {
                 speed = speedCap;
             }
@@ -79,7 +121,18 @@ public class Clickable : MonoBehaviour
                 } else if (destinationText == "goal") {
                     PuzzleManager.instance.AnimatePuzzleSolved(gameObject, true, false);
                 } else if (destinationText == "operator") {
+
+                    // need the 1-circle to NOT execute if it's supposed to be a 2-circle math problem
                     PuzzleManager.instance.ExecuteCompletionOf_oneCircle_Math(true);
+
+                    /// the problem is that this script doesn't know whether it's resolving a 1-circle or 2-circle math problem
+                    /// ... so we need a way for a message sent by this script to be effective for both types
+                    ///         we don't know which of the 3 circles will be part of the math problem
+                    ///         
+
+                    PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
+                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math();        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
+
                 }
             }
         }
