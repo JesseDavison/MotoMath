@@ -20,7 +20,7 @@ public class Explosion : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (explosionInMotion) {
             transform.localScale = Vector3.MoveTowards(transform.localScale, maxScale, Time.deltaTime * speed);

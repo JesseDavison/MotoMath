@@ -10,22 +10,32 @@ public class GameManager : MonoBehaviour
 
     public GameObject MainMenuUI;
     public GameObject LevelUI;
-    
+    public GameObject GameOverUI;
+
+    public TextMeshProUGUI MainMenu_BestScore;
+
     public GameObject CirclesParent;
     public GameObject MathInProgress;
     public GameObject OperatorsParent;
     public GameObject GoalParent;
 
-    // performing math operations
-    int clickTally = 0;
-    float value_1;
-    float value_2;
-
-
     public GameObject GlobalTimer;
     public GameObject PuzzleTimer;
     TimerGlobal timerGlobal;
     TimerPuzzle timerPuzzle;
+
+    public int puzzlesRemaining;
+    public TextMeshProUGUI PuzzlesRemainingDisplay;
+
+    public int score;
+    public TextMeshProUGUI ScoreDisplay;
+
+    public TextMeshProUGUI GameOverText;        // this will say "OUT OF TIME" or "GAME OVER", depending on circumstances
+    public TextMeshProUGUI TimeRemainingExplanation;
+    public TextMeshProUGUI GameOverScore;
+    public TextMeshProUGUI GameOverScreen_BestScore;
+
+
 
 
 
@@ -45,12 +55,20 @@ public class GameManager : MonoBehaviour
     }
 
     public void DisplayMainMenu() {
+        if (PlayerPrefs.HasKey("HighScore")) {
+            int highScore = PlayerPrefs.GetInt("HighScore");
+            MainMenu_BestScore.text = "All-time Best Score: " + highScore;
+        } else {
+            MainMenu_BestScore.text = "";
+        }
+
         MainMenuUI.SetActive(true);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
         MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
     }
     public void DisplayLevel() {
         MainMenuUI.SetActive(false);
@@ -59,12 +77,16 @@ public class GameManager : MonoBehaviour
         MathInProgress.SetActive(true);
         OperatorsParent.SetActive(true);
         GoalParent.SetActive(true);
+        GameOverUI.SetActive(false);
     }
     public void StartGame() {
+        ResetScore();
         PuzzleManager.instance.CreateNewPuzzle();
         DisplayLevel();
+        timerGlobal.ResetTimeRemaining();
         timerPuzzle.UnpausePuzzleTimer();
         timerGlobal.UnpauseGlobalTimer();
+        SetNumberOfPuzzlesRemaining(20);     // change to 20 later
     }
     public void EndGameEarly() {        // tie this to the "Main Menu" button in the level UI
         DisplayMainMenu();
@@ -73,38 +95,90 @@ public class GameManager : MonoBehaviour
         timerGlobal.ResetTimeRemaining();
 
     }
+    public void SkipPuzzle()
+    {
+        // reduces the amount of time remaining in such a way that the player will always have zero speed points
+        //e.g., if there are 10 puzzles left & 100 seconds left, then it reduces by 10 seconds
+        //e.g., if there are 2 puzzles left & 50 seconds left, then it reduces by 25 seconds
+        //e.g., base case: if there is 1 puzzle left, then it reduces by ALL seconds
 
-
-
-    // need to enforce(?) certain click order
-
-    // IF THE OPERATOR IS ADD/SUBT/MULT/DIV, then the click order is: circle, operator, circle
-
-    // IF THE OPERATOR IS ROOT/EXPONENT, then the click order is: circle, operator
-
-    // the first thing clicked must be a Circle
-    // the second thing clicked must be an Operator
-    //      depending on the operator, the next thing clicked is either a circle to complete the math, or a circle to start a new operator
-
-    public void SendCircleToGameManager(float value) { 
-
-    }
-    public void SendOperatorToGameManager(string type) { 
+        if (puzzlesRemaining <= 1) {
+            DisplayGameOver(false, true);
+        } else {
+            float timeRemaining = timerGlobal.GetTimeRemaining();
+            float timeToTakeAway = timeRemaining / puzzlesRemaining;
+            timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
+            PuzzleManager.instance.CreateNewPuzzle();
+        }
 
     }
-
-
-
-//        if (clickTally == 0) { 
-//            if (gameObject.CompareTag("circle")) {
-//                value_1 = valueOfThisCircle;
-//            }
-//clickTally += 1;
-//        }
-
-    public void ResetClickTally() {
-        clickTally = 0;        
+    public void DecreaseNumberOfPuzzlesRemaining(int amount) {
+        puzzlesRemaining -= amount;
+        PuzzlesRemainingDisplay.text = "Puzzles Remaining: " + puzzlesRemaining;
+        if (puzzlesRemaining == 0) {
+            DisplayGameOver(false, false);
+        }
     }
+    public void SetNumberOfPuzzlesRemaining(int amount) {
+        puzzlesRemaining = amount;
+        PuzzlesRemainingDisplay.text = "Puzzles Remaining: " + puzzlesRemaining;
+    }
+    public void IncreaseScore(int amount) {
+        score += amount;
+        ScoreDisplay.text = "Score: " + score;
+    }
+    public void ResetScore() {
+        score = 0;
+        ScoreDisplay.text = "Score: " + score;
+    }
+    public void DisplayGameOverForButtonPress() {  // this exists so i can press the "quit" button on the levelUI
+        DisplayGameOver(false, true); 
+    }
+    public void DisplayGameOver(bool timeRanOut, bool removeAllSpeedPoints) {
+        MainMenuUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        MathInProgress.SetActive(false);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+
+        if (timeRanOut) {
+            GameOverText.text = "TIME RAN OUT";
+        } else {
+            GameOverText.text = "GAME OVER";
+        }
+
+
+        // do the score calculating here
+        float timeRemain;
+        if (removeAllSpeedPoints) {
+            timeRemain = 0.1f;
+        } else {
+            timeRemain = timerGlobal.GetTimeRemaining();
+        }
+        int scoreFromTimeRemaining = (int)(timeRemain / 10);
+        TimeRemainingExplanation.text = "Time Remaining: " + (int)timeRemain + " seconds = " + scoreFromTimeRemaining + " speed points";
+
+        int total = score + scoreFromTimeRemaining;
+
+        if (PlayerPrefs.HasKey("HighScore")) {
+            if (total > PlayerPrefs.GetInt("HighScore")) {
+                PlayerPrefs.SetInt("HighScore", total);
+            }
+            int bestScore = PlayerPrefs.GetInt("HighScore");
+            GameOverScreen_BestScore.text = "All-time Best Score: " + bestScore;
+        } else {
+            PlayerPrefs.SetInt("HighScore", total);
+            GameOverScreen_BestScore.text = "All-time Best Score: " + total;
+        }
+
+        GameOverScore.text = "Score: " + score + " points + " + scoreFromTimeRemaining + " speed points = <b><color=#b80b0b>" + total + " POINTS";
+        GameOverUI.SetActive(true);
+    }
+    public void QuitGame() {
+        Application.Quit();
+    }
+
 
 
 }

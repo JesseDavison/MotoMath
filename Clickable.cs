@@ -34,7 +34,8 @@ public class Clickable : MonoBehaviour
 
     public AnimationCurve curve;
 
-
+    public bool changingToWhite = false;
+    Color initialColor;
 
 
     public bool rotating = false;
@@ -60,7 +61,11 @@ public class Clickable : MonoBehaviour
         destination = defaultPosition;
         readyToMove = true;
     }
-    public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp) {
+    public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp, bool fadingToWhite) {
+        changingToWhite = fadingToWhite;
+        if (fadingToWhite) {
+            initialColor = gameObject.GetComponent<SpriteRenderer>().color;
+        }
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
         speed = defaultSpeed;
@@ -70,10 +75,29 @@ public class Clickable : MonoBehaviour
         //destinationXPosition = destination.x;
         //midwayX = destinationXPosition - transform.position.x;
         readyToMove = true;
+
+        // as the RESULT circle moves to the left it should fade from green to white
+
+
+    }
+    public void SendCircleToToilet() {
+        
+        curvePath = false;
+        curveUpIfTrue = true;
+        speed = defaultSpeed;
+        startPosition = transform.position;
+        time = 0;
+        //destination = target.transform.position;
+        destination = new Vector2(startPosition.x, startPosition.y - 10);
+        //destinationXPosition = destination.x;
+        //midwayX = destinationXPosition - transform.position.x;
+        destinationText = "toilet";
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(0.27f, .36f, .26f, 1);
+        readyToMove = true;
     }
     public void TeleportToDefaultPosition() {
         speed = defaultSpeed;
-        Debug.Log("about to send " + gameObject.name + "to default position of " + defaultPosition);
+        //Debug.Log("about to send " + gameObject.name + "to default position of " + defaultPosition);
         transform.position = defaultPosition;
         readyToMove = false;
     }
@@ -82,20 +106,23 @@ public class Clickable : MonoBehaviour
     }
     public void EndRotating() {
         rotating = false;
-        BeginMovementToDefaultPosition(false, true);
+        BeginMovementToDefaultPosition(false, true, false);
     }
 
- 
 
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (readyToMove) {
             rotating = false;
             if (curvePath == false) {
                 transform.position = Vector2.MoveTowards(transform.position, destination, Time.deltaTime * speed);
-            } else
-            {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
+                speed *= speedMultiplier;
+                if (speed > speedCap)
+                {
+                    speed = speedCap;
+                }
+            } else {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
 
                 time += Time.deltaTime * speedForCurve;
                 Vector2 pos = Vector2.Lerp(startPosition, destination, time);
@@ -105,13 +132,9 @@ public class Clickable : MonoBehaviour
                     pos.y -= curve.Evaluate(time);      
                 }
                 transform.position = pos;
+                speedForCurve *= curveSpeedMultiplier;
             }
 
-            speed *= speedMultiplier;
-            speedForCurve *= curveSpeedMultiplier;
-            if (speed > speedCap) {
-                speed = speedCap;
-            }
             if (Vector2.Distance(transform.position, destination) < 0.1f) {
                 readyToMove = false;
                 destinationReached = true;
@@ -133,13 +156,19 @@ public class Clickable : MonoBehaviour
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
                     PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math();        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
+                } else if (destinationText == "goalThenToilet") {
+                    PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, false);
+                } else if (destinationText == "toilet") {
+                    PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, true);
                 }
             }
         }
         if (rotating) {
             DoRotationStuff();
         }
-
+        if (changingToWhite) {
+            Color.Lerp(initialColor, Color.white, Time.time);
+        }
     }
     public void NotifyPuzzleManagerOfDestinationReached() { 
 
@@ -152,8 +181,8 @@ public class Clickable : MonoBehaviour
 
     //      ROTATION STUFF
     //  ***************************************************************************************
-    private float RotateSpeed = 5f;
-    private float Radius = 0.1f;
+    public float RotateSpeed = 5f;
+    public float Radius = 0.1f;
 
     //private Vector2 _centre;
     private float _angle;

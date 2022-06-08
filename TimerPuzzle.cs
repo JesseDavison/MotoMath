@@ -43,7 +43,12 @@ public class TimerPuzzle : MonoBehaviour
 
         float milliseconds = timeToDisplay % 1 * 1000;
 
-        puzzleTimerText.text = "Bonus time: " + string.Format("{0:00}.{1:000}", timeValue, milliseconds);
+        if (timeToDisplay > 3) {
+            puzzleTimerText.text = "Bonus time: " + string.Format("{0:00}", timeValue);
+        } else {
+            puzzleTimerText.text = "Bonus time: " + string.Format("{0:00}.{1:000}", timeValue, milliseconds);
+        }
+
     }
 
     public float GetPuzzleTimeRemaining() {

@@ -29,6 +29,9 @@ public class TimerGlobal : MonoBehaviour
 
             DisplayTime(timeValue);
         }
+        if (timeValue <= 0) {
+            GameManager.instance.DisplayGameOver(true, false);
+        }
 
 
     }
@@ -42,7 +45,11 @@ public class TimerGlobal : MonoBehaviour
 
         float milliseconds = timeToDisplay % 1 * 1000;
 
-        timerText.text = "" + string.Format("{0:00}.{1:000}", timeValue, milliseconds);
+        if (timeToDisplay > 10) {
+            timerText.text = "" + string.Format("{0:00}", timeValue);
+        } else {
+            timerText.text = "" + string.Format("{0:00}.{1:000}", timeValue, milliseconds);
+        }
     }
 
     public void AddToGlobalTimer(float amount) {
