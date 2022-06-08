@@ -12,6 +12,18 @@ public class TimerGlobal : MonoBehaviour
     public TextMeshProUGUI timerText;
     bool timerPaused = true;
 
+    bool readyToFadeColorFromGreenToBlack = false;
+    public float fadeSpeed = 1;
+    Color originalColor;
+    Color greenColor;
+
+    float t = 0;
+
+    private void Start()
+    {
+        originalColor = Color.black;
+        greenColor = Color.green;
+    }
 
     // Update is called once per frame
     void Update()
@@ -35,7 +47,21 @@ public class TimerGlobal : MonoBehaviour
 
 
     }
+    private void FixedUpdate()
+    {
+        if (readyToFadeColorFromGreenToBlack) {
+            //Color currentColor = timerText.color;
+            //float fadeAmount = currentColor.a - (fadeSpeed * Time.deltaTime);
+            t += Time.deltaTime / 1.5f; // Divided by 5 to make it 5 seconds.
+            timerText.color = Color.Lerp(greenColor, originalColor, t);
+            
+            if (timerText.color == originalColor) {
+                readyToFadeColorFromGreenToBlack = false;
+                t = 0;
+            }
+        }
 
+    }
     void DisplayTime(float timeToDisplay) { 
         if (timeToDisplay < 0) {
             timeToDisplay = 0;
@@ -53,8 +79,13 @@ public class TimerGlobal : MonoBehaviour
     }
 
     public void AddToGlobalTimer(float amount) {
-
+        readyToFadeColorFromGreenToBlack = false;   // if the color is already changing, stop it
+        timerText.color = greenColor;
         timeValue += amount;
+
+        // now fade the text color back to black
+        readyToFadeColorFromGreenToBlack = true;
+
     }
     public void SubtractFromGlobalTimer(float amount) {
 

@@ -92,7 +92,8 @@ public class Clickable : MonoBehaviour
         //destinationXPosition = destination.x;
         //midwayX = destinationXPosition - transform.position.x;
         destinationText = "toilet";
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(0.27f, .36f, .26f, 1);
+        //gameObject.GetComponent<SpriteRenderer>().color = new Color(0.27f, .36f, .26f, 1);
+        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
         readyToMove = true;
     }
     public void TeleportToDefaultPosition() {

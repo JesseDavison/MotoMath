@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public GameObject MainMenuUI;
+    public GameObject OptionsUI;
     public GameObject LevelUI;
     public GameObject GameOverUI;
 
@@ -63,6 +64,17 @@ public class GameManager : MonoBehaviour
         }
 
         MainMenuUI.SetActive(true);
+        OptionsUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        MathInProgress.SetActive(false);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
+    }
+    public void DisplayOptions() {
+        MainMenuUI.SetActive(false);
+        OptionsUI.SetActive(true);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
         MathInProgress.SetActive(false);
@@ -72,6 +84,7 @@ public class GameManager : MonoBehaviour
     }
     public void DisplayLevel() {
         MainMenuUI.SetActive(false);
+        OptionsUI.SetActive(false);
         LevelUI.SetActive(true);
         CirclesParent.SetActive(true);
         MathInProgress.SetActive(true);
@@ -136,6 +149,7 @@ public class GameManager : MonoBehaviour
     }
     public void DisplayGameOver(bool timeRanOut, bool removeAllSpeedPoints) {
         MainMenuUI.SetActive(false);
+        OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
         MathInProgress.SetActive(false);
