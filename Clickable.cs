@@ -42,6 +42,10 @@ public class Clickable : MonoBehaviour
     public bool curvePath;
     public bool curveUpIfTrue;
 
+    public bool shrinking = false;
+    public Vector3 minScale = new Vector3(0, 0, 0);
+    public Vector3 originalScale = new Vector3(2.2f, 2.2f, 2.2f);
+
     public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
@@ -80,11 +84,15 @@ public class Clickable : MonoBehaviour
 
 
     }
-    public void SendCircleToToilet() {
+    public void SendCircleToToilet(int fallingSpeed) {
         
         curvePath = false;
         curveUpIfTrue = true;
-        speed = defaultSpeed;
+        if (fallingSpeed != 0) {
+            speed = fallingSpeed;
+        } else {
+            speed = defaultSpeed;
+        }
         startPosition = transform.position;
         time = 0;
         //destination = target.transform.position;
@@ -109,7 +117,9 @@ public class Clickable : MonoBehaviour
         rotating = false;
         BeginMovementToDefaultPosition(false, true, false);
     }
-
+    public void ShrinkAndDisappear() {
+        shrinking = true;
+    }
 
 
     private void FixedUpdate()
@@ -169,6 +179,23 @@ public class Clickable : MonoBehaviour
         }
         if (changingToWhite) {
             Color.Lerp(initialColor, Color.white, Time.time);
+        }
+        if (shrinking) {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, minScale, Time.deltaTime * speed);
+            speed *= speedMultiplier;
+            if (speed > speedCap)
+            {
+                speed = speedCap;
+            }
+
+            if (transform.localScale.x < 0.1f)
+            {
+                shrinking = false;
+                //PuzzleManager.instance.AnimatePuzzleSolved(null, true, true);
+                gameObject.SetActive(false);
+                transform.localScale = originalScale;
+
+            }
         }
     }
     public void NotifyPuzzleManagerOfDestinationReached() { 

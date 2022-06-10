@@ -61,8 +61,6 @@ public class BonusTimeNotify : MonoBehaviour
             }
             if ((Vector2.Distance(rectTransform.anchoredPosition, endPos) < distanceToStartChangingTimer) && timeAdded == false) {
 
-
-
                 // add the time to the clock
                 timerGlobal.AddToGlobalTimer(timeToAdd);
                 timeAdded = true;

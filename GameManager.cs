@@ -8,12 +8,16 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public string gameType;
+
     public GameObject MainMenuUI;
     public GameObject OptionsUI;
     public GameObject LevelUI;
     public GameObject GameOverUI;
 
-    public TextMeshProUGUI MainMenu_BestScore;
+    public TextMeshProUGUI MainMenu_BestScore_Timed;
+    public TextMeshProUGUI MainMenu_BestScore_Endless;
+    public TextMeshProUGUI MainMenu_BestScore_Kiddy;
 
     public GameObject CirclesParent;
     public GameObject MathInProgress;
@@ -22,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject GlobalTimer;
     public GameObject PuzzleTimer;
+    public GameObject PuzzleTimerThatMoves;
     TimerGlobal timerGlobal;
     TimerPuzzle timerPuzzle;
 
@@ -45,7 +50,7 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
-        timerPuzzle = PuzzleTimer.GetComponent<TimerPuzzle>();
+        timerPuzzle = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
         DisplayMainMenu();
     }
 
@@ -56,11 +61,25 @@ public class GameManager : MonoBehaviour
     }
 
     public void DisplayMainMenu() {
-        if (PlayerPrefs.HasKey("HighScore")) {
-            int highScore = PlayerPrefs.GetInt("HighScore");
-            MainMenu_BestScore.text = "All-time Best Score: " + highScore;
+        if (PlayerPrefs.HasKey("HighScore_Timed")) {
+            int highScore = PlayerPrefs.GetInt("HighScore_Timed");
+            MainMenu_BestScore_Timed.text = "High Score: " + highScore;
         } else {
-            MainMenu_BestScore.text = "";
+            MainMenu_BestScore_Timed.text = "";
+        }
+
+        if (PlayerPrefs.HasKey("HighScore_Endless")) {
+            int highScore = PlayerPrefs.GetInt("HighScore_Endless");
+            MainMenu_BestScore_Endless.text = "High Score: " + highScore;
+        } else {
+            MainMenu_BestScore_Endless.text = "";
+        }
+
+        if (PlayerPrefs.HasKey("HighScore_Kiddy")) {
+            int highScore = PlayerPrefs.GetInt("HighScore_Kiddy");
+            MainMenu_BestScore_Kiddy.text = "High Score: " + highScore;
+        } else {
+            MainMenu_BestScore_Kiddy.text = "";
         }
 
         MainMenuUI.SetActive(true);
@@ -92,14 +111,52 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(true);
         GameOverUI.SetActive(false);
     }
-    public void StartGame() {
+    public void StartTimedGame() {
+        PuzzleManager.instance.gameType = "timed";
+        gameType = "timed";
         ResetScore();
         PuzzleManager.instance.CreateNewPuzzle();
         DisplayLevel();
         timerGlobal.ResetTimeRemaining();
         timerPuzzle.UnpausePuzzleTimer();
         timerGlobal.UnpauseGlobalTimer();
+        GlobalTimer.SetActive(true);
+        PuzzleTimer.SetActive(true);
+        PuzzleTimerThatMoves.SetActive(true);
         SetNumberOfPuzzlesRemaining(20);     // change to 20 later
+    }
+    public void StartEndlessGame() {
+        PuzzleManager.instance.gameType = "endless";
+        gameType = "endless";
+        ResetScore();
+        PuzzleManager.instance.CreateNewPuzzle();
+        DisplayLevel();
+        //timerGlobal.ResetTimeRemaining();
+        //timerPuzzle.UnpausePuzzleTimer();
+        //timerGlobal.UnpauseGlobalTimer();
+        GlobalTimer.SetActive(false);
+        PuzzleTimer.SetActive(false);
+        PuzzleTimerThatMoves.SetActive(false);
+        //SetNumberOfPuzzlesRemaining(20);     // change to 20 later
+
+        PuzzlesRemainingDisplay.text = "";
+
+    }
+    public void StartKiddyGame() {
+        PuzzleManager.instance.gameType = "kiddy";
+        gameType = "kiddy";
+        ResetScore();
+        PuzzleManager.instance.CreateNewPuzzle();
+        DisplayLevel();
+        //timerGlobal.ResetTimeRemaining();
+        //timerPuzzle.UnpausePuzzleTimer();
+        //timerGlobal.UnpauseGlobalTimer();
+        GlobalTimer.SetActive(false);
+        PuzzleTimer.SetActive(false);
+        PuzzleTimerThatMoves.SetActive(false);
+        //SetNumberOfPuzzlesRemaining(20);     // change to 20 later
+
+        PuzzlesRemainingDisplay.text = "";
     }
     public void EndGameEarly() {        // tie this to the "Main Menu" button in the level UI
         DisplayMainMenu();
@@ -115,14 +172,23 @@ public class GameManager : MonoBehaviour
         //e.g., if there are 2 puzzles left & 50 seconds left, then it reduces by 25 seconds
         //e.g., base case: if there is 1 puzzle left, then it reduces by ALL seconds
 
-        if (puzzlesRemaining <= 1) {
-            DisplayGameOver(false, true);
-        } else {
-            float timeRemaining = timerGlobal.GetTimeRemaining();
-            float timeToTakeAway = timeRemaining / puzzlesRemaining;
-            timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
+        if (gameType == "timed") {
+            if (puzzlesRemaining <= 1)
+            {
+                DisplayGameOver(false, true);
+            }
+            else
+            {
+                float timeRemaining = timerGlobal.GetTimeRemaining();
+                float timeToTakeAway = timeRemaining / puzzlesRemaining;
+                timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
+                PuzzleManager.instance.CreateNewPuzzle();
+            }
+        } else if (gameType == "endless") {
             PuzzleManager.instance.CreateNewPuzzle();
         }
+
+
 
     }
     public void DecreaseNumberOfPuzzlesRemaining(int amount) {
@@ -156,37 +222,103 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
 
-        if (timeRanOut) {
-            GameOverText.text = "TIME RAN OUT";
-        } else {
-            GameOverText.text = "GAME OVER";
-        }
-
-
-        // do the score calculating here
-        float timeRemain;
-        if (removeAllSpeedPoints) {
-            timeRemain = 0.1f;
-        } else {
-            timeRemain = timerGlobal.GetTimeRemaining();
-        }
-        int scoreFromTimeRemaining = (int)(timeRemain / 10);
-        TimeRemainingExplanation.text = "Time Remaining: " + (int)timeRemain + " seconds = " + scoreFromTimeRemaining + " speed points";
-
-        int total = score + scoreFromTimeRemaining;
-
-        if (PlayerPrefs.HasKey("HighScore")) {
-            if (total > PlayerPrefs.GetInt("HighScore")) {
-                PlayerPrefs.SetInt("HighScore", total);
+        if (gameType == "timed") {
+            if (timeRanOut)
+            {
+                GameOverText.text = "TIME RAN OUT";
             }
-            int bestScore = PlayerPrefs.GetInt("HighScore");
-            GameOverScreen_BestScore.text = "All-time Best Score: " + bestScore;
-        } else {
-            PlayerPrefs.SetInt("HighScore", total);
-            GameOverScreen_BestScore.text = "All-time Best Score: " + total;
+            else
+            {
+                GameOverText.text = "GAME OVER";
+            }
+
+            // do the score calculating here
+            float timeRemain;
+            if (removeAllSpeedPoints)
+            {
+                timeRemain = 0.1f;
+            }
+            else
+            {
+                timeRemain = timerGlobal.GetTimeRemaining();
+            }
+            int scoreFromTimeRemaining = (int)(timeRemain / 10);
+            TimeRemainingExplanation.text = "Time Remaining: " + (int)timeRemain + " seconds = " + scoreFromTimeRemaining + " speed points";
+
+            int total = score + scoreFromTimeRemaining;
+
+            if (PlayerPrefs.HasKey("HighScore_Timed"))
+            {
+                if (total > PlayerPrefs.GetInt("HighScore_Timed"))
+                {
+                    PlayerPrefs.SetInt("HighScore_Timed", total);
+                }
+                int bestScore = PlayerPrefs.GetInt("HighScore_Timed");
+                GameOverScreen_BestScore.text = "All-time Best Score (Timed mode): " + bestScore;
+            }
+            else
+            {
+                PlayerPrefs.SetInt("HighScore_Timed", total);
+                GameOverScreen_BestScore.text = "All-time Best Score (Timed mode): " + total;
+            }
+
+            GameOverScore.text = "Score: " + score + " points + " + scoreFromTimeRemaining + " speed points = <b><color=#b80b0b>" + total + " POINTS";
+
+        } else if (gameType == "endless") {
+            GameOverText.text = "GAME OVER";
+
+            // do the score calculating here
+
+            TimeRemainingExplanation.text = "";
+
+            int total = score;
+
+            if (PlayerPrefs.HasKey("HighScore_Endless"))
+            {
+                if (total > PlayerPrefs.GetInt("HighScore_Endless"))
+                {
+                    PlayerPrefs.SetInt("HighScore_Endless", total);
+                }
+                int bestScore = PlayerPrefs.GetInt("HighScore_Endless");
+                GameOverScreen_BestScore.text = "All-time Best Score (Endless mode): " + bestScore;
+            }
+            else
+            {
+                PlayerPrefs.SetInt("HighScore_Endless", total);
+                GameOverScreen_BestScore.text = "All-time Best Score (Endless mode): " + total;
+            }
+
+            GameOverScore.text = "Score: <b><color=#b80b0b>" + total + " POINTS";
+
+
+
+        } else if (gameType == "kiddy") {
+            GameOverText.text = "GAME OVER";
+
+            // do the score calculating here
+
+            TimeRemainingExplanation.text = "";
+
+            int total = score;
+
+            if (PlayerPrefs.HasKey("HighScore_Kiddy"))
+            {
+                if (total > PlayerPrefs.GetInt("HighScore_Kiddy"))
+                {
+                    PlayerPrefs.SetInt("HighScore_Kiddy", total);
+                }
+                int bestScore = PlayerPrefs.GetInt("HighScore_Kiddy");
+                GameOverScreen_BestScore.text = "All-time Best Score (Easy mode): " + bestScore;
+            }
+            else
+            {
+                PlayerPrefs.SetInt("HighScore_Kiddy", total);
+                GameOverScreen_BestScore.text = "All-time Best Score (Easy mode): " + total;
+            }
+
+            GameOverScore.text = "Score: <b><color=#b80b0b>" + total + " POINTS";
         }
 
-        GameOverScore.text = "Score: " + score + " points + " + scoreFromTimeRemaining + " speed points = <b><color=#b80b0b>" + total + " POINTS";
         GameOverUI.SetActive(true);
     }
     public void QuitGame() {
