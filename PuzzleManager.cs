@@ -140,7 +140,7 @@ public class PuzzleManager : MonoBehaviour
         explosion = ExplosionImage.GetComponent<Explosion>();
 
         // toggles
-        ToggleDebugON = GameObject.FindGameObjectWithTag("ToggleDebugON");
+        ToggleDebugON = GameObject.FindGameObjectWithTag("ToggleDebugON");      // the FindGameObjectWithTag function only works if the object is ACTIVE
         ToggleDebugOFF = GameObject.FindGameObjectWithTag("ToggleDebugOFF");
         ToggleNegativesON = GameObject.FindGameObjectWithTag("ToggleNegativesON");
         ToggleNegativesOFF = GameObject.FindGameObjectWithTag("ToggleNegativesOFF");
@@ -237,6 +237,7 @@ public class PuzzleManager : MonoBehaviour
         public string circleGameObject_associatedWith;
 
         public Circle(float val) {
+            Debug.Log("about to create a new circle, with value: " + val);
             value = val;
             trueInt_falseFraction = true;
             IDnumber = numberOfThisTypeThatExist;
@@ -591,12 +592,14 @@ public class PuzzleManager : MonoBehaviour
     }
     
     public bool TestIfIsInteger(float value) {
+        Debug.Log("we are in TestIfIsInteger(), value: " + value);
         float marginErr = 0.001f;
         bool toReturn = false;
         if (Mathf.Abs(value - Mathf.RoundToInt(value)) < marginErr) {
+            Debug.Log(value + " IS an integer");
             toReturn = true;
         } else {
-            //Debug.Log(value + " is not an integer");
+            Debug.Log(value + " is not an integer");
         }
         return toReturn;
     }
@@ -647,6 +650,7 @@ public class PuzzleManager : MonoBehaviour
     }
 
     public Circle CreateSpecificCircle(float num) {
+        DEBUG_outputCircleValues("At beginning of CreateSpecificCircle()");
         bool isNegative = false;
         if (num < 0)
         {
@@ -697,6 +701,7 @@ public class PuzzleManager : MonoBehaviour
             temp = new Circle(num);
             listOfAllCircles.Add(temp);
         }
+        DEBUG_outputCircleValues("At end of CreateSpecificCircle()");
         return temp;
     }
 
@@ -742,12 +747,17 @@ public class PuzzleManager : MonoBehaviour
     }
 
     public Circle CreateResultCircle(Circle circle1, Circle circle2, Operator opera) {
+        DEBUG_outputCircleValues("at beginning of CreateResultCircle()");
+        
         float result = 0;
         Circle temp;
         if (opera.type == "addition") {
             result = circle1.value + circle2.value;
         } else if (opera.type == "subtraction") {
+            DEBUG_outputCircleValues("in subtraction section, before assigning result, of CreateResultCircle()");
             result = circle1.value - circle2.value;
+            Debug.Log("result: " + result);
+            DEBUG_outputCircleValues("in subtraction section, after assigning result, of CreateResultCircle()");
         } else if (opera.type == "multiplication") {
             result = circle1.value * circle2.value;
         } else if (opera.type == "division") {
@@ -768,8 +778,9 @@ public class PuzzleManager : MonoBehaviour
                 Debug.Log("problem: the circle value is zero");
             }
         }
-        //Debug.Log("checkpoint charlie, result: " + result);
+        Debug.Log("checkpoint charlie, result: " + result);
         temp = CreateSpecificCircle(result);
+        DEBUG_outputCircleValues("at end of CreateResultCircle()");
         return temp;
     }
 
@@ -1830,7 +1841,7 @@ public class PuzzleManager : MonoBehaviour
 
     public void SetCircle(GameObject circleGameObject, Circle circleData)
     {
-        if (circleData == null || circleData.value == 0)
+        if (circleData == null) //  || circleData.value == -999999999)
         {
             //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
             circleGameObject.SetActive(false);
@@ -2273,28 +2284,28 @@ public class PuzzleManager : MonoBehaviour
         
         CreateNewPuzzle();
     }
-    bool noErrorReceived = true;
-    private void OnEnable()
-    {
-        Application.logMessageReceived += HandleLog;
-    }
-    void HandleLog(string logString, string stackTrace, LogType type) { 
-        if (type == LogType.Error) {
-            noErrorReceived = false;
-        }
-    }
-    public void SkipPuzzleForever() {
-        // this method exists to suss out errors for debugging purposes
+    //bool noErrorReceived = true;
+    //private void OnEnable()
+    //{
+    //    Application.logMessageReceived += HandleLog;
+    //}
+    //void HandleLog(string logString, string stackTrace, LogType type) { 
+    //    if (type == LogType.Error) {
+    //        noErrorReceived = false;
+    //    }
+    //}
+    //public void SkipPuzzleForever() {
+    //    // this method exists to suss out errors for debugging purposes
 
-        // https://stackoverflow.com/questions/45341179/how-to-detect-if-there-is-an-error-in-unity-c-sharp-when-running-without-see-the
-        while (noErrorReceived) {
-            Debug.Log("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$$");
-            CreateNewPuzzle();
+    //    // https://stackoverflow.com/questions/45341179/how-to-detect-if-there-is-an-error-in-unity-c-sharp-when-running-without-see-the
+    //    while (noErrorReceived) {
+    //        Debug.Log("*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$*$$");
+    //        CreateNewPuzzle();
 
 
 
-        }
-    }
+    //    }
+    //}
     // ************************************************************************************************************
     // ************************************************************************************************************
     public void TurnDebugModeON()
@@ -2349,6 +2360,7 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     public void CreateNewPuzzle() 
     {
+        DEBUG_outputCircleValues("CreateNewPuzzle at start");
         // get rid of all the Circles & Operators we created in past puzzles
         Circle.numberOfThisTypeThatExist = 0;
         listOfAllCircles.Clear();
@@ -2406,10 +2418,12 @@ public class PuzzleManager : MonoBehaviour
                 stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
             }
             inputCircleA = CreateRandomCircle(stuff);
+            //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "exponent3") {
             List<float> stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
+            //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "squareRoot") {
             List<float> stuff = null;
@@ -2419,10 +2433,12 @@ public class PuzzleManager : MonoBehaviour
                 stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
             }
             inputCircleA = CreateRandomCircle(stuff);
+            //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "cubeRoot") {
             List<float> stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
+            //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         }
         Debug.Log("first value: " + inputCircleA.value);
@@ -2498,12 +2514,13 @@ public class PuzzleManager : MonoBehaviour
                                                  // the above function will tell us which PartA result was used as the first input for PartB
                                                  //      we need to identify which PartA result was used, and then make the OTHER ONE appear in the puzzle
                 Circle resultFromPartA = (Circle)PartAStuff[3];
-                Debug.Log("resultFromPartA value: " + resultFromPartA.value);
+                //Debug.Log("resultFromPartA value: " + resultFromPartA.value);
+                //Debug.Log("PartB inputCircleA: " + inputCircleA.value + "  ...   inputCircleB: " + inputCircleB.value);
                 if (resultFromPartA.value == inputCircleA.value)        // THIS LINE seems to be where errors are spawning
                 {
                     circle3 = inputCircleB;
                 }
-                else if (resultFromPartA.value == inputCircleB.value)
+                else if (resultFromPartA.value == inputCircleB.value)       // error spawned here: start with PartB, 5^2 = 25, .... i think i fixed it: when 1circle math, force creating of inputCircleB.value = 0
                 {
                     circle3 = inputCircleA;
                 }
@@ -2875,6 +2892,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void DetermineWhether_twoCircle_MathIsComplete()
     {
+        DEBUG_outputCircleValues("DetermineWhether_twoCircle_MathIsComplete");
         // if the operator is ADD/SUBT/MULT/DIVI, then a second Circle must be clicked
         //      otherwise, just 1 circle and then 1 operator is enough
 
@@ -2946,7 +2964,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void ExecuteCompletionOf_twoCircle_Math()
     {
-        Debug.Log("about to ExecuteCompletionOf_twoCircle_Math()");
+        DEBUG_outputCircleValues("about to ExecuteCompletionOf_twoCircle_Math()");
         if (executingTWOcircleMath && circle1DoneMoving == false && circle2DoneMoving == false) {
             // identify which circle is higher, so they curve up & down correctly
             if(highlightedCircle1.transform.position.y > highlightedCircle2.transform.position.y) {
@@ -2986,9 +3004,13 @@ public class PuzzleManager : MonoBehaviour
             Circle c2 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle2);
             Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
 
-            Circle result = CreateResultCircle(c1, c2, oppy);
-            SetCircle(highlightedCircle1, result);
+            DEBUG_outputCircleValues("right after c1 c2 oppy, in ExecuteCompletionOf_twoCircle_Math()");
 
+            Circle result = CreateResultCircle(c1, c2, oppy);
+            DEBUG_outputCircleValues("right after CreateResultCircle(), in ExecuteCompletionOf_twoCircle_Math()");
+            Debug.Log("result.value:::: " + result.value);
+            SetCircle(highlightedCircle1, result);
+            DEBUG_outputCircleValues("right after SetCircle(), in ExecuteCompletionOf_twoCircle_Math()");
             highlightedCircle1.SetActive(true);
 
             ResetColorsAndMath_Circles_Operators();
@@ -2998,6 +3020,8 @@ public class PuzzleManager : MonoBehaviour
 
             circle1DoneMoving = false;
             circle2DoneMoving = false;
+
+            DEBUG_outputCircleValues("at end of ExecuteCompletionOf_twoCircle_Math()");
         }
 
 
@@ -3036,7 +3060,7 @@ public class PuzzleManager : MonoBehaviour
                 float goalValue = GetValueOfGoal();
                 if (circleValue == goalValue) {
                     //Debug.Log("in kiddy mode: there is 1 circle and 1 operators, and the goal has been reached");
-                    GameManager.instance.IncreaseScore(10);
+                    GameManager.instance.IncreaseNumberOfCompleted(1);
                     // get rid of the useless operator
                     if (OperatorA.activeSelf) {
                         // if this is the remaining operator, then make it fall away
@@ -3062,11 +3086,15 @@ public class PuzzleManager : MonoBehaviour
                         //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
                     }
+                    GameManager.instance.IncreaseNumberOfFailed(1);
                     AnimatePuzzleFailed(temp, false, false);
                 }
+            } else {
+                DEBUG_outputCircleValues("puzzle not solved yet (kiddy)");
+                
             }
         } 
-        else 
+        else if (gameType == "timed" || gameType == "endless")
         {
             if (circleTally == 1 && operatorTally == 0) {
                 // if the 1 circle value is the same as the goal
@@ -3074,12 +3102,22 @@ public class PuzzleManager : MonoBehaviour
                 float goalValue = GetValueOfGoal();
                 if (circleValue == goalValue) {
                     //Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
-                    GameManager.instance.IncreaseScore(10);
+                    if (gameType == "timed") {
+                        GameManager.instance.IncreaseScore(10);
+                    } else {
+                        GameManager.instance.IncreaseNumberOfCompleted(1);
+                    }
+
                     AnimatePuzzleSolved(temp, false, false);
                 } else {
                     //Debug.Log("there is 1 circle and 0 operators------------------------------------------ but the goal is not reached! you FAIL!");
+                    if (gameType == "endless") {
+                        GameManager.instance.IncreaseNumberOfFailed(1);
+                    }
                     AnimatePuzzleFailed(temp, false, false);
                 }
+            } else {
+                DEBUG_outputCircleValues("puzzle not solved yet (timed/endless)");
             }
         }
 
@@ -3184,5 +3222,24 @@ public class PuzzleManager : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    public void DEBUG_outputCircleValues(string location)
+    {
+        
+        Debug.Log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ location: " + location);
+        Debug.Log("CircleA: " + CircleA.GetComponent<Clickable>().valueOfThisCircle_orGoal);
+        Debug.Log("CircleB: " + CircleB.GetComponent<Clickable>().valueOfThisCircle_orGoal);
+        Debug.Log("CircleB: " + CircleC.GetComponent<Clickable>().valueOfThisCircle_orGoal);
+
+    }
 
 }

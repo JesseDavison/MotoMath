@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public string gameType;
 
     public GameObject MainMenuUI;
+    public GameObject StatsUI;
     public GameObject OptionsUI;
     public GameObject LevelUI;
     public GameObject GameOverUI;
@@ -41,7 +42,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI GameOverScore;
     public TextMeshProUGUI GameOverScreen_BestScore;
 
-
+    // for endless & kiddy gameTypes, there is no score. Rather, keep track of number completed, number skipped, number failed
+    public int numberCompleted;
+    public int numberSkipped;
+    public int numberFailed;
 
 
 
@@ -68,21 +72,46 @@ public class GameManager : MonoBehaviour
             MainMenu_BestScore_Timed.text = "";
         }
 
-        if (PlayerPrefs.HasKey("HighScore_Endless")) {
-            int highScore = PlayerPrefs.GetInt("HighScore_Endless");
-            MainMenu_BestScore_Endless.text = "High Score: " + highScore;
+        if (PlayerPrefs.HasKey("Endless_Tally")) {
+            int tally = PlayerPrefs.GetInt("Endless_Tally");
+            MainMenu_BestScore_Endless.text = "Total Completed: " + tally;
         } else {
             MainMenu_BestScore_Endless.text = "";
         }
 
-        if (PlayerPrefs.HasKey("HighScore_Kiddy")) {
-            int highScore = PlayerPrefs.GetInt("HighScore_Kiddy");
-            MainMenu_BestScore_Kiddy.text = "High Score: " + highScore;
+        if (PlayerPrefs.HasKey("Kiddy_Tally")) {
+            int tally = PlayerPrefs.GetInt("Kiddy_Tally");
+            MainMenu_BestScore_Kiddy.text = "Total Completed: " + tally;
         } else {
             MainMenu_BestScore_Kiddy.text = "";
         }
 
         MainMenuUI.SetActive(true);
+        StatsUI.SetActive(false);
+        OptionsUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        MathInProgress.SetActive(false);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
+    }
+    public void DisplayStats() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+        MainMenuUI.SetActive(false);
+        StatsUI.SetActive(true);
         OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
@@ -93,6 +122,7 @@ public class GameManager : MonoBehaviour
     }
     public void DisplayOptions() {
         MainMenuUI.SetActive(false);
+        StatsUI.SetActive(false);
         OptionsUI.SetActive(true);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
@@ -103,6 +133,7 @@ public class GameManager : MonoBehaviour
     }
     public void DisplayLevel() {
         MainMenuUI.SetActive(false);
+        StatsUI.SetActive(false);
         OptionsUI.SetActive(false);
         LevelUI.SetActive(true);
         CirclesParent.SetActive(true);
@@ -184,32 +215,81 @@ public class GameManager : MonoBehaviour
                 timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
                 PuzzleManager.instance.CreateNewPuzzle();
             }
-        } else if (gameType == "endless") {
+        } else if (gameType == "endless" || gameType == "kiddy") {
+            IncreaseNumberOfSkipped(1);
             PuzzleManager.instance.CreateNewPuzzle();
-        }
+        } 
 
 
 
     }
     public void DecreaseNumberOfPuzzlesRemaining(int amount) {
         puzzlesRemaining -= amount;
-        PuzzlesRemainingDisplay.text = "Puzzles Remaining: " + puzzlesRemaining;
+        PuzzlesRemainingDisplay.text = "Remaining: " + puzzlesRemaining;
         if (puzzlesRemaining == 0) {
             DisplayGameOver(false, false);
         }
     }
     public void SetNumberOfPuzzlesRemaining(int amount) {
         puzzlesRemaining = amount;
-        PuzzlesRemainingDisplay.text = "Puzzles Remaining: " + puzzlesRemaining;
+        PuzzlesRemainingDisplay.text = "Remaining: " + puzzlesRemaining;
     }
+    //  ************************************************************************************************************************************
     public void IncreaseScore(int amount) {
         score += amount;
         ScoreDisplay.text = "Score: " + score;
     }
     public void ResetScore() {
         score = 0;
-        ScoreDisplay.text = "Score: " + score;
+        if (gameType == "timed") {
+            ScoreDisplay.text = "Score: " + score;
+        } else {
+            numberCompleted = 0;
+            numberSkipped = 0;
+            numberFailed = 0;
+            UpdateCompletedSkippedFailed();
+        }
+
     }
+    //  ************************************************************************************************************************************
+    public void IncreaseNumberOfCompleted(int amount) {
+        numberCompleted += amount;
+        if (gameType == "endless") {
+            int temp = PlayerPrefs.GetInt("Endless_Tally");
+            temp += amount;
+            PlayerPrefs.SetInt("Endless_Tally", temp);
+        } else if (gameType == "kiddy") {
+            int temp = PlayerPrefs.GetInt("Kiddy_Tally");
+            temp += amount;
+            PlayerPrefs.SetInt("Kiddy_Tally", temp);
+        }
+        UpdateCompletedSkippedFailed();
+    }
+    public void IncreaseNumberOfSkipped(int amount) {
+        numberSkipped += amount;
+        UpdateCompletedSkippedFailed();
+    }
+    public void IncreaseNumberOfFailed(int amount) {
+        numberFailed += amount;
+        UpdateCompletedSkippedFailed();
+    }
+    public void UpdateCompletedSkippedFailed() {
+        string type = "wtf";
+        if (gameType == "endless") {
+            type = "ENDLESS MODE\n";
+        } else if (gameType == "kiddy") {
+            type = "EASY MODE\n";
+        }
+        ScoreDisplay.text = type + "Completed: " + numberCompleted + "\nSkipped: " + numberSkipped + "\nFailed: " + numberFailed;
+    }
+    public void ResetCompletedSkippedFailed() {
+        numberCompleted = 0;
+        numberSkipped = 0;
+        numberFailed = 0;
+        UpdateCompletedSkippedFailed();
+    }
+
+    //  ************************************************************************************************************************************
     public void DisplayGameOverForButtonPress() {  // this exists so i can press the "quit" button on the levelUI
         DisplayGameOver(false, true); 
     }
@@ -222,7 +302,8 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
 
-        if (gameType == "timed") {
+        if (gameType == "timed")
+        {
             if (timeRanOut)
             {
                 GameOverText.text = "TIME RAN OUT";
@@ -264,59 +345,17 @@ public class GameManager : MonoBehaviour
 
             GameOverScore.text = "Score: " + score + " points + " + scoreFromTimeRemaining + " speed points = <b><color=#b80b0b>" + total + " POINTS";
 
-        } else if (gameType == "endless") {
+        }
+        else if (gameType == "endless" || gameType == "kiddy")
+        {
             GameOverText.text = "GAME OVER";
 
-            // do the score calculating here
+            TimeRemainingExplanation.text = "Puzzles Completed: " + numberCompleted;
 
-            TimeRemainingExplanation.text = "";
+            GameOverScore.text = "Puzzles Skipped: " + numberSkipped;
 
-            int total = score;
+            GameOverScreen_BestScore.text = "Puzzles Failed: " + numberFailed;
 
-            if (PlayerPrefs.HasKey("HighScore_Endless"))
-            {
-                if (total > PlayerPrefs.GetInt("HighScore_Endless"))
-                {
-                    PlayerPrefs.SetInt("HighScore_Endless", total);
-                }
-                int bestScore = PlayerPrefs.GetInt("HighScore_Endless");
-                GameOverScreen_BestScore.text = "All-time Best Score (Endless mode): " + bestScore;
-            }
-            else
-            {
-                PlayerPrefs.SetInt("HighScore_Endless", total);
-                GameOverScreen_BestScore.text = "All-time Best Score (Endless mode): " + total;
-            }
-
-            GameOverScore.text = "Score: <b><color=#b80b0b>" + total + " POINTS";
-
-
-
-        } else if (gameType == "kiddy") {
-            GameOverText.text = "GAME OVER";
-
-            // do the score calculating here
-
-            TimeRemainingExplanation.text = "";
-
-            int total = score;
-
-            if (PlayerPrefs.HasKey("HighScore_Kiddy"))
-            {
-                if (total > PlayerPrefs.GetInt("HighScore_Kiddy"))
-                {
-                    PlayerPrefs.SetInt("HighScore_Kiddy", total);
-                }
-                int bestScore = PlayerPrefs.GetInt("HighScore_Kiddy");
-                GameOverScreen_BestScore.text = "All-time Best Score (Easy mode): " + bestScore;
-            }
-            else
-            {
-                PlayerPrefs.SetInt("HighScore_Kiddy", total);
-                GameOverScreen_BestScore.text = "All-time Best Score (Easy mode): " + total;
-            }
-
-            GameOverScore.text = "Score: <b><color=#b80b0b>" + total + " POINTS";
         }
 
         GameOverUI.SetActive(true);
@@ -324,7 +363,10 @@ public class GameManager : MonoBehaviour
     public void QuitGame() {
         Application.Quit();
     }
-
+    public void ResetPlayerPrefs() {
+        PlayerPrefs.DeleteAll();
+    }
+    
 
 
 }
