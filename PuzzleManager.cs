@@ -57,6 +57,12 @@ public class PuzzleManager : MonoBehaviour
     public GameObject ExplosionImage;
     Explosion explosion;
 
+    // if the player solves the puzzle, these strings will be used to update the stats via ChangeStat_Endless() & ChangeStat_Easy()
+    string operator1_forStats;
+    string operator2_forStats;
+
+
+
     public GameObject sparkle1;
     public GameObject sparkle2;
     public GameObject sparkle3;
@@ -2577,6 +2583,8 @@ public class PuzzleManager : MonoBehaviour
 
             SetOperator(OperatorA, operator1);
             SetOperator(OperatorB, operator2);
+            operator1_forStats = operator1.type;        // if the player solves the puzzle, these strings will be used to update stats contained in PlayerPrefs
+            operator2_forStats = operator2.type;
             UpdateDefaultPositionsOfOperators();
             TeleportAllOperatorsToDefaultPositions();
 
@@ -3061,16 +3069,23 @@ public class PuzzleManager : MonoBehaviour
                 if (circleValue == goalValue) {
                     //Debug.Log("in kiddy mode: there is 1 circle and 1 operators, and the goal has been reached");
                     GameManager.instance.IncreaseNumberOfCompleted(1);
+                    GameManager.instance.ChangeStat_Easy("solved", 1);
                     // get rid of the useless operator
                     if (OperatorA.activeSelf) {
                         // if this is the remaining operator, then make it fall away
                         //OperatorA.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorA.GetComponent<Clickable>().ShrinkAndDisappear();
+                        Operator tempOp = GetOperator_classObject_OfClickedOperator_gameObject(OperatorB);
+                        Debug.Log("about to change stat for OperatorB, type: " + tempOp.type);
+                        GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
                     }
                     if (OperatorB.activeSelf) {
                         // if this is the remaining operator, then make it fall away
                         //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
+                        Operator tempOp = GetOperator_classObject_OfClickedOperator_gameObject(OperatorA);
+                        Debug.Log("about to change stat for OperatorA, type: " + tempOp.type);
+                        GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
                     }
                     AnimatePuzzleSolved(temp, false, false);
                 } else {
@@ -3087,6 +3102,7 @@ public class PuzzleManager : MonoBehaviour
                         OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
                     }
                     GameManager.instance.IncreaseNumberOfFailed(1);
+                    GameManager.instance.ChangeStat_Easy("failed", 1);
                     AnimatePuzzleFailed(temp, false, false);
                 }
             } else {
@@ -3104,15 +3120,18 @@ public class PuzzleManager : MonoBehaviour
                     //Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
                     if (gameType == "timed") {
                         GameManager.instance.IncreaseScore(10);
-                    } else {
+                    } else if (gameType == "endless") {
                         GameManager.instance.IncreaseNumberOfCompleted(1);
-                    }
-
+                        GameManager.instance.ChangeStat_Endless("solved", 1);
+                        GameManager.instance.ChangeStat_Endless(operator1_forStats, 1);
+                        GameManager.instance.ChangeStat_Endless(operator2_forStats, 1);
+                    } 
                     AnimatePuzzleSolved(temp, false, false);
                 } else {
                     //Debug.Log("there is 1 circle and 0 operators------------------------------------------ but the goal is not reached! you FAIL!");
                     if (gameType == "endless") {
                         GameManager.instance.IncreaseNumberOfFailed(1);
+                        GameManager.instance.ChangeStat_Endless("failed", 1);
                     }
                     AnimatePuzzleFailed(temp, false, false);
                 }

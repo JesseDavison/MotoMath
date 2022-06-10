@@ -47,6 +47,33 @@ public class GameManager : MonoBehaviour
     public int numberSkipped;
     public int numberFailed;
 
+    // STATS SCREEN stuff & PlayerPrefs strings
+    public TextMeshProUGUI stats_TimedMode;
+    public TextMeshProUGUI stats_EndlessMode;
+    public TextMeshProUGUI stats_EasyMode;
+    string stat_endless_addition = "stat_endless_addition";
+    string stat_endless_subtraction = "stat_endless_subtraction";
+    string stat_endless_multiplication = "stat_endless_multiplication";
+    string stat_endless_division = "stat_endless_division";
+    string stat_endless_exponent2 = "stat_endless_exponent2";
+    string stat_endless_exponent3 = "stat_endless_exponent3";
+    string stat_endless_squareRoot = "stat_endless_squareRoot";
+    string stat_endless_cubeRoot = "stat_endless_cubeRoot";
+    string stat_endless_solved = "stat_endless_solved";
+    string stat_endless_skipped = "stat_endless_skipped";
+    string stat_endless_failed = "stat_endless_failed";
+
+    string stat_easy_addition = "stat_easy_addition";
+    string stat_easy_subtraction = "stat_easy_subtraction";
+    string stat_easy_multiplication = "stat_easy_multiplication";
+    string stat_easy_division = "stat_easy_division";
+    string stat_easy_exponent2 = "stat_easy_exponent2";
+    string stat_easy_exponent3 = "stat_easy_exponent3";
+    string stat_easy_squareRoot = "stat_easy_squareRoot";
+    string stat_easy_cubeRoot = "stat_easy_cubeRoot";
+    string stat_easy_solved = "stat_easy_solved";
+    string stat_easy_skipped = "stat_easy_skipped";
+    string stat_easy_failed = "stat_easy_failed";
 
 
     // Start is called before the first frame update
@@ -72,15 +99,15 @@ public class GameManager : MonoBehaviour
             MainMenu_BestScore_Timed.text = "";
         }
 
-        if (PlayerPrefs.HasKey("Endless_Tally")) {
-            int tally = PlayerPrefs.GetInt("Endless_Tally");
+        if (PlayerPrefs.HasKey(stat_endless_solved)) {
+            int tally = PlayerPrefs.GetInt(stat_endless_solved);
             MainMenu_BestScore_Endless.text = "Total Completed: " + tally;
         } else {
             MainMenu_BestScore_Endless.text = "";
         }
 
-        if (PlayerPrefs.HasKey("Kiddy_Tally")) {
-            int tally = PlayerPrefs.GetInt("Kiddy_Tally");
+        if (PlayerPrefs.HasKey(stat_easy_solved)) {
+            int tally = PlayerPrefs.GetInt(stat_easy_solved);
             MainMenu_BestScore_Kiddy.text = "Total Completed: " + tally;
         } else {
             MainMenu_BestScore_Kiddy.text = "";
@@ -98,13 +125,160 @@ public class GameManager : MonoBehaviour
     }
     public void DisplayStats() {
 
+        if (PlayerPrefs.HasKey("HighScore_Timed"))
+        {
+            int highScore = PlayerPrefs.GetInt("HighScore_Timed");
+            stats_TimedMode.text = "Timed Mode High Score: " + highScore;
+        }
+        else
+        {
+            stats_TimedMode.text = "";
+        }
+
+        int endless_addition_count = 0;
+        int endless_subtraction_count = 0;
+        int endless_multiplication_count = 0;
+        int endless_division_count = 0;
+        int endless_exponent2_count = 0;
+        int endless_exponent3_count = 0;
+        int endless_squareRoot_count = 0;
+        int endless_cubeRoot_count = 0;
+        int endless_solved = 0;
+        int endless_skipped = 0;
+        int endless_failed = 0;
+
+        if (PlayerPrefs.HasKey(stat_endless_addition)) 
+        {
+            endless_addition_count = PlayerPrefs.GetInt(stat_endless_addition, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_subtraction)) {
+            endless_subtraction_count = PlayerPrefs.GetInt(stat_endless_subtraction, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_multiplication))
+        {
+            endless_multiplication_count = PlayerPrefs.GetInt(stat_endless_multiplication, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_division))
+        {
+            endless_division_count = PlayerPrefs.GetInt(stat_endless_division, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_exponent2))
+        {
+            endless_exponent2_count = PlayerPrefs.GetInt(stat_endless_exponent2, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_exponent3))
+        {
+            endless_exponent3_count = PlayerPrefs.GetInt(stat_endless_exponent3, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_squareRoot))
+        {
+            endless_squareRoot_count = PlayerPrefs.GetInt(stat_endless_squareRoot, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_cubeRoot))
+        {
+            endless_cubeRoot_count = PlayerPrefs.GetInt(stat_endless_cubeRoot, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_solved))
+        {
+            endless_solved = PlayerPrefs.GetInt(stat_endless_solved, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_skipped))
+        {
+            endless_skipped = PlayerPrefs.GetInt(stat_endless_skipped, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_endless_failed))
+        {
+            endless_failed = PlayerPrefs.GetInt(stat_endless_failed, 0);
+        }
+
+
+        stats_EndlessMode.text =
+            "Addition:   " + endless_addition_count + "\n" +
+            "Subtraction:   " + endless_subtraction_count + "\n" +
+            "Multiplication:   " + endless_multiplication_count + "\n" +
+            "Division:   " + endless_division_count + "\n" +
+            "Exponent = 2:   " + endless_exponent2_count + "\n" +
+            "Exponent = 3:   " + endless_exponent3_count + "\n" +
+            "Square Root:   " + endless_squareRoot_count + "\n" +
+            "Cube Root:   " + endless_cubeRoot_count + "\n" +
+            "\n" +
+            "Problems Solved:   " + endless_solved + "\n" +
+            "Problems Skipped:   " + endless_skipped + "\n" +
+            "Problems Failed:   " + endless_failed + "\n";
 
 
 
+        int easy_addition_count = 0;
+        int easy_subtraction_count = 0;
+        int easy_multiplication_count = 0;
+        int easy_division_count = 0;
+        int easy_exponent2_count = 0;
+        int easy_exponent3_count = 0;
+        int easy_squareRoot_count = 0;
+        int easy_cubeRoot_count = 0;
+        int easy_solved = 0;
+        int easy_skipped = 0;
+        int easy_failed = 0;
+
+        if (PlayerPrefs.HasKey(stat_easy_addition))
+        {
+            easy_addition_count = PlayerPrefs.GetInt(stat_easy_addition, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_subtraction))
+        {
+            easy_subtraction_count = PlayerPrefs.GetInt(stat_easy_subtraction, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_multiplication))
+        {
+            easy_multiplication_count = PlayerPrefs.GetInt(stat_easy_multiplication, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_division))
+        {
+            easy_division_count = PlayerPrefs.GetInt(stat_easy_division, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_exponent2))
+        {
+            easy_exponent2_count = PlayerPrefs.GetInt(stat_easy_exponent2, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_exponent3))
+        {
+            easy_exponent3_count = PlayerPrefs.GetInt(stat_easy_exponent3, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_squareRoot))
+        {
+            easy_squareRoot_count = PlayerPrefs.GetInt(stat_easy_squareRoot, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_cubeRoot))
+        {
+            easy_cubeRoot_count = PlayerPrefs.GetInt(stat_easy_cubeRoot, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_solved))
+        {
+            easy_solved = PlayerPrefs.GetInt(stat_easy_solved, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_skipped))
+        {
+            easy_skipped = PlayerPrefs.GetInt(stat_easy_skipped, 0);
+        }
+        if (PlayerPrefs.HasKey(stat_easy_failed))
+        {
+            easy_failed = PlayerPrefs.GetInt(stat_easy_failed, 0);
+        }
 
 
-
-
+        stats_EasyMode.text =
+            "Addition:   " + easy_addition_count + "\n" +
+            "Subtraction:   " + easy_subtraction_count + "\n" +
+            "Multiplication:   " + easy_multiplication_count + "\n" +
+            "Division:   " + easy_division_count + "\n" +
+            "Exponent = 2:   " + easy_exponent2_count + "\n" +
+            "Exponent = 3:   " + easy_exponent3_count + "\n" +
+            "Square Root:   " + easy_squareRoot_count + "\n" +
+            "Cube Root:   " + easy_cubeRoot_count + "\n" +
+            "\n" +
+            "Problems Solved:   " + easy_solved + "\n" +
+            "Problems Skipped:   " + easy_skipped + "\n" +
+            "Problems Failed:   " + easy_failed + "\n";
 
 
 
@@ -215,10 +389,15 @@ public class GameManager : MonoBehaviour
                 timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
                 PuzzleManager.instance.CreateNewPuzzle();
             }
-        } else if (gameType == "endless" || gameType == "kiddy") {
+        } else if (gameType == "endless") {
             IncreaseNumberOfSkipped(1);
+            ChangeStat_Endless("skipped", 1);
             PuzzleManager.instance.CreateNewPuzzle();
-        } 
+        } else if (gameType == "kiddy") {
+            IncreaseNumberOfSkipped(1);
+            ChangeStat_Easy("skipped", 1);
+            PuzzleManager.instance.CreateNewPuzzle();
+        }
 
 
 
@@ -366,7 +545,76 @@ public class GameManager : MonoBehaviour
     public void ResetPlayerPrefs() {
         PlayerPrefs.DeleteAll();
     }
-    
+    //  ************************************************************************************************************************************
+    public void ChangeStat_Endless(string typeOfOperator_orCategory, int amount) {
+        string keyName = "";
+        if (typeOfOperator_orCategory == "addition") {
+            keyName = stat_endless_addition;
+        } else if (typeOfOperator_orCategory == "subtraction") {
+            keyName = stat_endless_subtraction;
+        } else if (typeOfOperator_orCategory == "multiplication") {
+            keyName = stat_endless_multiplication;
+        } else if (typeOfOperator_orCategory == "division") {
+            keyName = stat_endless_division;
+        } else if (typeOfOperator_orCategory == "exponent2") {
+            keyName = stat_endless_exponent2;
+        } else if (typeOfOperator_orCategory == "exponent3") {
+            keyName = stat_endless_exponent3;
+        } else if (typeOfOperator_orCategory == "squareRoot") {
+            keyName = stat_endless_squareRoot;
+        } else if (typeOfOperator_orCategory == "cubeRoot") {
+            keyName = stat_endless_cubeRoot;
+        } else if (typeOfOperator_orCategory == "solved") {
+            keyName = stat_endless_solved;
+        } else if (typeOfOperator_orCategory == "skipped") {
+            keyName = stat_endless_skipped;
+        } else if (typeOfOperator_orCategory == "failed") {
+            keyName = stat_endless_failed;
+        }
+
+        if (PlayerPrefs.HasKey(keyName))
+        {
+            PlayerPrefs.SetInt(keyName, amount + PlayerPrefs.GetInt(keyName));
+        } else {
+            PlayerPrefs.SetInt(keyName, amount);
+        }
+    }
+    public void ChangeStat_Easy(string typeOfOperator_orCategory, int amount)
+    {
+        string keyName = "";
+        if (typeOfOperator_orCategory == "addition") {
+            keyName = stat_easy_addition;
+        } else if (typeOfOperator_orCategory == "subtraction") {
+            keyName = stat_easy_subtraction;
+        } else if (typeOfOperator_orCategory == "multiplication") {
+            keyName = stat_easy_multiplication;
+        } else if (typeOfOperator_orCategory == "division") {
+            keyName = stat_easy_division;
+        } else if (typeOfOperator_orCategory == "exponent2") {
+            keyName = stat_easy_exponent2;
+        } else if (typeOfOperator_orCategory == "exponent3") {
+            keyName = stat_easy_exponent3; 
+        } else if (typeOfOperator_orCategory == "squareRoot") {
+            keyName = stat_easy_squareRoot; 
+        } else if (typeOfOperator_orCategory == "cubeRoot") {
+            keyName = stat_easy_cubeRoot;
+        } else if (typeOfOperator_orCategory == "solved") {
+            keyName = stat_easy_solved;
+        } else if (typeOfOperator_orCategory == "skipped") {
+            keyName = stat_easy_skipped;
+        } else if (typeOfOperator_orCategory == "failed") {
+            keyName = stat_easy_failed;
+        }
+
+        if (PlayerPrefs.HasKey(keyName)) {
+            PlayerPrefs.SetInt(keyName, amount + PlayerPrefs.GetInt(keyName));
+        } else {
+            PlayerPrefs.SetInt(keyName, amount);
+        }
+    }
+
+
 
 
 }
+
