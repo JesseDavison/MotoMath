@@ -1802,7 +1802,10 @@ public class PuzzleManager : MonoBehaviour
             }
 
             partA_circle1 = CreateSpecificCircle(circle1Value);
-            partA_circle2 = CreateSpecificCircle(circle2Value);
+            // we want partA_circle2 to REMAIN NULL if it's not going to be used!!!, not have a value of zero.... the only time a circle has a zero value and is on-screen is when the player screws up
+            if (circle2Value != 0) {
+                partA_circle2 = CreateSpecificCircle(circle2Value);
+            }
             partA_result = CreateSpecificCircle(resultPartA);
 
             //Debug.Log("for PartA, circle1.value is: " + circle1Value);
