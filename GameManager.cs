@@ -206,18 +206,18 @@ public class GameManager : MonoBehaviour
 
 
         stats_EndlessMode.text =
-            "Addition:" + NumWithSpaces(numSpaces, endless_addition_count) + "\n" +
-            "Subtraction:" + NumWithSpaces(numSpaces, endless_subtraction_count) + "\n" +
-            "Multiplication:" + NumWithSpaces(numSpaces, endless_multiplication_count) + "\n" +
-            "Division:" + NumWithSpaces(numSpaces, endless_division_count) + "\n" +
-            "Exponent = 2:" + NumWithSpaces(numSpaces, endless_exponent2_count) + "\n" +
-            "Exponent = 3:" + NumWithSpaces(numSpaces, endless_exponent3_count) + "\n" +
-            "Square Root:" + NumWithSpaces(numSpaces, endless_squareRoot_count) + "\n" +
-            "Cube Root:" + NumWithSpaces(numSpaces, endless_cubeRoot_count) + "\n" +
+            "Addition" + NumWithSpaces(numSpaces, endless_addition_count) + "\n" +
+            "Subtraction" + NumWithSpaces(numSpaces, endless_subtraction_count) + "\n" +
+            "Multiplication" + NumWithSpaces(numSpaces, endless_multiplication_count) + "\n" +
+            "Division" + NumWithSpaces(numSpaces, endless_division_count) + "\n" +
+            "Exponent = 2" + NumWithSpaces(numSpaces, endless_exponent2_count) + "\n" +
+            "Exponent = 3" + NumWithSpaces(numSpaces, endless_exponent3_count) + "\n" +
+            "Square Root" + NumWithSpaces(numSpaces, endless_squareRoot_count) + "\n" +
+            "Cube Root" + NumWithSpaces(numSpaces, endless_cubeRoot_count) + "\n" +
             "\n" +
-            "Problems Solved:" + NumWithSpaces(numSpaces, endless_solved) + "\n" +
-            "Problems Skipped:" + NumWithSpaces(numSpaces, endless_skipped) + "\n" +
-            "Problems Failed:" + NumWithSpaces(numSpaces, endless_failed) + "\n";
+            "Problems Solved" + NumWithSpaces(numSpaces, endless_solved) + "\n" +
+            "Problems Skipped" + NumWithSpaces(numSpaces, endless_skipped) + "\n" +
+            "Problems Failed" + NumWithSpaces(numSpaces, endless_failed) + "\n";
 
 
 
@@ -279,18 +279,18 @@ public class GameManager : MonoBehaviour
         }
 
         stats_EasyMode.text =
-            "Addition:" + NumWithSpaces(numSpaces, easy_addition_count) + "\n" +
-            "Subtraction:" + NumWithSpaces(numSpaces, easy_subtraction_count) + "\n" +
-            "Multiplication:" + NumWithSpaces(numSpaces, easy_multiplication_count) + "\n" +
-            "Division:" + NumWithSpaces(numSpaces, easy_division_count) + "\n" +
-            "Exponent = 2:" + NumWithSpaces(numSpaces, easy_exponent2_count) + "\n" +
-            "Exponent = 3:" + NumWithSpaces(numSpaces, easy_exponent3_count) + "\n" +
-            "Square Root:" + NumWithSpaces(numSpaces, easy_squareRoot_count) + "\n" +
-            "Cube Root:" + NumWithSpaces(numSpaces, easy_cubeRoot_count) + "\n" +
+            "Addition" + NumWithSpaces(numSpaces, easy_addition_count) + "\n" +
+            "Subtraction" + NumWithSpaces(numSpaces, easy_subtraction_count) + "\n" +
+            "Multiplication" + NumWithSpaces(numSpaces, easy_multiplication_count) + "\n" +
+            "Division" + NumWithSpaces(numSpaces, easy_division_count) + "\n" +
+            "Exponent = 2" + NumWithSpaces(numSpaces, easy_exponent2_count) + "\n" +
+            "Exponent = 3" + NumWithSpaces(numSpaces, easy_exponent3_count) + "\n" +
+            "Square Root" + NumWithSpaces(numSpaces, easy_squareRoot_count) + "\n" +
+            "Cube Root" + NumWithSpaces(numSpaces, easy_cubeRoot_count) + "\n" +
             "\n" +
-            "Problems Solved:" + NumWithSpaces(numSpaces, easy_solved) + "\n" +
-            "Problems Skipped:" + NumWithSpaces(numSpaces, easy_skipped) + "\n" +
-            "Problems Failed:" + NumWithSpaces(numSpaces, easy_failed) + "\n";
+            "Problems Solved" + NumWithSpaces(numSpaces, easy_solved) + "\n" +
+            "Problems Skipped" + NumWithSpaces(numSpaces, easy_skipped) + "\n" +
+            "Problems Failed" + NumWithSpaces(numSpaces, easy_failed) + "\n";
 
 
         MainMenuUI.SetActive(false);
