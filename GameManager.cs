@@ -79,6 +79,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        #if UNITY_EDITOR
+            Debug.unityLogger.logEnabled = true;
+        #else
+            Debug.unityLogger.logEnabled=false;
+        #endif
+        // from https://answers.unity.com/questions/1301347/how-to-disable-all-logging-on-release-build.html
+
+
         instance = this;
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
         timerPuzzle = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
