@@ -458,7 +458,7 @@ public class PuzzleManager : MonoBehaviour
 
     public List<float> CreateListOfPossibleCircleValues_forExponent2(float resultCap, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
         List<float> toReturn = new List<float>();
-        int squareRootOfResultCap = (int)Mathf.Pow(resultCap, 0.5f);
+        int squareRootOfResultCap = Mathf.RoundToInt(Mathf.Pow(resultCap, 0.5f));
         if (negativesAllowed) {
             for (int i = (squareRootOfResultCap * -1); i <= -2; i++) {
                 toReturn.Add(i);
@@ -497,7 +497,7 @@ public class PuzzleManager : MonoBehaviour
         List<float> toReturn = new List<float>();
         //int squareRootOfResultCap = (int)Mathf.Pow(resultCap, 0.5f);
 
-        int cubeRootOfResultCap = (int)Mathf.Pow(resultCap, 1f/3f);
+        int cubeRootOfResultCap = Mathf.RoundToInt(Mathf.Pow(resultCap, 1f/3f));
 
 
 
@@ -556,7 +556,7 @@ public class PuzzleManager : MonoBehaviour
         }
         for (int i = 2; i <= maxValue; i++)
         {
-            toReturn.Add(Mathf.Pow(i, 2));
+            toReturn.Add(Mathf.RoundToInt(Mathf.Pow(i, 2)));
         }
         return toReturn;
     }
@@ -568,7 +568,7 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int i = (int)(maxValue * -1); i <= -2; i++)
             {
-                toReturn.Add(Mathf.Pow(i, 3));
+                toReturn.Add(Mathf.RoundToInt(Mathf.Pow(i, 3)));
             }
         }
         if (negativesAllowed && oneAllowed)
@@ -597,7 +597,7 @@ public class PuzzleManager : MonoBehaviour
         }
         for (int i = 2; i <= maxValue; i++)
         {
-            toReturn.Add(Mathf.Pow(i, 3));
+            toReturn.Add(Mathf.RoundToInt(Mathf.Pow(i, 3)));
         }
         return toReturn;
     }
@@ -620,100 +620,106 @@ public class PuzzleManager : MonoBehaviour
     public Circle CreateRandomCircle(List<float> values) {
         int randomIndex = Random.Range(0, values.Count);
         float num = values[randomIndex];
-        bool isNegative = false;
-        if (num < 0) {
-            isNegative = true;
-        }
+        //bool isNegative = false;
+        //if (num < 0) {
+        //    isNegative = true;
+        //}
         Circle temp;
-        if (!TestIfIsInteger(num)) {
-            float margin = 0.001f;
-            float numerator = 0;
-            int denominator = 0;
-            if (Mathf.Abs(0.75f - Mathf.Abs(num)) < margin) {
-                numerator = 3;
-                denominator = 4;
-            } else if (Mathf.Abs(2f/3f - Mathf.Abs(num)) < margin) {
-                numerator = 2;
-                denominator = 3;
-            } else if (Mathf.Abs(0.5f - Mathf.Abs(num)) < margin) {
-                numerator = 1;
-                denominator = 2;
-            } else if (Mathf.Abs(1f/3f - Mathf.Abs(num)) < margin) {
-                numerator = 1;
-                denominator = 3;
-            } else if (Mathf.Abs(0.25f - Mathf.Abs(num)) < margin) {
-                numerator = 1;
-                denominator = 4;
-            } else {
-                Debug.Log("glitch glitch");
-            }
-            if (isNegative) {
-                temp = new Circle(-1 * numerator, denominator);
-                listOfAllCircles.Add(temp);
-            } else {
-                temp = new Circle(numerator, denominator);
-                listOfAllCircles.Add(temp);
-            }
+        //if (!TestIfIsInteger(num)) 
+        //{
+        //    float margin = 0.001f;
+        //    float numerator = 0;
+        //    int denominator = 0;
+        //    if (Mathf.Abs(0.75f - Mathf.Abs(num)) < margin) {
+        //        numerator = 3;
+        //        denominator = 4;
+        //    } else if (Mathf.Abs(2f/3f - Mathf.Abs(num)) < margin) {
+        //        numerator = 2;
+        //        denominator = 3;
+        //    } else if (Mathf.Abs(0.5f - Mathf.Abs(num)) < margin) {
+        //        numerator = 1;
+        //        denominator = 2;
+        //    } else if (Mathf.Abs(1f/3f - Mathf.Abs(num)) < margin) {
+        //        numerator = 1;
+        //        denominator = 3;
+        //    } else if (Mathf.Abs(0.25f - Mathf.Abs(num)) < margin) {
+        //        numerator = 1;
+        //        denominator = 4;
+        //    } else {
+        //        Debug.Log("glitch glitch");
+        //    }
+        //    if (isNegative) {
+        //        temp = new Circle(-1 * numerator, denominator);
+        //        listOfAllCircles.Add(temp);
+        //    } else {
+        //        temp = new Circle(numerator, denominator);
+        //        listOfAllCircles.Add(temp);
+        //    }
 
-        } else {
+        //} 
+        //else 
+        //{
             temp = new Circle(num);
             listOfAllCircles.Add(temp);
-        }
+        //}
         return temp;
     }
 
     public Circle CreateSpecificCircle(float num) {
         DEBUG_outputCircleValues("At beginning of CreateSpecificCircle()");
-        bool isNegative = false;
-        if (num < 0)
-        {
-            isNegative = true;
-        }
+        //bool isNegative = false;
+        //if (num < 0)
+        //{
+        //    isNegative = true;
+        //}
         Circle temp;
-        if (!TestIfIsInteger(num) && (Mathf.Abs(num) == 0.25f || CheckIfNumbersAreCloseEnough(Mathf.Abs(num), 1f / 3f) || Mathf.Abs(num) == 0.5f || CheckIfNumbersAreCloseEnough(Mathf.Abs(num), 2f / 3f) || Mathf.Abs(num) == 0.75f)) {
-            float margin = 0.001f;
-            float numerator = 0;
-            int denominator = 0;
-            if (Mathf.Abs(0.75f - Mathf.Abs(num)) < margin)
-            {
-                numerator = 3;
-                denominator = 4;
-            }
-            else if (Mathf.Abs(2f/3f - Mathf.Abs(num)) < margin)
-            {
-                numerator = 2;
-                denominator = 3;
-            }
-            else if (Mathf.Abs(0.5f - Mathf.Abs(num)) < margin)
-            {
-                numerator = 1;
-                denominator = 2;
-            }
-            else if (Mathf.Abs(1f/3f - Mathf.Abs(num)) < margin)
-            {
-                numerator = 1;
-                denominator = 3;
-            }
-            else if (Mathf.Abs(0.25f - Mathf.Abs(num)) < margin)
-            {
-                numerator = 1;
-                denominator = 4;
-            }
+        //if (!TestIfIsInteger(num) && (Mathf.Abs(num) == 0.25f || CheckIfNumbersAreCloseEnough(Mathf.Abs(num), 1f / 3f) || Mathf.Abs(num) == 0.5f || CheckIfNumbersAreCloseEnough(Mathf.Abs(num), 2f / 3f) || Mathf.Abs(num) == 0.75f)) 
+        //{
+        //    float margin = 0.001f;
+        //    float numerator = 0;
+        //    int denominator = 0;
+        //    if (Mathf.Abs(0.75f - Mathf.Abs(num)) < margin)
+        //    {
+        //        numerator = 3;
+        //        denominator = 4;
+        //    }
+        //    else if (Mathf.Abs(2f/3f - Mathf.Abs(num)) < margin)
+        //    {
+        //        numerator = 2;
+        //        denominator = 3;
+        //    }
+        //    else if (Mathf.Abs(0.5f - Mathf.Abs(num)) < margin)
+        //    {
+        //        numerator = 1;
+        //        denominator = 2;
+        //    }
+        //    else if (Mathf.Abs(1f/3f - Mathf.Abs(num)) < margin)
+        //    {
+        //        numerator = 1;
+        //        denominator = 3;
+        //    }
+        //    else if (Mathf.Abs(0.25f - Mathf.Abs(num)) < margin)
+        //    {
+        //        numerator = 1;
+        //        denominator = 4;
+        //    }
 
-            if (isNegative) {
-                Debug.Log("checkpoint alpha, value: " + num);
-                temp = new Circle(-1 * numerator, denominator);
-                listOfAllCircles.Add(temp);
-            } else {
-                Debug.Log("checkpoint bravo, value: " + num);
-                temp = new Circle(numerator, denominator);
-                listOfAllCircles.Add(temp);
-            }
-        } else {
+        //    if (isNegative) {
+        //        Debug.Log("checkpoint alpha, value: " + num);
+        //        temp = new Circle(-1 * numerator, denominator);
+        //        listOfAllCircles.Add(temp);
+        //    } else {
+        //        Debug.Log("checkpoint bravo, value: " + num);
+        //        temp = new Circle(numerator, denominator);
+        //        listOfAllCircles.Add(temp);
+        //    }
+        //} 
+        //else 
+        //{
             Debug.Log("checkpoint delta, value: " + num);
             temp = new Circle(num);
             listOfAllCircles.Add(temp);
-        }
+        //}
         DEBUG_outputCircleValues("At end of CreateSpecificCircle()");
         return temp;
     }
@@ -767,29 +773,59 @@ public class PuzzleManager : MonoBehaviour
         if (opera.type == "addition") {
             result = circle1.value + circle2.value;
         } else if (opera.type == "subtraction") {
-            DEBUG_outputCircleValues("in subtraction section, before assigning result, of CreateResultCircle()");
+            //DEBUG_outputCircleValues("in subtraction section, before assigning result, of CreateResultCircle()");
             result = circle1.value - circle2.value;
             Debug.Log("result: " + result);
-            DEBUG_outputCircleValues("in subtraction section, after assigning result, of CreateResultCircle()");
+            //DEBUG_outputCircleValues("in subtraction section, after assigning result, of CreateResultCircle()");
         } else if (opera.type == "multiplication") {
             result = circle1.value * circle2.value;
         } else if (opera.type == "division") {
             result = circle1.value / circle2.value;
         } else if (opera.type == "exponent2") {
             result = Mathf.Pow(circle1.value, 2);
+            if (TestIfIsInteger(result)) {
+                result = Mathf.RoundToInt(result);
+            } 
+
+
+
+
         } else if (opera.type == "exponent3") {
             result = Mathf.Pow(circle1.value, 3);
+            if (TestIfIsInteger(result)) {
+                result = Mathf.RoundToInt(result);
+            }
+
+
+
+            if (TestIfIsInteger(result)) {
+                result = Mathf.RoundToInt(Mathf.Pow(circle1.value, 3));
+            } else {
+                result = Mathf.Pow(circle1.value, 3);
+            }
         } else if (opera.type == "squareRoot") {
             result = Mathf.Pow(circle1.value, 0.5f);
+            if (TestIfIsInteger(result)) {
+                result = Mathf.RoundToInt(result);
+            } 
+            
+            
+            
+            
         } else if (opera.type == "cubeRoot") {
             float value = circle1.value;
             if (value < 0) {
                 result = -Mathf.Pow(-value, 1f / 3f);
             } else if (value > 0) {
-                result = Mathf.Pow(value, 1f / 3f);
+                    result = Mathf.Pow(value, 1f / 3f);
             } else {
                 Debug.Log("problem: the circle value is zero");
             }
+            if (TestIfIsInteger(result)) {
+                result = Mathf.RoundToInt(result);
+            }
+
+
         }
         Debug.Log("checkpoint charlie, result: " + result);
         temp = CreateSpecificCircle(result);
@@ -1301,17 +1337,17 @@ public class PuzzleManager : MonoBehaviour
                 }
                 if (rando == 1) {
                     if (ABC == 'A') {
-                        exponent2_circle1ValueToUse_1 = Mathf.Pow(resultValue, 0.5f);
+                        exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
                     } else if (ABC == 'B') {
-                        exponent2_circle1ValueToUse_2 = Mathf.Pow(resultValue, 0.5f);
+                        exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
                     } else if (ABC == 'C') { 
 
                     }
                 } else {
                     if (ABC == 'A') {
-                        exponent2_circle1ValueToUse_1 = -Mathf.Pow(resultValue, 0.5f);
+                        exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
                     } else if (ABC == 'B') {
-                        exponent2_circle1ValueToUse_2 = -Mathf.Pow(resultValue, 0.5f);
+                        exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
                     } else if (ABC == 'C') {
 
                     }
@@ -1345,17 +1381,17 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (resultValue < 0) {
                     if (ABC == 'A') {
-                        exponent3_circle1ValueToUse_1 = -Mathf.Pow(-resultValue, 1f / 3f);
+                        exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
                     } else if (ABC == 'B') {
-                        exponent3_circle1ValueToUse_2 = -Mathf.Pow(-resultValue, 1f / 3f);
+                        exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
                     } else if (ABC == 'C') {
 
                     }
                 } else {
                     if (ABC == 'A') {
-                        exponent3_circle1ValueToUse_1 = Mathf.Pow(resultValue, 1f / 3f);
+                        exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
                     } else if (ABC == 'B') {
-                        exponent3_circle1ValueToUse_2 = Mathf.Pow(resultValue, 1f / 3f);
+                        exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
                     } else if (ABC == 'C') {
 
                     }
@@ -1382,13 +1418,13 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (ABC == 'A')
                 {
-                    squareRoot_circle1ValueToUse_1 = Mathf.Pow(resultValue, 2);
+                    squareRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
                     //Debug.Log("squareRoot is viable: " + squareRoot_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
                     operatorList_1.Add("squareRoot");
                 }
                 else if (ABC == 'B')
                 {
-                    squareRoot_circle1ValueToUse_2 = Mathf.Pow(resultValue, 2);
+                    squareRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
                     //Debug.Log("squareRoot is viable: " + squareRoot_circle1ValueToUse_2 + " as circle1 gives us result of " + resultValue);
                     operatorList_2.Add("squareRoot");
                 }
@@ -1446,11 +1482,11 @@ public class PuzzleManager : MonoBehaviour
             if (usableResults.Contains(resultValue))
             {
                 if (ABC == 'A') {
-                    cubeRoot_circle1ValueToUse_1 = Mathf.Pow(resultValue, 3);
+                    cubeRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
                     operatorList_1.Add("cubeRoot");
                 } else if (ABC == 'B') {
-                    cubeRoot_circle1ValueToUse_2 = Mathf.Pow(resultValue, 3);
+                    cubeRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_2 + " as circle1 gives us result of " + resultValue);
                     operatorList_2.Add("cubeRoot");
                 } else if (ABC == 'C') {
@@ -1564,21 +1600,21 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("exponent2", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_1;
-                resultPartA = Mathf.Pow(circle1Value, 2);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_1;
-                resultPartA = Mathf.Pow(circle1Value, 3);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_1;
-                resultPartA = Mathf.Pow(circle1Value, 0.5f);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
             }
             else if (operatorWeUse == "cubeRoot")
             {
@@ -1586,9 +1622,9 @@ public class PuzzleManager : MonoBehaviour
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_1;
                 if (circle1Value < 0) {
-                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
+                    resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
                 } else if (circle1Value > 0) {
-                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                    resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
                 }
 
             }
@@ -1663,21 +1699,21 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("exponent2", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_2;
-                resultPartA = Mathf.Pow(circle1Value, 2);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_2;
-                resultPartA = Mathf.Pow(circle1Value, 3);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_2;
-                resultPartA = Mathf.Pow(circle1Value, 0.5f);
+                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
             }
             else if (operatorWeUse == "cubeRoot")
             {
@@ -1685,9 +1721,9 @@ public class PuzzleManager : MonoBehaviour
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_2;
                 if (circle1Value < 0) {
-                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
+                    resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
                 } else if (circle1Value > 0) {
-                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
+                    resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
                 }
             }
             if (circle1Value != 0)
@@ -1761,54 +1797,111 @@ public class PuzzleManager : MonoBehaviour
         {
             Debug.Log("in SetCircle()....  circleData is not null, circleData.value = " + circleData.value);
             float value = circleData.value;
-            if (TestIfIsInteger(value)) {
+            if (TestIfIsInteger(value)) 
+            {
                 circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString();
                 // turn off all the fraction stuff
-                for (int i = 1; i <= 7; i++) {
+                for (int i = 1; i <= 3; i++) {
                     circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
-            else if (Mathf.Abs(value) == 0.25f || CheckIfNumbersAreCloseEnough(Mathf.Abs(value), 1f / 3f) || Mathf.Abs(value) == 0.5f || CheckIfNumbersAreCloseEnough(Mathf.Abs(value), 2f / 3f) || Mathf.Abs(value) == 0.75f) {
-                // if the player screws up and gets a weird non-int number, we still need that number to appear on the circle
-                // so, if it's one of our pre-approved fractions, go ahead with the below code, otherwise set the textMeshPro text to the new value
+            else
+            // see whether a rational number will work, or if we have to use decimals
+            {
+                bool isNegative = false;
+                if (value < 0) {
+                    isNegative = true;
+                }
+
+                value = Mathf.Abs(value);
+
+                int numerator = -99999;
+                int denominator = -99999;
+
+                bool rationalFound = false;
+                for (int i = 1; i <= 30 && rationalFound == false; i++) 
+                {
+                    for (int j = 2; j <= 20 && rationalFound == false; j++) {
+                        if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j)) {
+                            if (rationalFound == false) {
+                                numerator = i;
+                                if (isNegative) {
+                                    numerator = -numerator;
+                                }
+                                denominator = j;
+
+                                Debug.Log("numerator: " + i + ", denominator: " + j);
+                                rationalFound = true;
+                            }
+                        }
+                    }
+                }
+
+                if (rationalFound == true) 
+                {
+                    // here we set the values into the circle gameObject
+                    circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";       // this child is for ints
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        circleGameObject.transform.GetChild(i).gameObject.SetActive(true);
+                    }
+                    circleGameObject.transform.GetChild(1).GetComponent<TextMeshPro>().text = numerator.ToString();    // numerator value
+                    circleGameObject.transform.GetChild(3).GetComponent<TextMeshPro>().text = denominator.ToString();
+
+                } else {
+                    // if we got to this point it means that we have to portray the number in decimals
+                    circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString("F3"); // this is for ints only
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
+                    }
+                }
+            }
+
+            //if (Mathf.Abs(value) == 0.25f || CheckIfNumbersAreCloseEnough(Mathf.Abs(value), 1f / 3f) || Mathf.Abs(value) == 0.5f || CheckIfNumbersAreCloseEnough(Mathf.Abs(value), 2f / 3f) || Mathf.Abs(value) == 0.75f) 
+            //{
+            //    // if the player screws up and gets a weird non-int number, we still need that number to appear on the circle
+            //    // so, if it's one of our pre-approved fractions, go ahead with the below code, otherwise set the textMeshPro text to the new value
                 
 
-                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
-                for (int i = 1; i <= 7; i++) {
-                    circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
-                }
-                if (value < 0) {
-                    circleGameObject.transform.GetChild(1).gameObject.SetActive(true);      // numerator_negative
-                } else {
-                    circleGameObject.transform.GetChild(1).gameObject.SetActive(false);     // numerator_negative
-                }
-                float absValue = Mathf.Abs(value);
-                if (absValue == 0.25f) {
-                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
-                    circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
-                } else if (CheckIfNumbersAreCloseEnough(absValue, 1f / 3f)) {
-                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
-                    circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
-                } else if (absValue == 0.5f) {
-                    circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
-                    circleGameObject.transform.GetChild(5).gameObject.SetActive(true);      // denominator_2
-                } else if (CheckIfNumbersAreCloseEnough(absValue, 2f / 3f)) {
-                    circleGameObject.transform.GetChild(3).gameObject.SetActive(true);      // numerator_2
-                    circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
-                } else if (absValue == 0.75f) {
-                    circleGameObject.transform.GetChild(4).gameObject.SetActive(true);      // numerator_3
-                    circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
-                }
-            } else {
-                Debug.Log("screwy value: " + value);
-                // if we got to this point then the value is a random useless (for the purposes of solving the puzzle) non-int
-                circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString("F3");
-                // turn off all the fraction stuff
-                for (int i = 1; i <= 7; i++)
-                {
-                    circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
-                }
-            }
+            //    circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
+            //    for (int i = 1; i <= 7; i++) {
+            //        circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
+            //    }
+            //    if (value < 0) {
+            //        circleGameObject.transform.GetChild(1).gameObject.SetActive(true);      // numerator_negative
+            //    } else {
+            //        circleGameObject.transform.GetChild(1).gameObject.SetActive(false);     // numerator_negative
+            //    }
+            //    float absValue = Mathf.Abs(value);
+            //    if (absValue == 0.25f) {
+            //        circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+            //        circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
+            //    } else if (CheckIfNumbersAreCloseEnough(absValue, 1f / 3f)) {
+            //        circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+            //        circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
+            //    } else if (absValue == 0.5f) {
+            //        circleGameObject.transform.GetChild(2).gameObject.SetActive(true);      // numerator_1
+            //        circleGameObject.transform.GetChild(5).gameObject.SetActive(true);      // denominator_2
+            //    } else if (CheckIfNumbersAreCloseEnough(absValue, 2f / 3f)) {
+            //        circleGameObject.transform.GetChild(3).gameObject.SetActive(true);      // numerator_2
+            //        circleGameObject.transform.GetChild(6).gameObject.SetActive(true);      // denominator_3
+            //    } else if (absValue == 0.75f) {
+            //        circleGameObject.transform.GetChild(4).gameObject.SetActive(true);      // numerator_3
+            //        circleGameObject.transform.GetChild(7).gameObject.SetActive(true);      // denominator_4
+            //    }
+            //} 
+            //else 
+            //{
+            //    Debug.Log("screwy value: " + value);
+            //    // if we got to this point then the value is a random useless (for the purposes of solving the puzzle) non-int
+            //    circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString("F3");
+            //    // turn off all the fraction stuff
+            //    for (int i = 1; i <= 7; i++)
+            //    {
+            //        circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
+            //    }
+            //}
 
             circleGameObject.SetActive(true);
             circleGameObject.GetComponent<Clickable>().valueOfThisCircle_orGoal = value;
@@ -2270,7 +2363,7 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
     public bool CheckIfNumbersAreCloseEnough(float num1, float num2) {
-        float marginOfError = 0.001f;
+        float marginOfError = 0.00001f;
         if (Mathf.Abs(num1 - num2) < marginOfError) {
             return true;
         } else {
@@ -2896,6 +2989,7 @@ public class PuzzleManager : MonoBehaviour
             Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
 
             Circle result = CreateResultCircle(c1, c1, oppy);
+            Debug.Log("in ExecuteCompletionOf_oneCircle_Math(), just created Circle result, where value is " + result.value);
             SetCircle(highlightedCircle1, result);
 
             highlightedCircle1.SetActive(true);
@@ -3009,7 +3103,7 @@ public class PuzzleManager : MonoBehaviour
             if (circleTally == 1 && operatorTally == 1) {
                 float circleValue = GetValueOfClickedCircle(temp);
                 float goalValue = GetValueOfGoal();
-                if (circleValue == goalValue) {
+                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue)) {
                     //Debug.Log("in kiddy mode: there is 1 circle and 1 operators, and the goal has been reached");
                     GameManager.instance.IncreaseNumberOfCompleted(1);
                     GameManager.instance.ChangeStat_Easy("solved", 1);
@@ -3059,7 +3153,7 @@ public class PuzzleManager : MonoBehaviour
                 // if the 1 circle value is the same as the goal
                 float circleValue = GetValueOfClickedCircle(temp);
                 float goalValue = GetValueOfGoal();
-                if (circleValue == goalValue) {
+                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue)) {
                     //Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
                     if (gameType == "timed") {
                         GameManager.instance.IncreaseScore(10);
@@ -3214,6 +3308,12 @@ public class PuzzleManager : MonoBehaviour
     //}
 
     public void ConvertToRational() {
+
+        float testFloat = 4.999f;
+        Debug.Log("testFloat: " + testFloat);
+        Debug.Log("using (int): " + (int)testFloat);
+        Debug.Log("using RoundToInt: " + Mathf.RoundToInt(testFloat));
+
         Circle temp = GetCircle_classObject_OfClickedCircle_gameObject(CircleA);
         float value = temp.value;
         bool isNegative = false;
@@ -3229,7 +3329,7 @@ public class PuzzleManager : MonoBehaviour
         bool rationalFound = false;
 
         for (int i = 1; i <= 30; i++) { 
-            for (int j = 1; j <= 10; j++) { 
+            for (int j = 2; j <= 10; j++) { 
                 if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j)) {
                     if (rationalFound == false) {
                         if (isNegative)
@@ -3253,3 +3353,6 @@ public class PuzzleManager : MonoBehaviour
 
 
 }
+
+
+
