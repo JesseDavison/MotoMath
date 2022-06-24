@@ -61,7 +61,7 @@ public class PuzzleManager : MonoBehaviour
     public Clickable OperatorAScript;
     public Clickable OperatorBScript;
     public GameObject Goal;
-
+            // https://store.steampowered.com/app/868270/The_Cycle_Frontier/?snr=1_4_4__118
     public GameObject ExplosionImage;
     Explosion explosion;
 
@@ -84,6 +84,7 @@ public class PuzzleManager : MonoBehaviour
     Sparkle sparkleScript5;
     Sparkle sparkleScript6;
 
+    public GameObject vehicle;
 
 
     public List<Circle> listOfAllCircles;
@@ -3177,8 +3178,6 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-
-
     }
 
 
@@ -3206,24 +3205,32 @@ public class PuzzleManager : MonoBehaviour
 
         } else {
             // begin "animating" the explosion
-            if (explosionFinished) {
-                // then load a new puzzle
-                if (gameType == "timed") {
-                    if (timerGlobal.GetTimeRemaining() > 0)
-                    {
-                        //Debug.Log("AnimatePuzzleSolved() is now about to CreateNewPuzzle()");
-                        CreateNewPuzzle();
-                        //          it may be a good idea to create the new puzzle before it's needed, but that will require some work
-                    }
-                } else {
+   
+            //explosion.StartExplosion();
+            float xDestination = -7;
+            float yDestination = -3.5f;
+            sparkleScript1.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            sparkleScript2.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            sparkleScript3.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            sparkleScript4.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            sparkleScript5.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            sparkleScript6.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+
+            if (gameType == "timed")
+            {
+                if (timerGlobal.GetTimeRemaining() > 0)
+                {
+                    //Debug.Log("AnimatePuzzleSolved() is now about to CreateNewPuzzle()");
                     CreateNewPuzzle();
+                    //          it may be a good idea to create the new puzzle before it's needed, but that will require some work
                 }
-
-
-
-            } else {
-                explosion.StartExplosion();
             }
+            else
+            {
+                CreateNewPuzzle();
+            }
+            
+            
         }
     }
     public void AnimatePuzzleFailed(GameObject finalCircle, bool circleHasReachedGoal, bool fallingIntoToiletComplete) {

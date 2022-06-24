@@ -20,10 +20,15 @@ public class Sparkle : MonoBehaviour
     public float zAxisSpeedModifier = 1f;
 
 
+    public float speedForCurve = 5;
+
+    public GameObject vehicle;
+    VehicleBounce vehicleScript;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        vehicleScript = vehicle.GetComponent<VehicleBounce>();
     }
 
     // Update is called once per frame
@@ -31,6 +36,29 @@ public class Sparkle : MonoBehaviour
     {
 
         if (readyToMove) {
+
+
+            //time += Time.deltaTime * speedForCurve;
+            //Vector2 pos = Vector2.Lerp(startPosition, destination, time);
+            //if (curveUpIfTrue)
+            //{
+            //    pos.y += curve.Evaluate(time);      // for curve DOWNWARDS, just subtract instead of add
+            //}
+            //else
+            //{
+            //    pos.y -= curve.Evaluate(time);
+            //}
+            //transform.position = pos;
+            //speedForCurve *= curveSpeedMultiplier;
+
+
+
+
+
+
+
+
+
             time += Time.deltaTime * speed;
             Vector2 pos = Vector2.Lerp(startPosition, endPosition, time);
             if (curveUpIfTrue)
@@ -53,10 +81,12 @@ public class Sparkle : MonoBehaviour
             //} else if (time > 0.7f) {
             //    gameObject.SetActive(true);
             //}
-            if (time > 0.6f)
-            {
-                gameObject.SetActive(false);
-            }
+
+            //if (time > 0.6f)
+            //{
+            //    gameObject.SetActive(false);
+            //}
+
             //} else if (time > 0.5f) {
             //    gameObject.SetActive(true);
             //} else if (time > 0.4f) {
@@ -70,7 +100,10 @@ public class Sparkle : MonoBehaviour
                 readyToMove = false;
                 //destinationReached = true;
                 speed = defaultSpeed;
-                Debug.Log("time: " + time);             // find the highest time that is reached, so we can evenly space out on&off flickering for the sparkle effect
+                //Debug.Log("time: " + time);             // find the highest time that is reached, so we can evenly space out on&off flickering for the sparkle effect
+                //PuzzleManager.instance.AnimatePuzzleSolved(null, true, true);
+                //Debug.Log("sent message to animate puzzleSolved");
+                vehicleScript.AddSparkleArrived();
             }
             DoRotationStuff();
         }
@@ -84,10 +117,14 @@ public class Sparkle : MonoBehaviour
         endPosition = endPos;
         // if it's moving right, rotate clockwise... & vice-versa
         //zAxisRotationSpeed = endPos.x - startPos.x;
-        zAxisRotationSpeed = startPos.x = endPos.x;
+        //zAxisRotationSpeed = startPos.x = endPos.x;
+
+        speed = Random.Range(0.7f, 2);
+
+        zAxisRotationSpeed = Random.Range(-2, 2);
 
         time = 0;
-        zAxisRotationSpeed = 2;    // starts at 2 and slows down
+        //zAxisRotationSpeed = 2;    // starts at 2 and slows down
         gameObject.SetActive(true);
         readyToMove = true;
     }

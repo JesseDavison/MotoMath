@@ -194,7 +194,7 @@ public class Clickable : MonoBehaviour
                 //PuzzleManager.instance.AnimatePuzzleSolved(null, true, true);
                 gameObject.SetActive(false);
                 transform.localScale = originalScale;
-
+                speed = defaultSpeed;
             }
         }
     }

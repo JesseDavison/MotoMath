@@ -75,6 +75,8 @@ public class GameManager : MonoBehaviour
     string stat_easy_skipped = "stat_easy_skipped";
     string stat_easy_failed = "stat_easy_failed";
 
+    public TextMeshProUGUI xpGainText;
+
 
     // Start is called before the first frame update
     void Start()
@@ -172,7 +174,8 @@ public class GameManager : MonoBehaviour
         {
             endless_addition_count = PlayerPrefs.GetInt(stat_endless_addition, 0);
         }
-        if (PlayerPrefs.HasKey(stat_endless_subtraction)) {
+        if (PlayerPrefs.HasKey(stat_endless_subtraction)) 
+        {
             endless_subtraction_count = PlayerPrefs.GetInt(stat_endless_subtraction, 0);
         }
         if (PlayerPrefs.HasKey(stat_endless_multiplication))
@@ -630,6 +633,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+    public void ShowXPgain(int xpAmount) {
+        //xpGainText.gameObject.SetActive(true);
+        //xpGainText.text = "+ " + xpAmount + " XP";
+        xpGainText.GetComponent<XPnotify>().BeginMove(10);
+
+
+
+    }
 
 
 
