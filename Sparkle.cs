@@ -6,7 +6,7 @@ public class Sparkle : MonoBehaviour
 {
 
     public AnimationCurve curve;
-    public bool curveUpIfTrue = true;
+    //public bool curveUpIfTrue = true;
     public float time;
     public bool readyToMove = true;
     public float speed = 10;
@@ -21,6 +21,7 @@ public class Sparkle : MonoBehaviour
 
 
     public float speedForCurve = 5;
+    public float randomCurveMagnifier = 1;
 
     public GameObject vehicle;
     VehicleBounce vehicleScript;
@@ -61,14 +62,10 @@ public class Sparkle : MonoBehaviour
 
             time += Time.deltaTime * speed;
             Vector2 pos = Vector2.Lerp(startPosition, endPosition, time);
-            if (curveUpIfTrue)
-            {
-                pos.y += curve.Evaluate(time);      // for curve DOWNWARDS, just subtract instead of add
-            }
-            else
-            {
-                pos.y -= curve.Evaluate(time);
-            }
+
+            pos.y += curve.Evaluate(time) * randomCurveMagnifier;      
+      
+            
             transform.position = pos;
             speed *= curveSpeedMultiplier;
             zAxisRotationSpeed *= zAxisSpeedModifier;
@@ -119,9 +116,10 @@ public class Sparkle : MonoBehaviour
         //zAxisRotationSpeed = endPos.x - startPos.x;
         //zAxisRotationSpeed = startPos.x = endPos.x;
 
-        speed = Random.Range(0.7f, 2);
+        speed = Random.Range(1.3f, 2.2f);
 
         zAxisRotationSpeed = Random.Range(-2, 2);
+        randomCurveMagnifier = Random.Range(-2.5f, 2.5f);
 
         time = 0;
         //zAxisRotationSpeed = 2;    // starts at 2 and slows down

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class backgroundScroll : MonoBehaviour
+public class foregroundScroll : MonoBehaviour
 {
     // gonna try https://www.youtube.com/watch?v=P3hcopOkpa8
 
@@ -22,9 +22,7 @@ public class backgroundScroll : MonoBehaviour
 
     Vector3 defaultPosition;
 
-    public bool foregroundObject = false;
     public bool randomized = false;
-    public float randomizedMultiplier = 1;
 
     float defaultZposition;
     //float defaultYposition;
@@ -38,11 +36,7 @@ public class backgroundScroll : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
-        if (!foregroundObject) {
-            width = boxCollider.size.x * zoomMultiplier;
-        } 
-
-
+        width = boxCollider.size.x * zoomMultiplier;
         rb.velocity = new Vector2(speed, 0);
 
         vector = new Vector2(width * 2f, 0);
@@ -51,7 +45,8 @@ public class backgroundScroll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.x < -width) {
+        if (transform.position.x < -width)
+        {
             Reposition();
         }
 
@@ -70,15 +65,10 @@ public class backgroundScroll : MonoBehaviour
         //}
     }
 
-    void Reposition() {
+    void Reposition()
+    {
         //Debug.Log("reposition called");
-        if (randomized) {
-            randomizedMultiplier = Random.Range(0.5f, 4f);
-        } else {
-            randomizedMultiplier = 1;
-        }
-
-        transform.position = (Vector2)transform.position + vector * randomizedMultiplier;
+        transform.position = (Vector2)transform.position + vector;
         transform.position = new Vector3(transform.position.x, transform.position.y, defaultZposition);
     }
 }

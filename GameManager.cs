@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject OptionsUI;
     public GameObject LevelUI;
     public GameObject GameOverUI;
+    public GameObject InventoryUI;
 
     public TextMeshProUGUI MainMenu_BestScore_Timed;
     public TextMeshProUGUI MainMenu_BestScore_Endless;
@@ -76,6 +77,21 @@ public class GameManager : MonoBehaviour
     string stat_easy_failed = "stat_easy_failed";
 
     public TextMeshProUGUI xpGainText;
+    string XP_amount = "XP_amount";
+    public TextMeshProUGUI xpDisplay;
+    public TextMeshProUGUI xpDisplayForInventoryScreen;
+    public bool readyToFadeColorFromGreenToBlack = false;
+    float t = 0;
+
+    public TextMeshProUGUI weaponList;
+    public TextMeshProUGUI partsList;
+    string bulletsInInventory = "bulletsInInventory";
+    string rocketsInInventory = "rocketsInInventory";
+    string scrapmetalInInventory = "scrapmetalInInventory";
+    string gunpowderInInventory = "gunpowderInInventory";
+    string wiringInInventory = "wiringInInventory";
+
+
 
 
     // Start is called before the first frame update
@@ -99,6 +115,23 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void FixedUpdate()
+    {
+        if (readyToFadeColorFromGreenToBlack)
+        {
+            //Color currentColor = timerText.color;
+            //float fadeAmount = currentColor.a - (fadeSpeed * Time.deltaTime);
+            t += Time.deltaTime / 1.5f; // Divided by 5 to make it 5 seconds.
+            xpDisplay.color = Color.Lerp(Color.green, Color.black, t);
+
+            if (xpDisplay.color == Color.black)
+            {
+                readyToFadeColorFromGreenToBlack = false;
+                t = 0;
+            }
+        }
     }
 
     public void DisplayMainMenu() {
@@ -132,6 +165,7 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
     }
     public void DisplayStats() {
 
@@ -313,6 +347,7 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
     }
     public void DisplayOptions() {
         MainMenuUI.SetActive(false);
@@ -324,6 +359,7 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
     }
     public void DisplayLevel() {
         MainMenuUI.SetActive(false);
@@ -335,6 +371,41 @@ public class GameManager : MonoBehaviour
         OperatorsParent.SetActive(true);
         GoalParent.SetActive(true);
         GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
+        ShowXP();
+    }
+    public void DisplayInventory() {
+
+        string NumWithSpaces(int totalSpacesWanted, int theNumber) {
+            int temp = totalSpacesWanted - theNumber.ToString().Length;
+            string toReturn = "";
+            for (int i = 0; i < temp; i++) {
+                toReturn += "_";
+            }
+            toReturn += theNumber.ToString();
+            return toReturn;
+        }
+
+        weaponList.text =
+            "Bullets" + NumWithSpaces(10, PlayerPrefs.GetInt("bulletsInInventory", 0)) + "\n" +
+            "Rockets" + NumWithSpaces(10, PlayerPrefs.GetInt("rocketsInInventory", 0)) + "\n";
+
+        partsList.text =
+            "Scrap Metal" + NumWithSpaces(10, PlayerPrefs.GetInt("scrapmetalInInventory", 0)) + "\n" +
+            "Gun Powder" + NumWithSpaces(10, PlayerPrefs.GetInt("gunpowderInInventory", 0)) + "\n" +
+            "Wiring" + NumWithSpaces(10, PlayerPrefs.GetInt("wiringInInventory", 0)) + "\n";
+
+        MainMenuUI.SetActive(false);
+        StatsUI.SetActive(false);
+        OptionsUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        MathInProgress.SetActive(false);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
+        InventoryUI.SetActive(true);
+        xpDisplayForInventoryScreen.text = "XP: " + PlayerPrefs.GetInt(XP_amount);
     }
     public void StartTimedGame() {
         PuzzleManager.instance.gameType = "timed";
@@ -450,6 +521,65 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    public void IncreaseXP() {
+        // check which toggles are active
+        int XPtoGrant = 1;
+        if (PuzzleManager.instance.ReturnNegativeNumbersON_OFF()) { XPtoGrant += 1; }
+        if (PuzzleManager.instance.ReturnFractionsON_OFF()) { XPtoGrant += 1; }
+        if (PuzzleManager.instance.ReturnExponentsON_OFF()) { XPtoGrant += 1; }
+        if (PuzzleManager.instance.ReturnMultDivideON_OFF()) { XPtoGrant += 1; }
+        
+        if (gameType == "endless") {
+            // multiplier of 2 because this is "normal mode"
+            XPtoGrant *= 2;
+        } else if (gameType == "kiddy") { 
+            // do nothing
+        } else if (gameType == "timed") { 
+            // do nothing for now
+        } else if (gameType == "hard") { 
+            // do nothing for now, but probably a multiplier of 3 or 4
+        }
+
+        //ShowXPgain(XPtoGrant);
+        xpGainText.GetComponent<XPnotify>().BeginMove(XPtoGrant);
+
+
+        if (PlayerPrefs.HasKey(XP_amount))
+        {
+            int currentXP = PlayerPrefs.GetInt(XP_amount);
+            currentXP += XPtoGrant;
+            PlayerPrefs.SetInt(XP_amount, currentXP);
+            Debug.Log("xp just set to " + currentXP);
+            //xpDisplay.text = "Total XP: " + currentXP;
+        }
+        else
+        {
+            // then we create the playerPrefs key
+            PlayerPrefs.SetInt(XP_amount, XPtoGrant);
+            //xpDisplay.text = "";
+        }
+    }
+    public void ShowXP() { 
+        if (PlayerPrefs.HasKey(XP_amount)) {
+            xpDisplay.text = "Total XP: " + PlayerPrefs.GetInt(XP_amount);
+        } else {
+            xpDisplay.text = "";
+        }
+    }
+    public void ShowXPgainWithGreenFade()
+    {
+        //xpGainText.gameObject.SetActive(true);
+        //xpGainText.text = "+ " + xpAmount + " XP";
+        int currentXP = PlayerPrefs.GetInt(XP_amount);
+        xpDisplay.text = "Total XP: " + currentXP;
+        Debug.Log("inside ShowXPWithGreenFade: xp is " + currentXP);
+        xpDisplay.color = Color.green;
+        readyToFadeColorFromGreenToBlack = true;
+
+    }
+
+
+
     //  ************************************************************************************************************************************
     public void IncreaseNumberOfCompleted(int amount) {
         numberCompleted += amount;
@@ -633,16 +763,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //  ************************************************************************************************************************************
+    public void BuyBullets() {
+        // take away XP
+        int tempy = PlayerPrefs.GetInt(XP_amount);
+        if (tempy >= 10) {
+            PlayerPrefs.SetInt(XP_amount, tempy - 10);
 
+            // add bullets to inventory
+            PlayerPrefs.SetInt(bulletsInInventory, PlayerPrefs.GetInt(bulletsInInventory) + 10);
 
-    public void ShowXPgain(int xpAmount) {
-        //xpGainText.gameObject.SetActive(true);
-        //xpGainText.text = "+ " + xpAmount + " XP";
-        xpGainText.GetComponent<XPnotify>().BeginMove(10);
-
-
+            DisplayInventory();
+        }
+        else {
+            // do nothing cuz you are POOR
+            Debug.Log("omg so poor");
+        }
 
     }
+
+
 
 
 

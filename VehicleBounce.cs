@@ -41,6 +41,14 @@ public class VehicleBounce : MonoBehaviour
 
     public int sparklesArrived = 0;
 
+    public bool swerving = false;
+    public Vector3 swerveZoom_1;
+    public Vector3 swerveZoom_2;
+    public float swerveSpeed_1 = 1;
+    public float swerveSpeed_2 = 1;
+    public bool swerve_1_complete = false;
+    public bool swerve_2_complete = false;
+    public float swerveSpeedMultiplier = 1;
 
 
     // Start is called before the first frame update
@@ -96,8 +104,9 @@ public class VehicleBounce : MonoBehaviour
         if (sparklesArrived == 6)
         {
             //ShowXPgain();
-            GameManager.instance.ShowXPgain(10);
+            GameManager.instance.IncreaseXP();
             sparklesArrived = 0;
+            BeginSwerve();
         }
         //if (xpAppear) {
         //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
@@ -107,6 +116,43 @@ public class VehicleBounce : MonoBehaviour
         //        xpText.SetActive(false);
         //    }
         //}
+
+        if (swerving) { 
+            // move "back" by changing zoom, then over-correct, then back to zoom 1
+            if (swerve_1_complete == false) {
+                // move towards first swerve position
+
+                transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_1, Time.deltaTime * swerveSpeed_1);
+                //swerveSpeed_1 *= swerveSpeedMultiplier;
+
+
+                if (Vector3.Distance(transform.localScale, swerveZoom_1) < 0.01f) {
+                    swerve_1_complete = true;
+                }
+
+
+            } else if (swerve_2_complete == false) {
+                // move towards second swerve position
+                transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_2, Time.deltaTime * swerveSpeed_2);
+                //swerveSpeed_1 *= swerveSpeedMultiplier;
+
+                if (Vector3.Distance(transform.localScale, swerveZoom_2) < 0.01f) {
+                    swerve_2_complete = true;
+                }
+
+            }
+            else {
+                // move towards resting zoom level of 1
+                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * swerveSpeed_2);
+
+                if (Vector3.Distance(transform.localScale, Vector3.one) < 0.01f) {
+                    swerving = false;
+                    transform.localScale = Vector3.one;
+                }
+            }
+        }
+
+
     }
 
 
@@ -159,6 +205,35 @@ public class VehicleBounce : MonoBehaviour
     //    xpText.SetActive(true);
     //    xpAppear = true;
     //}
+
+
+    public void BeginSwerve() {
+
+        int rando = Random.Range(1, 3);
+        float temp1;
+        float temp2;
+
+
+        if (rando == 1) { 
+            temp1 = Random.Range(1.1f, 1.3f);
+            temp2 = Random.Range(0.7f, 0.9f);
+        } else {
+            temp2 = Random.Range(1.1f, 1.3f);
+            temp1 = Random.Range(0.7f, 0.9f);
+        }
+
+        swerveSpeed_1 = Random.Range(5, 10f);
+        swerveSpeed_2 = Random.Range(5, 10f);
+
+
+        swerveZoom_1 = new Vector3(temp1, temp1, temp1);
+
+        swerveZoom_2 = new Vector3(temp2, temp2, temp2);
+
+        swerve_1_complete = false;
+        swerve_2_complete = false;
+        swerving = true;
+    }
 
 
 }

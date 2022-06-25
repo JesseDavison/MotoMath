@@ -2329,37 +2329,59 @@ public class PuzzleManager : MonoBehaviour
         lowerLimitForResult = -125;
         //lowerLimitForCircleValue = -20;
         PlayerPrefs.SetInt(negativesPlayerPrefString, 1);
+        //GameManager.instance.negativeNumbersAllowed = true;
+        //GameManager.instance.TurnNegativeNumbersON();
     }
     public void TurnNegativeNumbersOFF() {
         negativeNumbersAllowed = false;
         lowerLimitForResult = 1;
         //lowerLimitForCircleValue = 1;
         PlayerPrefs.SetInt(negativesPlayerPrefString, 0);
+        //GameManager.instance.negativeNumbersAllowed = false;
+        //GameManager.instance.TurnNegativeNumbersOFF();
+    }
+    public bool ReturnNegativeNumbersON_OFF() {
+        return negativeNumbersAllowed;
     }
     public void TurnFractionsON() {
         fractionsAllowed = true;
         PlayerPrefs.SetInt(fractionsPlayerPrefString, 1);
+        //GameManager.instance.fractionsAllowed = true;
     }
     public void TurnFractionsOFF() {
         fractionsAllowed = false;
         PlayerPrefs.SetInt(fractionsPlayerPrefString, 0);
+        //GameManager.instance.fractionsAllowed = false;
+    }
+    public bool ReturnFractionsON_OFF() {
+        return fractionsAllowed;
     }
     public void TurnExponentsON() {
         exponentsAllowed = true;
         PlayerPrefs.SetInt(exponentsPlayerPrefString, 1);
+        //GameManager.instance.exponentsAllowed = true;
     }
     public void TurnExponentsOFF()
     {
         exponentsAllowed = false;
         PlayerPrefs.SetInt(exponentsPlayerPrefString, 0);
+        //GameManager.instance.exponentsAllowed = false;
+    }
+    public bool ReturnExponentsON_OFF() {
+        return exponentsAllowed;
     }
     public void TurnMultDivideON() {
         multDivideAllowed = true;
         PlayerPrefs.SetInt(multDividePlayerPrefString, 1);
+        //GameManager.instance.multDivideAllowed = true;
     }
     public void TurnMultDivideOFF() {
         multDivideAllowed = false;
         PlayerPrefs.SetInt(multDividePlayerPrefString, 0);
+        //GameManager.instance.multDivideAllowed = false;
+    }
+    public bool ReturnMultDivideON_OFF() {
+        return multDivideAllowed;
     }
     // ************************************************************************************************************
     // ************************************************************************************************************
@@ -2397,9 +2419,11 @@ public class PuzzleManager : MonoBehaviour
             A_B_C = 'C';
             //Debug.Log("we start by creating PartC");        // this isn't currently supported
         }
-        if (gameType != "kiddy")
+        if (gameType == "kiddy")
         {
             // hmm....
+            //A_B_C = 'B';
+            // we set it to 'B' because this forces the result to be an integer
         }
 
 
@@ -2432,31 +2456,49 @@ public class PuzzleManager : MonoBehaviour
             Debug.Log("%%%%%%%%%%%%%%%% ok we did division, and inputCircleA.value = " + inputCircleA.value + ", and inputCircleB.value = " + inputCircleB.value);
         } else if (oppy.type == "exponent2") {
             List<float> stuff = null;
-            if (A_B_C == 'A') {
-                stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
-            } else if (A_B_C == 'B') {
+            if (gameType == "kiddy") {
                 stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
+            } else {
+                if (A_B_C == 'A') {
+                    stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+                } else if (A_B_C == 'B') {
+                    stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
+                }
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "exponent3") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+            List<float> stuff = null;
+            if (gameType == "kiddy") {
+                stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, false);
+            } else {
+                stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+            }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "squareRoot") {
             List<float> stuff = null;
-            if (A_B_C == 'B') {
+            if (gameType == "kiddy") {
                 stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
-            } else if (A_B_C == 'A') {
-                stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
+            } else {
+                if (A_B_C == 'B') {
+                    stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
+                } else if (A_B_C == 'A') {
+                    stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
+                }
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         } else if (oppy.type == "cubeRoot") {
-            List<float> stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
+            List<float> stuff = null;
+            if (gameType == "kiddy") {
+                stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, false);
+            } else {
+                stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
+            }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
