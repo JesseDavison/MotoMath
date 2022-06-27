@@ -53,13 +53,22 @@ public class VehicleBounce : MonoBehaviour
     public bool initialAppearanceCompleted = false;
 
 
+    public bool isThisARocket = false;
+    public float rocketExplosionXPos;
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
         originalPos = transform.position;
         goalYpos = transform.position.y;
-        StartCoroutine(bounceLoop());
-        driftForwardBackward(5);
+        if (isThisARocket == false) {
+            StartCoroutine(bounceLoop());
+            driftForwardBackward(5);
+        }
+
         //bounceLoop();
         //xpTextOriginalPos = xpText.transform.position;
         //xpTextEndPos = new Vector3(xpText.transform.position.x, xpText.transform.position.y + 2, xpText.transform.position.z);
@@ -89,12 +98,15 @@ public class VehicleBounce : MonoBehaviour
         }
 
         Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
+        if (isThisARocket == false) {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
+        }
+
         transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);     // with SmoothDamp a lower speed means FASTER movement
 
 
 
-        if (readyToMoveAgain) {
+        if (readyToMoveAgain && !isThisARocket) {
             if (Mathf.Abs(goalXpos - transform.position.x) < 0.01f && readyToMoveAgain)
             {
                 // wait a random amount of time, then get a different goalXpos
@@ -108,11 +120,12 @@ public class VehicleBounce : MonoBehaviour
             //ShowXPgain();
             GameManager.instance.IncreaseXP();
             sparklesArrived = 0;
-            BeginSwerve();
+            //BeginSwerve();
             //GameManager.instance.PlayExplosion();
             GameManager.instance.ResolveConflict();
             //GameManager.instance.EnemyAppears();
             //GameManager.instance.EnemyDies();
+            //GameManager.instance.FireRocket();
         }
         //if (xpAppear) {
         //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
@@ -155,6 +168,12 @@ public class VehicleBounce : MonoBehaviour
                     swerving = false;
                     transform.localScale = Vector3.one;
                 }
+            }
+        }
+        if (isThisARocket) { 
+            if (transform.position.x > rocketExplosionXPos) {
+                GameManager.instance.EnemyDies();
+                gameObject.SetActive(false);
             }
         }
 
@@ -248,5 +267,13 @@ public class VehicleBounce : MonoBehaviour
         swerving = true;
     }
 
+
+    public void SetGoalPosForRocket(int xPos, int speed, float targetXPos) {
+        goalXpos = xPos;
+        actualHorizontalSpeed = speed;      // higher number means slower movement
+        rocketExplosionXPos = targetXPos;
+
+
+    }
 
 }

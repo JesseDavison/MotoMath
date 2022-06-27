@@ -93,9 +93,14 @@ public class GameManager : MonoBehaviour
 
 
     public Animator explodey;
+    public GameObject playerVehicle;
     public GameObject basicEnemy;
+    public Animator basicEnemyDriving;
+    public Animator basicEnemyExploding;
     public int puzzleSolvesSinceLastEnemy = 0;
-
+    public GameObject rocket;
+    public int rocketSpeed = 66;
+    public bool enemyInRange = false;
 
 
 
@@ -808,9 +813,12 @@ public class GameManager : MonoBehaviour
     public void EnemyAppears() {
 
         if (puzzleSolvesSinceLastEnemy == 2) {
-            basicEnemy.transform.position = new Vector3(19, 0, 1);
+            basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(21, 50, 0);
+            basicEnemy.transform.position = new Vector3(21, 0, 1);
 
             basicEnemy.SetActive(true);
+            basicEnemyDriving.gameObject.SetActive(true);
+            basicEnemyExploding.gameObject.SetActive(false);
             puzzleSolvesSinceLastEnemy = 0;
             basicEnemy.GetComponent<VehicleBounce>().driftForwardBackward(20);
         }
@@ -818,23 +826,41 @@ public class GameManager : MonoBehaviour
 
 
     }
+    
+    public void FireRocket(float targetXPos) {
+        rocket.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
+        // begin rocket slowly launching, & hitting enemy
+        rocket.SetActive(true);
+        rocket.GetComponent<VehicleBounce>().SetGoalPosForRocket(30, rocketSpeed, targetXPos);
+
+    }
+    
+    
     public void EnemyDies() {
-        if (basicEnemy.activeSelf == true) {
+        if (enemyInRange == true) {
             explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
             PlayExplosion();
-            basicEnemy.SetActive(false);
+            //basicEnemy.SetActive(false);
+            //basicEnemy.gameObject.transform.GetChild<
+            //basicEnemyExploding.
+            basicEnemyDriving.gameObject.SetActive(false);
+            basicEnemyExploding.gameObject.SetActive(true);
+            basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(-55, 33, 0);
+            enemyInRange = false;
         }
 
 
 
     }
     public void ResolveConflict() { 
-        if (basicEnemy.activeSelf == false) {
+        if (enemyInRange == false) {
             puzzleSolvesSinceLastEnemy += 1;
+            enemyInRange = true;
             EnemyAppears();
+
         } else {
             // the enemy is here, so kill it and make explosion
-            EnemyDies();
+            FireRocket(basicEnemy.transform.position.x);
         }
     }
 
