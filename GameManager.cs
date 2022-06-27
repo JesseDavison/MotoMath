@@ -92,6 +92,16 @@ public class GameManager : MonoBehaviour
     string wiringInInventory = "wiringInInventory";
 
 
+    public Animator explodey;
+    public GameObject basicEnemy;
+    public int puzzleSolvesSinceLastEnemy = 0;
+
+
+
+
+
+
+
 
 
     // Start is called before the first frame update
@@ -785,6 +795,48 @@ public class GameManager : MonoBehaviour
 
 
 
+
+
+
+    //  ************************************************************************************************************************************
+
+    public void PlayExplosion() {
+        explodey.gameObject.SetActive(true);
+        explodey.Play("explodeyAnim", -1, 0f);
+        //explodey.gameObject.SetActive(false);
+    }
+    public void EnemyAppears() {
+
+        if (puzzleSolvesSinceLastEnemy == 2) {
+            basicEnemy.transform.position = new Vector3(19, 0, 1);
+
+            basicEnemy.SetActive(true);
+            puzzleSolvesSinceLastEnemy = 0;
+            basicEnemy.GetComponent<VehicleBounce>().driftForwardBackward(20);
+        }
+
+
+
+    }
+    public void EnemyDies() {
+        if (basicEnemy.activeSelf == true) {
+            explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
+            PlayExplosion();
+            basicEnemy.SetActive(false);
+        }
+
+
+
+    }
+    public void ResolveConflict() { 
+        if (basicEnemy.activeSelf == false) {
+            puzzleSolvesSinceLastEnemy += 1;
+            EnemyAppears();
+        } else {
+            // the enemy is here, so kill it and make explosion
+            EnemyDies();
+        }
+    }
 
 }
 

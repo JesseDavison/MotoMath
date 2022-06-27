@@ -50,6 +50,8 @@ public class VehicleBounce : MonoBehaviour
     public bool swerve_2_complete = false;
     public float swerveSpeedMultiplier = 1;
 
+    public bool initialAppearanceCompleted = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +59,7 @@ public class VehicleBounce : MonoBehaviour
         originalPos = transform.position;
         goalYpos = transform.position.y;
         StartCoroutine(bounceLoop());
-        driftForwardBackward();
+        driftForwardBackward(5);
         //bounceLoop();
         //xpTextOriginalPos = xpText.transform.position;
         //xpTextEndPos = new Vector3(xpText.transform.position.x, xpText.transform.position.y + 2, xpText.transform.position.z);
@@ -88,7 +90,7 @@ public class VehicleBounce : MonoBehaviour
 
         Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
-        transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);
+        transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);     // with SmoothDamp a lower speed means FASTER movement
 
 
 
@@ -107,6 +109,10 @@ public class VehicleBounce : MonoBehaviour
             GameManager.instance.IncreaseXP();
             sparklesArrived = 0;
             BeginSwerve();
+            //GameManager.instance.PlayExplosion();
+            GameManager.instance.ResolveConflict();
+            //GameManager.instance.EnemyAppears();
+            //GameManager.instance.EnemyDies();
         }
         //if (xpAppear) {
         //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
@@ -163,7 +169,7 @@ public class VehicleBounce : MonoBehaviour
         float delay = Random.Range(minTimeBetweenMOVE, maxTimeBetweenMOVE);
         yield return new WaitForSeconds(delay);
         //Debug.Log("waiting for " + delay + " seconds");
-        driftForwardBackward();
+        driftForwardBackward(0);
     }
 
 
@@ -183,13 +189,20 @@ public class VehicleBounce : MonoBehaviour
         //float currentTime = 
     }
 
-    void driftForwardBackward() {
+    public void driftForwardBackward(int forcedSpeed) {
         // pick a spot to go to
         goalXpos = Random.Range(minXpos, maxXpos);
 
 
         // pick a speed
-        actualHorizontalSpeed = Random.Range(minHorizontalSpeed, maxHorizontalSpeed);
+
+
+        if (forcedSpeed != 0) {
+            actualHorizontalSpeed = forcedSpeed;
+        } else {
+            actualHorizontalSpeed = Random.Range(minHorizontalSpeed, maxHorizontalSpeed);
+        }
+
 
         // toggle the boolean
         readyToMoveAgain = true;
