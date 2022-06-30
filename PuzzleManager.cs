@@ -3184,6 +3184,7 @@ public class PuzzleManager : MonoBehaviour
                     GameManager.instance.IncreaseNumberOfFailed(1);
                     GameManager.instance.ChangeStat_Easy("failed", 1);
                     AnimatePuzzleFailed(temp, false, false);
+                    GameManager.instance.ResolveConflictUNFAVORABLY();
                 }
             } else {
                 DEBUG_outputCircleValues("puzzle not solved yet (kiddy)");
@@ -3214,6 +3215,7 @@ public class PuzzleManager : MonoBehaviour
                         GameManager.instance.ChangeStat_Endless("failed", 1);
                     }
                     AnimatePuzzleFailed(temp, false, false);
+                    GameManager.instance.ResolveConflictUNFAVORABLY();
                 }
             } else {
                 DEBUG_outputCircleValues("puzzle not solved yet (timed/endless)");

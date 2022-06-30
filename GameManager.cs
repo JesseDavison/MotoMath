@@ -93,15 +93,18 @@ public class GameManager : MonoBehaviour
 
 
     public Animator explodey;
+    public float durationOfExplosion;
     public GameObject playerVehicle;
     public GameObject basicEnemy;
     public Animator basicEnemyDriving;
     public Animator basicEnemyExploding;
+    public GameObject basicEnemyHull;
     public int puzzleSolvesSinceLastEnemy = 0;
     public GameObject rocket;
-    public int rocketSpeed = 66;
     public bool enemyInRange = false;
+    public float enemyAppearSpeed;
 
+    public TextMeshProUGUI LevelUI_ammoDisplay;
 
 
 
@@ -388,6 +391,11 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         ShowXP();
+
+        // update & display ammo levels
+        ShowLevelUI_ammoDisplay();
+
+
     }
     public void DisplayInventory() {
 
@@ -796,10 +804,47 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    public void BuyRocket()
+    {
+        // take away XP
+        int tempy = PlayerPrefs.GetInt(XP_amount);
+        if (tempy >= 10)
+        {
+            PlayerPrefs.SetInt(XP_amount, tempy - 10);
+
+            // add bullets to inventory
+            PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 1);
+
+            DisplayInventory();
+        }
+        else
+        {
+            // do nothing cuz you are POOR
+            Debug.Log("omg so poor");
+        }
+
+    }
+    public void SpendRocket() {
+        int tempy = PlayerPrefs.GetInt(rocketsInInventory);
+        if (tempy >= 1) {
+            PlayerPrefs.SetInt(rocketsInInventory, tempy - 1);
+            FireRocket();
+            //DisplayInventory();
+            // update the levelUI inventory thingy
+            ShowLevelUI_ammoDisplay();
+        } else {
+            Debug.Log("no rockets to shoot!");
+        }
+    }
 
 
-
-
+    public void ShowLevelUI_ammoDisplay() {
+        int numBullets = PlayerPrefs.GetInt(bulletsInInventory, 0);
+        int numRockets = PlayerPrefs.GetInt(rocketsInInventory, 0);
+        LevelUI_ammoDisplay.text =
+            "Bullets: " + numBullets + "\n" +
+            "Rockets: " + numRockets;
+    }
 
 
 
@@ -809,58 +854,108 @@ public class GameManager : MonoBehaviour
         explodey.gameObject.SetActive(true);
         explodey.Play("explodeyAnim", -1, 0f);
         //explodey.gameObject.SetActive(false);
+        StartCoroutine(ExplosionDisableAfterAnimation());
     }
+    IEnumerator ExplosionDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfExplosion);
+        explodey.gameObject.SetActive(false);
+    }
+
+
     public void EnemyAppears() {
 
-        if (puzzleSolvesSinceLastEnemy == 2) {
-            basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(21, 50, 0);
-            basicEnemy.transform.position = new Vector3(21, 0, 1);
 
-            basicEnemy.SetActive(true);
-            basicEnemyDriving.gameObject.SetActive(true);
-            basicEnemyExploding.gameObject.SetActive(false);
-            puzzleSolvesSinceLastEnemy = 0;
-            basicEnemy.GetComponent<VehicleBounce>().driftForwardBackward(20);
-        }
+        //basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(21, 50, 0);
+        basicEnemy.transform.position = new Vector3(21, 0, 1);
 
+        basicEnemy.SetActive(true);
+        basicEnemyDriving.gameObject.SetActive(true);
+        basicEnemyExploding.gameObject.SetActive(false);
+        puzzleSolvesSinceLastEnemy = 0;
+        basicEnemy.GetComponent<VehicleBounce>().driftForwardBackward(enemyAppearSpeed);
+        basicEnemy.GetComponent<VehicleBounce>().midBounce = true;
+
+        enemyInRange = true;
 
 
     }
     
-    public void FireRocket(float targetXPos) {
+    public void FireRocket() {
         rocket.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
         // begin rocket slowly launching, & hitting enemy
         rocket.SetActive(true);
-        rocket.GetComponent<VehicleBounce>().SetGoalPosForRocket(30, rocketSpeed, targetXPos);
+        //rocket.GetComponent<Rocket>().SetGoalPosForRocket(30, rocketSpeed, targetXPos);
+        rocket.GetComponent<Rocket>().LaunchRocket();
+
+    }
+    public void FireGuns() { 
+
+    }
+    public void EnemyFiresRocket() {
+        rocket.transform.position = basicEnemy.transform.position + new Vector3(0, 0.5f, 0);
+        rocket.SetActive(true);
+        rocket.GetComponent<Rocket>().LaunchRocketBackward();
+
+    }
+    public void EnemyFiresGuns() { 
 
     }
     
     
-    public void EnemyDies() {
-        if (enemyInRange == true) {
-            explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
-            PlayExplosion();
-            //basicEnemy.SetActive(false);
-            //basicEnemy.gameObject.transform.GetChild<
-            //basicEnemyExploding.
-            basicEnemyDriving.gameObject.SetActive(false);
-            basicEnemyExploding.gameObject.SetActive(true);
-            basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(-55, 33, 0);
-            enemyInRange = false;
-        }
+    public void EnemyExplodes() {
+
+        explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
+        PlayExplosion();
+        //basicEnemy.SetActive(false);
+        //basicEnemy.gameObject.transform.GetChild<
+        //basicEnemyExploding.
+        //basicEnemyDriving.gameObject.SetActive(false);
+        //basicEnemyExploding.gameObject.SetActive(true);
+        //basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(-55, 33, 0);
 
 
+        // turn off the normal enemy
+        basicEnemy.SetActive(false);
+        // turn on the hull
+        basicEnemyHull.transform.position = basicEnemy.transform.position - new Vector3(6.5f, 0, 0);
+        basicEnemyHull.SetActive(true);
+        // kick off the hull-bouncing script
+        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing();
 
+        enemyInRange = false;
+      
     }
-    public void ResolveConflict() { 
+    public void PlayerExplodes() {
+        explodey.transform.position = playerVehicle.transform.position + new Vector3(-6.6f, -3.95f, 0);
+        PlayExplosion();
+        //playerVehicle.SetActive(false);
+    }
+    public void ResolveConflictFavorably() { 
         if (enemyInRange == false) {
             puzzleSolvesSinceLastEnemy += 1;
-            enemyInRange = true;
-            EnemyAppears();
+
+            int rando = Random.Range(1, 2);
+
+            if (rando == 1) {
+                EnemyAppears();
+            }
 
         } else {
             // the enemy is here, so kill it and make explosion
-            FireRocket(basicEnemy.transform.position.x);
+            SpendRocket();
+
+            // or shoot guns
+
+            // or enemy shoots and player dodges
+
+        }
+    }
+    public void ResolveConflictUNFAVORABLY() { 
+        if (enemyInRange == false) { 
+
+        } else {
+            Debug.Log("resolving unfavorably");
+            EnemyFiresRocket();
         }
     }
 

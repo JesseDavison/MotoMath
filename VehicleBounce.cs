@@ -18,7 +18,7 @@ public class VehicleBounce : MonoBehaviour
     public float actualHorizontalSpeed;
     public float minXpos = -2;
     public float maxXpos = 0.5f;
-    public bool moving = true;
+    //public bool moving = true;
 
     public float currentXpos;
     public float goalXpos;
@@ -49,12 +49,16 @@ public class VehicleBounce : MonoBehaviour
     public bool swerve_1_complete = false;
     public bool swerve_2_complete = false;
     public float swerveSpeedMultiplier = 1;
+    public int swerve1_Zvalue;
+    public int swerve2_Zvalue;
 
     public bool initialAppearanceCompleted = false;
 
+    public bool supposedToBeOffScreen = false;
 
-    public bool isThisARocket = false;
-    public float rocketExplosionXPos;
+
+    //public bool isThisARocket = false;
+    //public float rocketExplosionXPos;
 
 
 
@@ -64,10 +68,9 @@ public class VehicleBounce : MonoBehaviour
     {
         originalPos = transform.position;
         goalYpos = transform.position.y;
-        if (isThisARocket == false) {
-            StartCoroutine(bounceLoop());
-            driftForwardBackward(5);
-        }
+
+        StartCoroutine(bounceLoop());
+        driftForwardBackward(30);
 
         //bounceLoop();
         //xpTextOriginalPos = xpText.transform.position;
@@ -98,15 +101,15 @@ public class VehicleBounce : MonoBehaviour
         }
 
         Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
-        if (isThisARocket == false) {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
-        }
+
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
+
 
         transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);     // with SmoothDamp a lower speed means FASTER movement
 
 
 
-        if (readyToMoveAgain && !isThisARocket) {
+        if (readyToMoveAgain && supposedToBeOffScreen == false) {
             if (Mathf.Abs(goalXpos - transform.position.x) < 0.01f && readyToMoveAgain)
             {
                 // wait a random amount of time, then get a different goalXpos
@@ -122,7 +125,7 @@ public class VehicleBounce : MonoBehaviour
             sparklesArrived = 0;
             //BeginSwerve();
             //GameManager.instance.PlayExplosion();
-            GameManager.instance.ResolveConflict();
+            GameManager.instance.ResolveConflictFavorably();
             //GameManager.instance.EnemyAppears();
             //GameManager.instance.EnemyDies();
             //GameManager.instance.FireRocket();
@@ -140,7 +143,7 @@ public class VehicleBounce : MonoBehaviour
             // move "back" by changing zoom, then over-correct, then back to zoom 1
             if (swerve_1_complete == false) {
                 // move towards first swerve position
-
+                transform.position = new Vector3(transform.position.x, transform.position.y, swerve1_Zvalue);
                 transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_1, Time.deltaTime * swerveSpeed_1);
                 //swerveSpeed_1 *= swerveSpeedMultiplier;
 
@@ -152,6 +155,7 @@ public class VehicleBounce : MonoBehaviour
 
             } else if (swerve_2_complete == false) {
                 // move towards second swerve position
+                transform.position = new Vector3(transform.position.x, transform.position.y, swerve2_Zvalue);
                 transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_2, Time.deltaTime * swerveSpeed_2);
                 //swerveSpeed_1 *= swerveSpeedMultiplier;
 
@@ -162,6 +166,7 @@ public class VehicleBounce : MonoBehaviour
             }
             else {
                 // move towards resting zoom level of 1
+                transform.position = new Vector3(transform.position.x, transform.position.y, 1);    // 1 is the default z value
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * swerveSpeed_2);
 
                 if (Vector3.Distance(transform.localScale, Vector3.one) < 0.01f) {
@@ -170,12 +175,12 @@ public class VehicleBounce : MonoBehaviour
                 }
             }
         }
-        if (isThisARocket) { 
-            if (transform.position.x > rocketExplosionXPos) {
-                GameManager.instance.EnemyDies();
-                gameObject.SetActive(false);
-            }
-        }
+        //if (isThisARocket) { 
+        //    if (transform.position.x > rocketExplosionXPos) {
+        //        GameManager.instance.EnemyDies();
+        //        gameObject.SetActive(false);
+        //    }
+        //}
 
 
     }
@@ -208,26 +213,45 @@ public class VehicleBounce : MonoBehaviour
         //float currentTime = 
     }
 
-    public void driftForwardBackward(int forcedSpeed) {
+    public void driftForwardBackward(float forcedSpeed) {
         // pick a spot to go to
-        goalXpos = Random.Range(minXpos, maxXpos);
+        if (supposedToBeOffScreen == false) {
+            goalXpos = Random.Range(minXpos, maxXpos);
 
 
-        // pick a speed
+            // pick a speed
 
 
-        if (forcedSpeed != 0) {
-            actualHorizontalSpeed = forcedSpeed;
-        } else {
-            actualHorizontalSpeed = Random.Range(minHorizontalSpeed, maxHorizontalSpeed);
+            if (forcedSpeed != 0)
+            {
+                actualHorizontalSpeed = forcedSpeed;
+            }
+            else
+            {
+                actualHorizontalSpeed = Random.Range(minHorizontalSpeed, maxHorizontalSpeed);
+            }
+
+
+            // toggle the boolean
+            readyToMoveAgain = true;
         }
 
-
-        // toggle the boolean
-        readyToMoveAgain = true;
         
     }
-
+    public void DriveAwayForward() {
+        goalXpos = 21;
+        readyToMoveAgain = true;
+        supposedToBeOffScreen = true;
+    }
+    public void DriveAwayBackward() {
+        goalXpos = -10;
+        readyToMoveAgain = true;
+        supposedToBeOffScreen = true;
+    }
+    public void BringVehicleBackOnScreen() {
+        supposedToBeOffScreen = false;
+        driftForwardBackward(0);
+    }
     public void AddSparkleArrived() {
         sparklesArrived += 1;
     }
@@ -238,24 +262,48 @@ public class VehicleBounce : MonoBehaviour
     //    xpAppear = true;
     //}
 
-
+    //public void BeginRandomSwerve() {
+    //    BeginSwerve();
+    //}
     public void BeginSwerve() {
+        // if it swerves "left" then z-value should be 1
 
-        int rando = Random.Range(1, 3);
+        // if it swerves "right" then z should be -1, and then get changed back to 1
+
+
+
         float temp1;
         float temp2;
 
-
-        if (rando == 1) { 
+        //if (swerveLeftToAvoidHull == true) {
+        //    temp1 = 0.7f;   // go far "left" because the enemy hull will appear in FRONT OF the player vehicle
+        //    temp2 = 1.05f;
+        
+        int rando = Random.Range(1, 3);
+        if (rando == 1)
+        {
+            // swerving "right" first, so z should be -1
             temp1 = Random.Range(1.1f, 1.3f);
             temp2 = Random.Range(0.7f, 0.9f);
-        } else {
+            swerve1_Zvalue = -1;
+            swerve2_Zvalue = 1;
+        }
+        else
+        {
+            // swerving "left" first, so z should be 1
             temp2 = Random.Range(1.1f, 1.3f);
             temp1 = Random.Range(0.7f, 0.9f);
+            swerve1_Zvalue = 1;
+            swerve2_Zvalue = -1;
         }
+
+        
+
+
 
         swerveSpeed_1 = Random.Range(5, 10f);
         swerveSpeed_2 = Random.Range(5, 10f);
+
 
 
         swerveZoom_1 = new Vector3(temp1, temp1, temp1);
@@ -268,12 +316,12 @@ public class VehicleBounce : MonoBehaviour
     }
 
 
-    public void SetGoalPosForRocket(int xPos, int speed, float targetXPos) {
-        goalXpos = xPos;
-        actualHorizontalSpeed = speed;      // higher number means slower movement
-        rocketExplosionXPos = targetXPos;
+    //public void SetGoalPosForRocket(int xPos, int speed, float targetXPos) {
+    //    goalXpos = xPos;
+    //    actualHorizontalSpeed = speed;      // higher number means slower movement
+    //    rocketExplosionXPos = targetXPos;
 
 
-    }
+    //}
 
 }
