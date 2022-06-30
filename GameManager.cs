@@ -878,6 +878,10 @@ public class GameManager : MonoBehaviour
         enemyInRange = true;
 
 
+        // enemies can appear behind player... the player moves forward
+
+
+
     }
     
     public void FireRocket() {
@@ -930,7 +934,108 @@ public class GameManager : MonoBehaviour
         PlayExplosion();
         //playerVehicle.SetActive(false);
     }
-    public void ResolveConflictFavorably() { 
+    public void ResolveConflictFavorably() {
+        // need to work out UI
+        //      main menu
+        //      levelUI
+        //      post-game summary UI
+        //      inventory: it's a roguelike so let's keep inventory simple: there's ammo, currency, scraps. When you replace a part the old one is gone.
+
+
+
+        // intermediate step before level loads, so that longer animations can play out without obstruction/distraction
+
+
+        // player randomly shown sign: "Supplies Ahead" or something
+        //      button appears to allow player to buy stuff, including fuel, ammo, and convert scrap into weapons & items 
+        //      tiny chance that created weapons & items will have good stats
+        //      ITEMS: engine, turbo booster, supercharger, transmission, gear assembly, 
+        //      what is the point of stats if the only thing that changes is how much damage your attacks do? what stats could there be???
+        //      ARMOR rebuild, to allow survival of one attack (that occurs when a puzzle is failed)
+        //          so, we could play with the theme, and whatever the armor thing is, it gives you some amount of failed-puzzle survival
+        //          e.g., you upgraded the armor on the sides, and you now have +0.48 towards your next hit protection
+        //          getting hit takes away 1.0 hit protection
+
+
+
+        // STATS
+        //      tire quality, as tires degrade over time and you have to buy new ones... better tires degrade slower 
+        //      + chance to shoot extra bullets/rockets/whatever
+        //      + chance to crit
+        //      + 
+
+        //  when a bonus procs, an announcement is made on-screen
+
+
+
+        // WEAPONS
+        //      flamethrower
+        //      grappling hook
+        //      chain saw
+        //      minigun
+        //      cannon
+        //      caltrops, spikes of some sort, Czech hedgehogs 
+        //      mortars
+        //      missiles
+        //      classic bombs
+        //  when weapon is ineffective against enemy an announcement is made on-screen
+
+
+        // ITEMS, Loot
+        //      some skins unlocked via achievements, others are small-chance random drops
+        //      fuel
+        //      scrap metal, scrap electronics, explosive 
+        //      ammo, parts to make ammo
+
+
+
+
+        // VEHICLES
+        //      tank treads
+        //      vehicles have states of degradation
+
+
+
+
+        // player gains progress toward BOSS BATTLE
+        //      boss battle is a timed mode
+        //      it starts when player hits the button that pops up when the bar is full
+        //      bar fills when enemies die only
+
+
+
+
+        // the longer a player goes without failing a puzzle, the higher their $$ multiplier gets... thus incentivizing longer play sessions
+        //      their "combo" builds
+
+
+        // after X number of puzzle types are solved, certain things are unlocked for purchase, and the announcement is made in-game
+        //      sometimes you have to unlock during every playthrough
+
+
+        // defeating an enemy rewards you with loot... small amount of scrap for normal enemies with very rare chance for new items
+        // beat a boss: at least 1 new items with small chance of high quality
+        //      need to work out what the stats might be
+
+
+        // after a certain weapon type is purchased X number of times, it is unlocked permanently
+
+
+        // the time allowed for boss battles increases slightly as total number of puzzle solves increases
+        //      thus, when starting fresh, your first boss battle will have very little time available
+
+
+
+        // MAYBE
+        //      player starts with only addition & subtraction... after a certain amount of solves the option to unlock more operators appears as a button
+        //      if the player hits the button the game is now harder, $ gains increase, and they get a one-time $ bonus
+
+
+        // the player is present with a "WARNING: RAVINE AHEAD" sign, and a time-limit appears, and the next puzzle solve makes them accelerate
+        // to be able to successfully jump the ravine
+        //      failure = too slow and death
+
+
         if (enemyInRange == false) {
             puzzleSolvesSinceLastEnemy += 1;
 
@@ -940,6 +1045,12 @@ public class GameManager : MonoBehaviour
                 EnemyAppears();
             }
 
+            // or player gathers small amount of resources
+
+
+            // or enemy rocket appears out of nowhere and player successfully dodges it
+
+
         } else {
             // the enemy is here, so kill it and make explosion
             SpendRocket();
@@ -948,14 +1059,53 @@ public class GameManager : MonoBehaviour
 
             // or enemy shoots and player dodges
 
+
+
+            // different enemies have different most-effective ways to kill them... so the player can toggle between which weapon is active
+
+            // no visible health bar... instead, vehicles become increasingly damaged... there is an invisible health number that dictates progression from one stage of broken-ness to the next
+
+
+
+
         }
     }
     public void ResolveConflictUNFAVORABLY() { 
-        if (enemyInRange == false) { 
+        // when a player's run ends, a summary screen appears, showing what they gained on that run
+        
+        
+        if (enemyInRange == false) {
 
-        } else {
-            Debug.Log("resolving unfavorably");
+
+            // or rocket comes out of nowhere and player dies, and enemy appears during death sequence
+
+
+            // or player hits a small object and gets a flat tire, causing vehicle to limp... this is a good outcome because most alternatives are death
+
+
+
+            // if the player SKIPS, they don't die, but they lose a lot of money or progress or something
+            //      basically, if failing a puzzle has a high chance of permadeath, then Skipping is a better alternative because you won't die (the first time)
+            //      SKIP could mean using nitrous to run away, and refilling nitrous is done via purchases or loot
+
+
+
+            // if the player QUITS... i don't know... should this be treated as a Pause button, or do we want the games to be played from start to finish in one sitting?
+            //      for example, "warning, if you quit all progress will be lost"
+
+
+        }
+        else {
+
             EnemyFiresRocket();
+
+
+            // or enemy fires guns
+
+            // or enemy drops caltrops
+
+
+
         }
     }
 

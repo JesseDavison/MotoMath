@@ -348,7 +348,7 @@ public class PuzzleManager : MonoBehaviour
                     case 6:
                         name = "cubeRoot"; break;
                 }
-                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type) {
+                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type && firstOperator_2or1 == TestWhetherONEorTWOcircleOperator(name)) {
                     finished = true;
                 } else if (secondOperatorForKiddyModeTrueOrFalse == false) {
                     finished = true;
@@ -817,6 +817,7 @@ public class PuzzleManager : MonoBehaviour
             float value = circle1.value;
             if (value < 0) {
                 result = -Mathf.Pow(-value, 1f / 3f);
+                Debug.Log(" (((((((((((((((((((((((((((((((((((((((((((((((( just did cubeRoot, value: " + value + ", and result: " + result);
             } else if (value > 0) {
                     result = Mathf.Pow(value, 1f / 3f);
             } else {
@@ -1812,6 +1813,7 @@ public class PuzzleManager : MonoBehaviour
                 bool isNegative = false;
                 if (value < 0) {
                     isNegative = true;
+                    Debug.Log("um yah it is negative");
                 }
 
                 value = Mathf.Abs(value);
@@ -1851,6 +1853,12 @@ public class PuzzleManager : MonoBehaviour
 
                 } else {
                     // if we got to this point it means that we have to portray the number in decimals
+
+                    // IS THE NUMBER NEGATIVE?????
+                    if (isNegative) {
+                        value *= -1;
+                    }
+
                     circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString("F3"); // this is for ints only
                     for (int i = 1; i <= 3; i++)
                     {
@@ -2830,6 +2838,13 @@ public class PuzzleManager : MonoBehaviour
                     ExecuteCompletionOf_oneCircle_Math(false);
                     DetermineWhetherPuzzleIsSolved();
                 }
+                // adding this June 30 2022
+                DetermineWhether_twoCircle_MathIsComplete();
+                if (math_twoCircle_IsComplete) {
+                    executingONEcircleMath = false;
+                    executingTWOcircleMath = true;
+                    ExecuteCompletionOf_twoCircle_Math();
+                }
             }
         } else if (circle1selected == true && operatorSelected == true && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false) { 
             // ready to accept circle2... CANNOT change circle1 at this point... but CAN CHANGE operator
@@ -2874,6 +2889,13 @@ public class PuzzleManager : MonoBehaviour
                         executingONEcircleMath = true;
                         executingTWOcircleMath = false;
                         ExecuteCompletionOf_oneCircle_Math(false);
+                    }
+                    // adding this June 30 2022
+                    DetermineWhether_twoCircle_MathIsComplete();
+                    if (math_twoCircle_IsComplete) {
+                        executingONEcircleMath = false;
+                        executingTWOcircleMath = true;
+                        ExecuteCompletionOf_twoCircle_Math();
                     }
                 }
             }
