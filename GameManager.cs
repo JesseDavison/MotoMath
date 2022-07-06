@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI MainMenu_BestScore_Kiddy;
 
     public GameObject CirclesParent;
-    public GameObject MathInProgress;
+    //public GameObject MathInProgress;
     public GameObject OperatorsParent;
     public GameObject GoalParent;
 
@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI partsList;
     string bulletsInInventory = "bulletsInInventory";
     string rocketsInInventory = "rocketsInInventory";
+    string bombsInInventory = "bombsInInventory";
     string scrapmetalInInventory = "scrapmetalInInventory";
     string gunpowderInInventory = "gunpowderInInventory";
     string wiringInInventory = "wiringInInventory";
@@ -104,7 +105,17 @@ public class GameManager : MonoBehaviour
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
-    public TextMeshProUGUI LevelUI_ammoDisplay;
+    public TextMeshProUGUI LevelUI_ammoDisplay_bullets;
+    public TextMeshProUGUI LevelUI_ammoDisplay_rockets;
+    public TextMeshProUGUI LevelUI_ammoDisplay_bombs;
+    public TextMeshProUGUI LevelUI_ammoDisplay_caltrops;
+    public TextMeshProUGUI LevelUI_ammoDisplay_flamethrower;
+    public TextMeshProUGUI LevelUI_scrapMetal;
+    public TextMeshProUGUI LevelUI_electronics;
+
+    public GameObject LOOT_rocket_icon;
+    public LootAnimationScript LOOT_rocket_script;
+    public int LOOT_rocket_quantity;
 
 
 
@@ -115,24 +126,25 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        #if UNITY_EDITOR
-            Debug.unityLogger.logEnabled = true;
-        #else
+#if UNITY_EDITOR
+        Debug.unityLogger.logEnabled = true;
+#else
             Debug.unityLogger.logEnabled=false;
-        #endif
+#endif
         // from https://answers.unity.com/questions/1301347/how-to-disable-all-logging-on-release-build.html
 
 
         instance = this;
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
         timerPuzzle = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
+        LOOT_rocket_script = LOOT_rocket_icon.GetComponent<LootAnimationScript>();
         DisplayMainMenu();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void FixedUpdate()
@@ -152,25 +164,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void DisplayMainMenu() {
-        if (PlayerPrefs.HasKey("HighScore_Timed")) {
+    public void DisplayMainMenu()
+    {
+        if (PlayerPrefs.HasKey("HighScore_Timed"))
+        {
             int highScore = PlayerPrefs.GetInt("HighScore_Timed");
             MainMenu_BestScore_Timed.text = "High Score: " + highScore;
-        } else {
+        }
+        else
+        {
             MainMenu_BestScore_Timed.text = "";
         }
 
-        if (PlayerPrefs.HasKey(stat_endless_solved)) {
+        if (PlayerPrefs.HasKey(stat_endless_solved))
+        {
             int tally = PlayerPrefs.GetInt(stat_endless_solved);
             MainMenu_BestScore_Endless.text = "Total Completed: " + tally;
-        } else {
+        }
+        else
+        {
             MainMenu_BestScore_Endless.text = "";
         }
 
-        if (PlayerPrefs.HasKey(stat_easy_solved)) {
+        if (PlayerPrefs.HasKey(stat_easy_solved))
+        {
             int tally = PlayerPrefs.GetInt(stat_easy_solved);
             MainMenu_BestScore_Kiddy.text = "Total Completed: " + tally;
-        } else {
+        }
+        else
+        {
             MainMenu_BestScore_Kiddy.text = "";
         }
 
@@ -179,13 +201,14 @@ public class GameManager : MonoBehaviour
         OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
-        MathInProgress.SetActive(false);
+        //MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
     }
-    public void DisplayStats() {
+    public void DisplayStats()
+    {
 
         int numSpaces = 10;
 
@@ -198,12 +221,14 @@ public class GameManager : MonoBehaviour
         {
             stats_TimedMode.text = "";
         }
-        
-        string NumWithSpaces(int totalSpacesWanted, int theNumber) {
+
+        string NumWithSpaces(int totalSpacesWanted, int theNumber)
+        {
 
             int temp = totalSpacesWanted - theNumber.ToString().Length;
             string toReturn = "";
-            for (int i = 0; i < temp; i++) {
+            for (int i = 0; i < temp; i++)
+            {
                 toReturn += "_";
             }
             toReturn += theNumber.ToString();
@@ -222,11 +247,11 @@ public class GameManager : MonoBehaviour
         int endless_skipped = 0;
         int endless_failed = 0;
 
-        if (PlayerPrefs.HasKey(stat_endless_addition)) 
+        if (PlayerPrefs.HasKey(stat_endless_addition))
         {
             endless_addition_count = PlayerPrefs.GetInt(stat_endless_addition, 0);
         }
-        if (PlayerPrefs.HasKey(stat_endless_subtraction)) 
+        if (PlayerPrefs.HasKey(stat_endless_subtraction))
         {
             endless_subtraction_count = PlayerPrefs.GetInt(stat_endless_subtraction, 0);
         }
@@ -361,31 +386,33 @@ public class GameManager : MonoBehaviour
         OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
-        MathInProgress.SetActive(false);
+        //MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
     }
-    public void DisplayOptions() {
+    public void DisplayOptions()
+    {
         MainMenuUI.SetActive(false);
         StatsUI.SetActive(false);
         OptionsUI.SetActive(true);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
-        MathInProgress.SetActive(false);
+        //MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
     }
-    public void DisplayLevel() {
+    public void DisplayLevel()
+    {
         MainMenuUI.SetActive(false);
         StatsUI.SetActive(false);
         OptionsUI.SetActive(false);
         LevelUI.SetActive(true);
         CirclesParent.SetActive(true);
-        MathInProgress.SetActive(true);
+        //MathInProgress.SetActive(true);
         OperatorsParent.SetActive(true);
         GoalParent.SetActive(true);
         GameOverUI.SetActive(false);
@@ -393,16 +420,19 @@ public class GameManager : MonoBehaviour
         ShowXP();
 
         // update & display ammo levels
-        ShowLevelUI_ammoDisplay();
+        ShowLevelUI_ammo_and_inventory_Display();
 
 
     }
-    public void DisplayInventory() {
+    public void DisplayInventory()
+    {
 
-        string NumWithSpaces(int totalSpacesWanted, int theNumber) {
+        string NumWithSpaces(int totalSpacesWanted, int theNumber)
+        {
             int temp = totalSpacesWanted - theNumber.ToString().Length;
             string toReturn = "";
-            for (int i = 0; i < temp; i++) {
+            for (int i = 0; i < temp; i++)
+            {
                 toReturn += "_";
             }
             toReturn += theNumber.ToString();
@@ -423,14 +453,15 @@ public class GameManager : MonoBehaviour
         OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
-        MathInProgress.SetActive(false);
+        //MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(true);
         xpDisplayForInventoryScreen.text = "XP: " + PlayerPrefs.GetInt(XP_amount);
     }
-    public void StartTimedGame() {
+    public void StartTimedGame()
+    {
         PuzzleManager.instance.gameType = "timed";
         gameType = "timed";
         ResetScore();
@@ -444,7 +475,8 @@ public class GameManager : MonoBehaviour
         PuzzleTimerThatMoves.SetActive(true);
         SetNumberOfPuzzlesRemaining(20);     // change to 20 later
     }
-    public void StartEndlessGame() {
+    public void StartEndlessGame()
+    {
         PuzzleManager.instance.gameType = "endless";
         gameType = "endless";
         ResetScore();
@@ -461,7 +493,8 @@ public class GameManager : MonoBehaviour
         PuzzlesRemainingDisplay.text = "";
 
     }
-    public void StartKiddyGame() {
+    public void StartKiddyGame()
+    {
         PuzzleManager.instance.gameType = "kiddy";
         gameType = "kiddy";
         ResetScore();
@@ -477,7 +510,8 @@ public class GameManager : MonoBehaviour
 
         PuzzlesRemainingDisplay.text = "";
     }
-    public void EndGameEarly() {        // tie this to the "Main Menu" button in the level UI
+    public void EndGameEarly()
+    {        // tie this to the "Main Menu" button in the level UI
         DisplayMainMenu();
         timerPuzzle.PausePuzzleTimer();
         timerGlobal.PauseGlobalTimer();
@@ -491,7 +525,8 @@ public class GameManager : MonoBehaviour
         //e.g., if there are 2 puzzles left & 50 seconds left, then it reduces by 25 seconds
         //e.g., base case: if there is 1 puzzle left, then it reduces by ALL seconds
 
-        if (gameType == "timed") {
+        if (gameType == "timed")
+        {
             if (puzzlesRemaining <= 1)
             {
                 DisplayGameOver(false, true);
@@ -503,11 +538,15 @@ public class GameManager : MonoBehaviour
                 timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
                 PuzzleManager.instance.CreateNewPuzzle();
             }
-        } else if (gameType == "endless") {
+        }
+        else if (gameType == "endless")
+        {
             IncreaseNumberOfSkipped(1);
             ChangeStat_Endless("skipped", 1);
             PuzzleManager.instance.CreateNewPuzzle();
-        } else if (gameType == "kiddy") {
+        }
+        else if (gameType == "kiddy")
+        {
             IncreaseNumberOfSkipped(1);
             ChangeStat_Easy("skipped", 1);
             PuzzleManager.instance.CreateNewPuzzle();
@@ -516,27 +555,39 @@ public class GameManager : MonoBehaviour
 
 
     }
-    public void DecreaseNumberOfPuzzlesRemaining(int amount) {
+    public void DecreaseNumberOfPuzzlesRemaining(int amount)
+    {
         puzzlesRemaining -= amount;
         PuzzlesRemainingDisplay.text = "Remaining: " + puzzlesRemaining;
-        if (puzzlesRemaining == 0) {
+        if (puzzlesRemaining == 0)
+        {
             DisplayGameOver(false, false);
         }
     }
-    public void SetNumberOfPuzzlesRemaining(int amount) {
+    public void SetNumberOfPuzzlesRemaining(int amount)
+    {
         puzzlesRemaining = amount;
         PuzzlesRemainingDisplay.text = "Remaining: " + puzzlesRemaining;
     }
     //  ************************************************************************************************************************************
-    public void IncreaseScore(int amount) {
+    public void IncreaseScore(int amount)
+    {
         score += amount;
         ScoreDisplay.text = "Score: " + score;
+
+        //// temporary:
+        //BuyRocket();
+
     }
-    public void ResetScore() {
+    public void ResetScore()
+    {
         score = 0;
-        if (gameType == "timed") {
+        if (gameType == "timed")
+        {
             ScoreDisplay.text = "Score: " + score;
-        } else {
+        }
+        else
+        {
             numberCompleted = 0;
             numberSkipped = 0;
             numberFailed = 0;
@@ -544,22 +595,30 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    public void IncreaseXP() {
+    public void IncreaseXP()
+    {
         // check which toggles are active
         int XPtoGrant = 1;
         if (PuzzleManager.instance.ReturnNegativeNumbersON_OFF()) { XPtoGrant += 1; }
         if (PuzzleManager.instance.ReturnFractionsON_OFF()) { XPtoGrant += 1; }
         if (PuzzleManager.instance.ReturnExponentsON_OFF()) { XPtoGrant += 1; }
         if (PuzzleManager.instance.ReturnMultDivideON_OFF()) { XPtoGrant += 1; }
-        
-        if (gameType == "endless") {
+
+        if (gameType == "endless")
+        {
             // multiplier of 2 because this is "normal mode"
             XPtoGrant *= 2;
-        } else if (gameType == "kiddy") { 
+        }
+        else if (gameType == "kiddy")
+        {
             // do nothing
-        } else if (gameType == "timed") { 
+        }
+        else if (gameType == "timed")
+        {
             // do nothing for now
-        } else if (gameType == "hard") { 
+        }
+        else if (gameType == "hard")
+        {
             // do nothing for now, but probably a multiplier of 3 or 4
         }
 
@@ -582,10 +641,14 @@ public class GameManager : MonoBehaviour
             //xpDisplay.text = "";
         }
     }
-    public void ShowXP() { 
-        if (PlayerPrefs.HasKey(XP_amount)) {
-            xpDisplay.text = "Total XP: " + PlayerPrefs.GetInt(XP_amount);
-        } else {
+    public void ShowXP()
+    {
+        if (PlayerPrefs.HasKey(XP_amount))
+        {
+            xpDisplay.text = "$" + PlayerPrefs.GetInt(XP_amount);
+        }
+        else
+        {
             xpDisplay.text = "";
         }
     }
@@ -594,7 +657,7 @@ public class GameManager : MonoBehaviour
         //xpGainText.gameObject.SetActive(true);
         //xpGainText.text = "+ " + xpAmount + " XP";
         int currentXP = PlayerPrefs.GetInt(XP_amount);
-        xpDisplay.text = "Total XP: " + currentXP;
+        xpDisplay.text = "$" + currentXP;
         Debug.Log("inside ShowXPWithGreenFade: xp is " + currentXP);
         xpDisplay.color = Color.green;
         readyToFadeColorFromGreenToBlack = true;
@@ -604,37 +667,48 @@ public class GameManager : MonoBehaviour
 
 
     //  ************************************************************************************************************************************
-    public void IncreaseNumberOfCompleted(int amount) {
+    public void IncreaseNumberOfCompleted(int amount)
+    {
         numberCompleted += amount;
-        if (gameType == "endless") {
+        if (gameType == "endless")
+        {
             int temp = PlayerPrefs.GetInt("Endless_Tally");
             temp += amount;
             PlayerPrefs.SetInt("Endless_Tally", temp);
-        } else if (gameType == "kiddy") {
+        }
+        else if (gameType == "kiddy")
+        {
             int temp = PlayerPrefs.GetInt("Kiddy_Tally");
             temp += amount;
             PlayerPrefs.SetInt("Kiddy_Tally", temp);
         }
         UpdateCompletedSkippedFailed();
     }
-    public void IncreaseNumberOfSkipped(int amount) {
+    public void IncreaseNumberOfSkipped(int amount)
+    {
         numberSkipped += amount;
         UpdateCompletedSkippedFailed();
     }
-    public void IncreaseNumberOfFailed(int amount) {
+    public void IncreaseNumberOfFailed(int amount)
+    {
         numberFailed += amount;
         UpdateCompletedSkippedFailed();
     }
-    public void UpdateCompletedSkippedFailed() {
+    public void UpdateCompletedSkippedFailed()
+    {
         string type = "wtf";
-        if (gameType == "endless") {
+        if (gameType == "endless")
+        {
             type = "ENDLESS MODE\n";
-        } else if (gameType == "kiddy") {
+        }
+        else if (gameType == "kiddy")
+        {
             type = "EASY MODE\n";
         }
         ScoreDisplay.text = type + "Completed: " + numberCompleted + "\nSkipped: " + numberSkipped + "\nFailed: " + numberFailed;
     }
-    public void ResetCompletedSkippedFailed() {
+    public void ResetCompletedSkippedFailed()
+    {
         numberCompleted = 0;
         numberSkipped = 0;
         numberFailed = 0;
@@ -642,15 +716,17 @@ public class GameManager : MonoBehaviour
     }
 
     //  ************************************************************************************************************************************
-    public void DisplayGameOverForButtonPress() {  // this exists so i can press the "quit" button on the levelUI
-        DisplayGameOver(false, true); 
+    public void DisplayGameOverForButtonPress()
+    {  // this exists so i can press the "quit" button on the levelUI
+        DisplayGameOver(false, true);
     }
-    public void DisplayGameOver(bool timeRanOut, bool removeAllSpeedPoints) {
+    public void DisplayGameOver(bool timeRanOut, bool removeAllSpeedPoints)
+    {
         MainMenuUI.SetActive(false);
         OptionsUI.SetActive(false);
         LevelUI.SetActive(false);
         CirclesParent.SetActive(false);
-        MathInProgress.SetActive(false);
+        //MathInProgress.SetActive(false);
         OperatorsParent.SetActive(false);
         GoalParent.SetActive(false);
 
@@ -712,85 +788,137 @@ public class GameManager : MonoBehaviour
 
         GameOverUI.SetActive(true);
     }
-    public void QuitGame() {
+    public void QuitGame()
+    {
         Application.Quit();
     }
-    public void ResetPlayerPrefs() {
+    public void ResetPlayerPrefs()
+    {
         PlayerPrefs.DeleteAll();
     }
     //  ************************************************************************************************************************************
-    public void ChangeStat_Endless(string typeOfOperator_orCategory, int amount) {
+    public void ChangeStat_Endless(string typeOfOperator_orCategory, int amount)
+    {
         string keyName = "";
-        if (typeOfOperator_orCategory == "addition") {
+        if (typeOfOperator_orCategory == "addition")
+        {
             keyName = stat_endless_addition;
-        } else if (typeOfOperator_orCategory == "subtraction") {
+        }
+        else if (typeOfOperator_orCategory == "subtraction")
+        {
             keyName = stat_endless_subtraction;
-        } else if (typeOfOperator_orCategory == "multiplication") {
+        }
+        else if (typeOfOperator_orCategory == "multiplication")
+        {
             keyName = stat_endless_multiplication;
-        } else if (typeOfOperator_orCategory == "division") {
+        }
+        else if (typeOfOperator_orCategory == "division")
+        {
             keyName = stat_endless_division;
-        } else if (typeOfOperator_orCategory == "exponent2") {
+        }
+        else if (typeOfOperator_orCategory == "exponent2")
+        {
             keyName = stat_endless_exponent2;
-        } else if (typeOfOperator_orCategory == "exponent3") {
+        }
+        else if (typeOfOperator_orCategory == "exponent3")
+        {
             keyName = stat_endless_exponent3;
-        } else if (typeOfOperator_orCategory == "squareRoot") {
+        }
+        else if (typeOfOperator_orCategory == "squareRoot")
+        {
             keyName = stat_endless_squareRoot;
-        } else if (typeOfOperator_orCategory == "cubeRoot") {
+        }
+        else if (typeOfOperator_orCategory == "cubeRoot")
+        {
             keyName = stat_endless_cubeRoot;
-        } else if (typeOfOperator_orCategory == "solved") {
+        }
+        else if (typeOfOperator_orCategory == "solved")
+        {
             keyName = stat_endless_solved;
-        } else if (typeOfOperator_orCategory == "skipped") {
+        }
+        else if (typeOfOperator_orCategory == "skipped")
+        {
             keyName = stat_endless_skipped;
-        } else if (typeOfOperator_orCategory == "failed") {
+        }
+        else if (typeOfOperator_orCategory == "failed")
+        {
             keyName = stat_endless_failed;
         }
 
         if (PlayerPrefs.HasKey(keyName))
         {
             PlayerPrefs.SetInt(keyName, amount + PlayerPrefs.GetInt(keyName));
-        } else {
+        }
+        else
+        {
             PlayerPrefs.SetInt(keyName, amount);
         }
     }
     public void ChangeStat_Easy(string typeOfOperator_orCategory, int amount)
     {
         string keyName = "";
-        if (typeOfOperator_orCategory == "addition") {
+        if (typeOfOperator_orCategory == "addition")
+        {
             keyName = stat_easy_addition;
-        } else if (typeOfOperator_orCategory == "subtraction") {
+        }
+        else if (typeOfOperator_orCategory == "subtraction")
+        {
             keyName = stat_easy_subtraction;
-        } else if (typeOfOperator_orCategory == "multiplication") {
+        }
+        else if (typeOfOperator_orCategory == "multiplication")
+        {
             keyName = stat_easy_multiplication;
-        } else if (typeOfOperator_orCategory == "division") {
+        }
+        else if (typeOfOperator_orCategory == "division")
+        {
             keyName = stat_easy_division;
-        } else if (typeOfOperator_orCategory == "exponent2") {
+        }
+        else if (typeOfOperator_orCategory == "exponent2")
+        {
             keyName = stat_easy_exponent2;
-        } else if (typeOfOperator_orCategory == "exponent3") {
-            keyName = stat_easy_exponent3; 
-        } else if (typeOfOperator_orCategory == "squareRoot") {
-            keyName = stat_easy_squareRoot; 
-        } else if (typeOfOperator_orCategory == "cubeRoot") {
+        }
+        else if (typeOfOperator_orCategory == "exponent3")
+        {
+            keyName = stat_easy_exponent3;
+        }
+        else if (typeOfOperator_orCategory == "squareRoot")
+        {
+            keyName = stat_easy_squareRoot;
+        }
+        else if (typeOfOperator_orCategory == "cubeRoot")
+        {
             keyName = stat_easy_cubeRoot;
-        } else if (typeOfOperator_orCategory == "solved") {
+        }
+        else if (typeOfOperator_orCategory == "solved")
+        {
             keyName = stat_easy_solved;
-        } else if (typeOfOperator_orCategory == "skipped") {
+        }
+        else if (typeOfOperator_orCategory == "skipped")
+        {
             keyName = stat_easy_skipped;
-        } else if (typeOfOperator_orCategory == "failed") {
+        }
+        else if (typeOfOperator_orCategory == "failed")
+        {
             keyName = stat_easy_failed;
         }
 
-        if (PlayerPrefs.HasKey(keyName)) {
+        if (PlayerPrefs.HasKey(keyName))
+        {
             PlayerPrefs.SetInt(keyName, amount + PlayerPrefs.GetInt(keyName));
-        } else {
+        }
+        else
+        {
             PlayerPrefs.SetInt(keyName, amount);
         }
     }
 
     //  ************************************************************************************************************************************
-    public void BuyBullets() {
+    public void BuyBullets()
+    {
         // take away XP
         int tempy = PlayerPrefs.GetInt(XP_amount);
-        if (tempy >= 10) {
+        if (tempy >= 10)
+        {
             PlayerPrefs.SetInt(XP_amount, tempy - 10);
 
             // add bullets to inventory
@@ -798,7 +926,8 @@ public class GameManager : MonoBehaviour
 
             DisplayInventory();
         }
-        else {
+        else
+        {
             // do nothing cuz you are POOR
             Debug.Log("omg so poor");
         }
@@ -814,8 +943,10 @@ public class GameManager : MonoBehaviour
 
             // add bullets to inventory
             PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 1);
+            Debug.Log("bought a rocket");
 
-            DisplayInventory();
+            //DisplayInventory();
+            ShowLevelUI_ammo_and_inventory_Display();
         }
         else
         {
@@ -824,45 +955,57 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    public void SpendRocket() {
+    public void LootRocket() {
+        PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory, 0) + LOOT_rocket_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void SpendRocket()
+    {
         int tempy = PlayerPrefs.GetInt(rocketsInInventory);
-        if (tempy >= 1) {
+        if (tempy >= 1)
+        {
             PlayerPrefs.SetInt(rocketsInInventory, tempy - 1);
             FireRocket();
             //DisplayInventory();
             // update the levelUI inventory thingy
-            ShowLevelUI_ammoDisplay();
-        } else {
+            ShowLevelUI_ammo_and_inventory_Display();
+        }
+        else
+        {
             Debug.Log("no rockets to shoot!");
         }
     }
 
 
-    public void ShowLevelUI_ammoDisplay() {
+    public void ShowLevelUI_ammo_and_inventory_Display()
+    {
         int numBullets = PlayerPrefs.GetInt(bulletsInInventory, 0);
         int numRockets = PlayerPrefs.GetInt(rocketsInInventory, 0);
-        LevelUI_ammoDisplay.text =
-            "Bullets: " + numBullets + "\n" +
-            "Rockets: " + numRockets;
+        LevelUI_ammoDisplay_bullets.text = numBullets.ToString();
+        LevelUI_ammoDisplay_rockets.text = numRockets.ToString();
+
     }
 
 
 
     //  ************************************************************************************************************************************
 
-    public void PlayExplosion() {
+    public void PlayExplosion()
+    {
         explodey.gameObject.SetActive(true);
         explodey.Play("explodeyAnim", -1, 0f);
         //explodey.gameObject.SetActive(false);
         StartCoroutine(ExplosionDisableAfterAnimation());
     }
-    IEnumerator ExplosionDisableAfterAnimation() {
+    IEnumerator ExplosionDisableAfterAnimation()
+    {
         yield return new WaitForSeconds(durationOfExplosion);
         explodey.gameObject.SetActive(false);
     }
 
 
-    public void EnemyAppears() {
+    public void EnemyAppears()
+    {
 
 
         //basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(21, 50, 0);
@@ -883,8 +1026,9 @@ public class GameManager : MonoBehaviour
 
 
     }
-    
-    public void FireRocket() {
+
+    public void FireRocket()
+    {
         rocket.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
         // begin rocket slowly launching, & hitting enemy
         rocket.SetActive(true);
@@ -892,21 +1036,25 @@ public class GameManager : MonoBehaviour
         rocket.GetComponent<Rocket>().LaunchRocket();
 
     }
-    public void FireGuns() { 
+    public void FireGuns()
+    {
 
     }
-    public void EnemyFiresRocket() {
+    public void EnemyFiresRocket()
+    {
         rocket.transform.position = basicEnemy.transform.position + new Vector3(0, 0.5f, 0);
         rocket.SetActive(true);
         rocket.GetComponent<Rocket>().LaunchRocketBackward();
 
     }
-    public void EnemyFiresGuns() { 
+    public void EnemyFiresGuns()
+    {
 
     }
-    
-    
-    public void EnemyExplodes() {
+
+
+    public void EnemyExplodes()
+    {
 
         explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
         PlayExplosion();
@@ -927,14 +1075,30 @@ public class GameManager : MonoBehaviour
         basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing();
 
         enemyInRange = false;
-      
+
     }
-    public void PlayerExplodes() {
+
+    public void SpawnLoot(Vector2 startPosition, float zAxisRotationSpeed) {
+        int bulletsSpawned = 1;
+        // turn on bullet icon & animate it
+
+
+        LOOT_rocket_quantity = Random.Range(1, 4);
+        LOOT_rocket_icon.SetActive(true);
+        LOOT_rocket_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+        LOOT_rocket_script.StartMovement(LOOT_rocket_quantity);
+
+
+
+    }
+    public void PlayerExplodes()
+    {
         explodey.transform.position = playerVehicle.transform.position + new Vector3(-6.6f, -3.95f, 0);
         PlayExplosion();
         //playerVehicle.SetActive(false);
     }
-    public void ResolveConflictFavorably() {
+    public void ResolveConflictFavorably()
+    {
         // need to work out UI
         //      main menu
         //      levelUI
@@ -1036,12 +1200,14 @@ public class GameManager : MonoBehaviour
         //      failure = too slow and death
 
 
-        if (enemyInRange == false) {
+        if (enemyInRange == false)
+        {
             puzzleSolvesSinceLastEnemy += 1;
 
             int rando = Random.Range(1, 2);
 
-            if (rando == 1) {
+            if (rando == 1)
+            {
                 EnemyAppears();
             }
 
@@ -1051,7 +1217,9 @@ public class GameManager : MonoBehaviour
             // or enemy rocket appears out of nowhere and player successfully dodges it
 
 
-        } else {
+        }
+        else
+        {
             // the enemy is here, so kill it and make explosion
             SpendRocket();
 
@@ -1070,11 +1238,13 @@ public class GameManager : MonoBehaviour
 
         }
     }
-    public void ResolveConflictUNFAVORABLY() { 
+    public void ResolveConflictUNFAVORABLY()
+    {
         // when a player's run ends, a summary screen appears, showing what they gained on that run
-        
-        
-        if (enemyInRange == false) {
+
+
+        if (enemyInRange == false)
+        {
 
 
             // or rocket comes out of nowhere and player dies, and enemy appears during death sequence
@@ -1095,7 +1265,8 @@ public class GameManager : MonoBehaviour
 
 
         }
-        else {
+        else
+        {
 
             EnemyFiresRocket();
 
@@ -1110,4 +1281,3 @@ public class GameManager : MonoBehaviour
     }
 
 }
-

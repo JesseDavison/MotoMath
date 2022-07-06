@@ -7,6 +7,8 @@ public class XPnotify : MonoBehaviour
 {
     public Vector2 startPos;
     public Vector2 endPos;
+    public float endPosX;
+    public float endPosY;
     Vector2 midpoint;
     float halfwayDistance;
 
@@ -145,7 +147,7 @@ public class XPnotify : MonoBehaviour
         //Debug.Log("BeginMove() for bonusTime about to start");
         rectTransform.anchoredPosition = startPos;
 
-        TMProReference.text = "+ " + xpAmount + " XP";
+        TMProReference.text = "+ $" + xpAmount;
 
 
         //if (xpAmount > 3)
@@ -162,7 +164,7 @@ public class XPnotify : MonoBehaviour
         //TMProReference.text = "Bonus time: " + (int)additionalTime + " seconds";
         speed = defaultSpeed;
         speedMultiplier = defaultSpeedMultiplier;
-        endPos = new Vector2(-215, -130);
+        endPos = new Vector2(endPosX, endPosY);
         gameObject.SetActive(true);
         readyToMove = true;
     }

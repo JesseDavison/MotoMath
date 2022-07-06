@@ -46,6 +46,11 @@ public class Clickable : MonoBehaviour
     public Vector3 minScale = new Vector3(0, 0, 0);
     public Vector3 originalScale = new Vector3(2.2f, 2.2f, 2.2f);
 
+    public bool growing = false;
+    public Vector3 defaultScale;
+
+    public bool partOfCurrentPuzzle = false;
+
     public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
@@ -107,8 +112,12 @@ public class Clickable : MonoBehaviour
     public void TeleportToDefaultPosition() {
         speed = defaultSpeed;
         //Debug.Log("about to send " + gameObject.name + "to default position of " + defaultPosition);
-        transform.position = defaultPosition;
-        readyToMove = false;
+        //if (partOfCurrentPuzzle == true) {
+            transform.position = defaultPosition;
+            readyToMove = false;
+        //}
+        
+
     }
     public void BeginRotating() {
         rotating = true;
@@ -188,12 +197,20 @@ public class Clickable : MonoBehaviour
                 speed = speedCap;
             }
 
-            if (transform.localScale.x < 0.1f)
+            if (transform.localScale.x <= 0.1f)
             {
                 shrinking = false;
                 //PuzzleManager.instance.AnimatePuzzleSolved(null, true, true);
                 gameObject.SetActive(false);
                 transform.localScale = originalScale;
+                speed = defaultSpeed;
+            }
+        }
+        if (growing) {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, defaultScale, Time.deltaTime * speed);
+            speed *= speedMultiplier;
+            if (transform.localScale.x == defaultScale.x) {
+                growing = false;
                 speed = defaultSpeed;
             }
         }

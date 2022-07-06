@@ -147,7 +147,7 @@ public class HullWrecking : MonoBehaviour
         finishedBouncing = false;
         time = 0;
 
-        
+        GameManager.instance.SpawnLoot(startPosition, zAxisRotationSpeed);
 
 
     }

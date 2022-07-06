@@ -55,13 +55,13 @@ public class PuzzleManager : MonoBehaviour
     public Clickable CircleAScript;
     public Clickable CircleBScript;
     public Clickable CircleCScript;
-    public GameObject MathInProgress;
+    //public GameObject MathInProgress;
     public GameObject OperatorA;
     public GameObject OperatorB;
     public Clickable OperatorAScript;
     public Clickable OperatorBScript;
     public GameObject Goal;
-            // https://store.steampowered.com/app/868270/The_Cycle_Frontier/?snr=1_4_4__118
+    // https://store.steampowered.com/app/868270/The_Cycle_Frontier/?snr=1_4_4__118
     public GameObject ExplosionImage;
     Explosion explosion;
 
@@ -167,38 +167,53 @@ public class PuzzleManager : MonoBehaviour
         ToggleMultDivideOFF = GameObject.FindGameObjectWithTag("ToggleMultDivideOFF");
 
         // use playerPrefs to load the toggle values        
-        if (PlayerPrefs.HasKey(debugPlayerPrefString) && PlayerPrefs.GetInt(debugPlayerPrefString) == 1) {
+        if (PlayerPrefs.HasKey(debugPlayerPrefString) && PlayerPrefs.GetInt(debugPlayerPrefString) == 1)
+        {
             TurnDebugModeON();
             ToggleDebugON.GetComponent<Toggle>().isOn = true;
-        } else {
+        }
+        else
+        {
             TurnDebugModeOFF();
             ToggleDebugOFF.GetComponent<Toggle>().isOn = true;
         }
-        if (PlayerPrefs.HasKey(negativesPlayerPrefString) && PlayerPrefs.GetInt(negativesPlayerPrefString) == 1) {
+        if (PlayerPrefs.HasKey(negativesPlayerPrefString) && PlayerPrefs.GetInt(negativesPlayerPrefString) == 1)
+        {
             TurnNegativeNumbersON();
             ToggleNegativesON.GetComponent<Toggle>().isOn = true;
-        } else {
+        }
+        else
+        {
             TurnNegativeNumbersOFF();
             ToggleNegativesOFF.GetComponent<Toggle>().isOn = true;
         }
-        if (PlayerPrefs.HasKey(fractionsPlayerPrefString) && PlayerPrefs.GetInt(fractionsPlayerPrefString) == 1) {
+        if (PlayerPrefs.HasKey(fractionsPlayerPrefString) && PlayerPrefs.GetInt(fractionsPlayerPrefString) == 1)
+        {
             TurnFractionsON();
             ToggleFractionsON.GetComponent<Toggle>().isOn = true;
-        } else {
+        }
+        else
+        {
             TurnFractionsOFF();
             ToggleFractionsOFF.GetComponent<Toggle>().isOn = true;
         }
-        if (PlayerPrefs.HasKey(exponentsPlayerPrefString) && PlayerPrefs.GetInt(exponentsPlayerPrefString) == 1) {
+        if (PlayerPrefs.HasKey(exponentsPlayerPrefString) && PlayerPrefs.GetInt(exponentsPlayerPrefString) == 1)
+        {
             TurnExponentsON();
             ToggleExponentsON.GetComponent<Toggle>().isOn = true;
-        } else {
+        }
+        else
+        {
             TurnExponentsOFF();
             ToggleExponentsOFF.GetComponent<Toggle>().isOn = true;
         }
-        if (PlayerPrefs.HasKey(multDividePlayerPrefString) && PlayerPrefs.GetInt(multDividePlayerPrefString) == 1) {
+        if (PlayerPrefs.HasKey(multDividePlayerPrefString) && PlayerPrefs.GetInt(multDividePlayerPrefString) == 1)
+        {
             TurnMultDivideON();
             ToggleMultDivideON.GetComponent<Toggle>().isOn = true;
-        } else {
+        }
+        else
+        {
             TurnMultDivideOFF();
             ToggleMultDivideOFF.GetComponent<Toggle>().isOn = true;
         }
@@ -218,10 +233,12 @@ public class PuzzleManager : MonoBehaviour
 
     }
 
-    public class OpsAndCircles {
+    public class OpsAndCircles
+    {
         //Vector2 position;
     }
-    public class Operator : OpsAndCircles {
+    public class Operator : OpsAndCircles
+    {
         public string type;
         public static int numberOfThisTypeThatExist;
         public int IDnumber;
@@ -232,7 +249,8 @@ public class PuzzleManager : MonoBehaviour
         public char AorBorC;
         public string operatorGameObject_associatedWith;
 
-        public Operator(string name, char ABC) {
+        public Operator(string name, char ABC)
+        {
             type = name;
             AorBorC = ABC;
             IDnumber = numberOfThisTypeThatExist;
@@ -241,7 +259,8 @@ public class PuzzleManager : MonoBehaviour
         }
 
     }
-    public class Circle : OpsAndCircles {
+    public class Circle : OpsAndCircles
+    {
         public float value;
         public bool trueInt_falseFraction;
         public int numerator;
@@ -251,7 +270,8 @@ public class PuzzleManager : MonoBehaviour
         Vector2 position;
         public string circleGameObject_associatedWith;
 
-        public Circle(float val) {
+        public Circle(float val)
+        {
             //Debug.Log("about to create a new circle, with value: " + val);
             value = val;
             trueInt_falseFraction = true;
@@ -259,7 +279,8 @@ public class PuzzleManager : MonoBehaviour
             numberOfThisTypeThatExist += 1;
             position = new Vector2(0, 0);
         }
-        public Circle(float numerator, int denom) {
+        public Circle(float numerator, int denom)
+        {
             value = numerator / denom;
             numerator = (int)numerator;
             denominator = denom;
@@ -271,13 +292,15 @@ public class PuzzleManager : MonoBehaviour
     }
 
 
-    public Operator PickRandomOperator(char ABC, bool secondOperatorForKiddyModeTrueOrFalse, Operator firstOperatorForKiddyMode) {
+    public Operator PickRandomOperator(char ABC, bool secondOperatorForKiddyModeTrueOrFalse, Operator firstOperatorForKiddyMode)
+    {
         string name = "";
         bool finished = false;
 
         string firstOperator_2or1;
 
-        string TestWhetherONEorTWOcircleOperator(string opType) {
+        string TestWhetherONEorTWOcircleOperator(string opType)
+        {
 
             if (opType == "addition" || opType == "subtraction" || opType == "multiplication" || opType == "division")
             {
@@ -289,13 +312,17 @@ public class PuzzleManager : MonoBehaviour
             }
 
         }
-        if (secondOperatorForKiddyModeTrueOrFalse == true) {
+        if (secondOperatorForKiddyModeTrueOrFalse == true)
+        {
             firstOperator_2or1 = TestWhetherONEorTWOcircleOperator(firstOperatorForKiddyMode.type);
-        } else {
+        }
+        else
+        {
             firstOperator_2or1 = "";
         }
 
-        while (finished == false) {
+        while (finished == false)
+        {
             if (multDivideAllowed == true && exponentsAllowed == true)
             {
                 // then pick one of the 8
@@ -319,9 +346,12 @@ public class PuzzleManager : MonoBehaviour
                     case 8:
                         name = "cubeRoot"; break;
                 }
-                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type && firstOperator_2or1 == TestWhetherONEorTWOcircleOperator(name)) {
-                    finished = true; 
-                } else if (secondOperatorForKiddyModeTrueOrFalse == false) {
+                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type && firstOperator_2or1 == TestWhetherONEorTWOcircleOperator(name))
+                {
+                    finished = true;
+                }
+                else if (secondOperatorForKiddyModeTrueOrFalse == false)
+                {
                     finished = true;
                 }
             }
@@ -348,9 +378,12 @@ public class PuzzleManager : MonoBehaviour
                     case 6:
                         name = "cubeRoot"; break;
                 }
-                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type && firstOperator_2or1 == TestWhetherONEorTWOcircleOperator(name)) {
+                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type && firstOperator_2or1 == TestWhetherONEorTWOcircleOperator(name))
+                {
                     finished = true;
-                } else if (secondOperatorForKiddyModeTrueOrFalse == false) {
+                }
+                else if (secondOperatorForKiddyModeTrueOrFalse == false)
+                {
                     finished = true;
                 }
             }
@@ -377,9 +410,12 @@ public class PuzzleManager : MonoBehaviour
                         //case 8:
                         //    name = "cubeRoot"; break;
                 }
-                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type) {
+                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type)
+                {
                     finished = true;
-                } else if (secondOperatorForKiddyModeTrueOrFalse == false) {
+                }
+                else if (secondOperatorForKiddyModeTrueOrFalse == false)
+                {
                     finished = true;
                 }
             }
@@ -406,9 +442,12 @@ public class PuzzleManager : MonoBehaviour
                         //case 8:
                         //    name = "cubeRoot"; break;
                 }
-                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type) {
+                if (secondOperatorForKiddyModeTrueOrFalse == true && name != firstOperatorForKiddyMode.type)
+                {
                     finished = true;
-                } else if (secondOperatorForKiddyModeTrueOrFalse == false) {
+                }
+                else if (secondOperatorForKiddyModeTrueOrFalse == false)
+                {
                     finished = true;
                 }
             }
@@ -421,71 +460,87 @@ public class PuzzleManager : MonoBehaviour
         return temp;
     }
 
-    public List<float> CreateListOfPossibleCircleValues_forArithmetic(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public List<float> CreateListOfPossibleCircleValues_forArithmetic(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> toReturn = new List<float>();
 
-        if (negativesAllowed) {
-            for (int i = (int)maxValue * -1; i <= -2; i++) {
+        if (negativesAllowed)
+        {
+            for (int i = (int)maxValue * -1; i <= -2; i++)
+            {
                 toReturn.Add(i);
             }
         }
-        if (negativesAllowed && oneAllowed) {
+        if (negativesAllowed && oneAllowed)
+        {
             toReturn.Add(-1);
         }
-        if (negativesAllowed && fractionsAllowed) {
+        if (negativesAllowed && fractionsAllowed)
+        {
             // 
             toReturn.Add(-0.7500f);   // -3/4
-            toReturn.Add(-2f/3f);   // -2/3
+            toReturn.Add(-2f / 3f);   // -2/3
             toReturn.Add(-0.5f);    // -1/2
-            toReturn.Add(-1f/3f);   // -1/3
+            toReturn.Add(-1f / 3f);   // -1/3
             toReturn.Add(-0.25f);   // -1/4
         }
-        if (fractionsAllowed) {
+        if (fractionsAllowed)
+        {
             toReturn.Add(0.25f);
-            toReturn.Add(1f/3f);
+            toReturn.Add(1f / 3f);
             toReturn.Add(0.5f);
-            toReturn.Add(2f/3f);
+            toReturn.Add(2f / 3f);
             toReturn.Add(0.75f);
         }
-        if (oneAllowed) {
+        if (oneAllowed)
+        {
             toReturn.Add(1);
         }
-        for (int i = 2; i <= (int)maxValue; i++) {
+        for (int i = 2; i <= (int)maxValue; i++)
+        {
             toReturn.Add(i);
         }
 
         return toReturn;
     }
 
-    public List<float> CreateListOfPossibleCircleValues_forExponent2(float resultCap, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public List<float> CreateListOfPossibleCircleValues_forExponent2(float resultCap, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> toReturn = new List<float>();
         int squareRootOfResultCap = Mathf.RoundToInt(Mathf.Pow(resultCap, 0.5f));
-        if (negativesAllowed) {
-            for (int i = (squareRootOfResultCap * -1); i <= -2; i++) {
+        if (negativesAllowed)
+        {
+            for (int i = (squareRootOfResultCap * -1); i <= -2; i++)
+            {
                 toReturn.Add(i);
             }
         }
-        if (negativesAllowed && oneAllowed) {
+        if (negativesAllowed && oneAllowed)
+        {
             toReturn.Add(-1);
         }
-        if (negativesAllowed && fractionsAllowed) {
+        if (negativesAllowed && fractionsAllowed)
+        {
             //toReturn.Add(-0.7500f);   // -3/4
             //toReturn.Add(-0.6666f);   // -2/3
             toReturn.Add(-0.5f);    // -1/2     because (-0.5)^2 = 0.25
             //toReturn.Add(-0.3333f);   // -1/3
             //toReturn.Add(-0.25f);   // -1/4
         }
-        if (fractionsAllowed) {
+        if (fractionsAllowed)
+        {
             //toReturn.Add(0.25f);
             //toReturn.Add(0.3333f);
             toReturn.Add(0.5f);
             //toReturn.Add(0.6666f);
             //toReturn.Add(0.75f);
         }
-        if (oneAllowed) {
+        if (oneAllowed)
+        {
             toReturn.Add(1);
         }
-        for (int i = 2; i <= squareRootOfResultCap; i++) {
+        for (int i = 2; i <= squareRootOfResultCap; i++)
+        {
             toReturn.Add(i);
         }
         //for (int i = 0; i < toReturn.Count; i++) {
@@ -494,11 +549,12 @@ public class PuzzleManager : MonoBehaviour
         return toReturn;
     }
 
-    public List<float> CreateListOfPossibleCircleValues_forExponent3(float resultCap, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public List<float> CreateListOfPossibleCircleValues_forExponent3(float resultCap, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> toReturn = new List<float>();
         //int squareRootOfResultCap = (int)Mathf.Pow(resultCap, 0.5f);
 
-        int cubeRootOfResultCap = Mathf.RoundToInt(Mathf.Pow(resultCap, 1f/3f));
+        int cubeRootOfResultCap = Mathf.RoundToInt(Mathf.Pow(resultCap, 1f / 3f));
 
 
 
@@ -540,7 +596,8 @@ public class PuzzleManager : MonoBehaviour
         return toReturn;
     }
 
-    public List<float> CreateListOfPossibleCircleValues_forSquareRoot(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public List<float> CreateListOfPossibleCircleValues_forSquareRoot(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> toReturn = new List<float>();
 
         if (fractionsAllowed)
@@ -562,9 +619,10 @@ public class PuzzleManager : MonoBehaviour
         return toReturn;
     }
 
-    public List<float> CreateListOfPossibleCircleValues_forCubeRoot(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public List<float> CreateListOfPossibleCircleValues_forCubeRoot(float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> toReturn = new List<float>();
-                                                            // maxValue is probably going to be 6, because 6^3 = 216 and we don't want to go higher than that
+        // maxValue is probably going to be 6, because 6^3 = 216 and we don't want to go higher than that
         if (negativesAllowed)
         {
             for (int i = (int)(maxValue * -1); i <= -2; i++)
@@ -602,15 +660,19 @@ public class PuzzleManager : MonoBehaviour
         }
         return toReturn;
     }
-    
-    public bool TestIfIsInteger(float value) {
+
+    public bool TestIfIsInteger(float value)
+    {
         Debug.Log("we are in TestIfIsInteger(), value: " + value);
         float marginErr = 0.001f;
         bool toReturn = false;
-        if (Mathf.Abs(value - Mathf.RoundToInt(value)) < marginErr) {
+        if (Mathf.Abs(value - Mathf.RoundToInt(value)) < marginErr)
+        {
             Debug.Log(value + " IS an integer");
             toReturn = true;
-        } else {
+        }
+        else
+        {
             Debug.Log(value + " is not an integer");
         }
         return toReturn;
@@ -618,7 +680,8 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-    public Circle CreateRandomCircle(List<float> values) {
+    public Circle CreateRandomCircle(List<float> values)
+    {
         int randomIndex = Random.Range(0, values.Count);
         float num = values[randomIndex];
         //bool isNegative = false;
@@ -660,13 +723,14 @@ public class PuzzleManager : MonoBehaviour
         //} 
         //else 
         //{
-            temp = new Circle(num);
-            listOfAllCircles.Add(temp);
+        temp = new Circle(num);
+        listOfAllCircles.Add(temp);
         //}
         return temp;
     }
 
-    public Circle CreateSpecificCircle(float num) {
+    public Circle CreateSpecificCircle(float num)
+    {
         DEBUG_outputCircleValues("At beginning of CreateSpecificCircle()");
         //bool isNegative = false;
         //if (num < 0)
@@ -717,33 +781,42 @@ public class PuzzleManager : MonoBehaviour
         //} 
         //else 
         //{
-            Debug.Log("checkpoint delta, value: " + num);
-            temp = new Circle(num);
-            listOfAllCircles.Add(temp);
+        Debug.Log("checkpoint delta, value: " + num);
+        temp = new Circle(num);
+        listOfAllCircles.Add(temp);
         //}
         DEBUG_outputCircleValues("At end of CreateSpecificCircle()");
         return temp;
     }
 
-    public Circle CreateRandomSecondCircleThatResultsInInt(Operator op, Circle firstCircle, int resultCap, float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed) {
+    public Circle CreateRandomSecondCircleThatResultsInInt(Operator op, Circle firstCircle, int resultCap, float maxValue, bool oneAllowed, bool negativesAllowed, bool fractionsAllowed)
+    {
         List<float> notSureIfPossibleValues = CreateListOfPossibleCircleValues_forArithmetic(maxValue, oneAllowed, negativesAllowed, fractionsAllowed);
         List<float> possibleValues = new List<float>();
         float result = 0;
-        for (int i = 0; i < notSureIfPossibleValues.Count; i++) {
-            if (op.type == "addition") {
+        for (int i = 0; i < notSureIfPossibleValues.Count; i++)
+        {
+            if (op.type == "addition")
+            {
                 result = firstCircle.value + notSureIfPossibleValues[i];      // addition
-            } else if (op.type == "subtraction") {
+            }
+            else if (op.type == "subtraction")
+            {
                 //Debug.Log("about to test " + notSureIfPossibleValues[i]);
                 result = firstCircle.value - notSureIfPossibleValues[i];      // subtraction
                 //Debug.Log("        result: " + firstCircle.value + " + " + notSureIfPossibleValues[i] + " = " + result);
             }
-            else if (op.type == "multiplication") {
+            else if (op.type == "multiplication")
+            {
                 result = firstCircle.value * notSureIfPossibleValues[i];      // multiplication
-            } else if (op.type == "division") {
+            }
+            else if (op.type == "division")
+            {
                 result = firstCircle.value / notSureIfPossibleValues[i];      // division
             }
 
-            if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && (Mathf.RoundToInt(result) != 0)) {
+            if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && (Mathf.RoundToInt(result) != 0))
+            {
                 possibleValues.Add(notSureIfPossibleValues[i]);
                 //Debug.Log("just added " + notSureIfPossibleValues[i] + "to possibleValues list");
                 //Debug.Log("Mathf.Abs(result - 0) = " + Mathf.Abs(result - 0));
@@ -766,64 +839,92 @@ public class PuzzleManager : MonoBehaviour
         return temp;
     }
 
-    public Circle CreateResultCircle(Circle circle1, Circle circle2, Operator opera) {
+    public Circle CreateResultCircle(Circle circle1, Circle circle2, Operator opera)
+    {
         DEBUG_outputCircleValues("at beginning of CreateResultCircle()");
-        
+
         float result = 0;
         Circle temp;
-        if (opera.type == "addition") {
+        if (opera.type == "addition")
+        {
             result = circle1.value + circle2.value;
-        } else if (opera.type == "subtraction") {
+        }
+        else if (opera.type == "subtraction")
+        {
             //DEBUG_outputCircleValues("in subtraction section, before assigning result, of CreateResultCircle()");
             result = circle1.value - circle2.value;
             Debug.Log("result: " + result);
             //DEBUG_outputCircleValues("in subtraction section, after assigning result, of CreateResultCircle()");
-        } else if (opera.type == "multiplication") {
+        }
+        else if (opera.type == "multiplication")
+        {
             result = circle1.value * circle2.value;
-        } else if (opera.type == "division") {
+        }
+        else if (opera.type == "division")
+        {
             result = circle1.value / circle2.value;
-        } else if (opera.type == "exponent2") {
+        }
+        else if (opera.type == "exponent2")
+        {
             result = Mathf.Pow(circle1.value, 2);
-            if (TestIfIsInteger(result)) {
-                result = Mathf.RoundToInt(result);
-            } 
-
-
-
-
-        } else if (opera.type == "exponent3") {
-            result = Mathf.Pow(circle1.value, 3);
-            if (TestIfIsInteger(result)) {
+            if (TestIfIsInteger(result))
+            {
                 result = Mathf.RoundToInt(result);
             }
 
 
 
-            if (TestIfIsInteger(result)) {
+
+        }
+        else if (opera.type == "exponent3")
+        {
+            result = Mathf.Pow(circle1.value, 3);
+            if (TestIfIsInteger(result))
+            {
+                result = Mathf.RoundToInt(result);
+            }
+
+
+
+            if (TestIfIsInteger(result))
+            {
                 result = Mathf.RoundToInt(Mathf.Pow(circle1.value, 3));
-            } else {
+            }
+            else
+            {
                 result = Mathf.Pow(circle1.value, 3);
             }
-        } else if (opera.type == "squareRoot") {
+        }
+        else if (opera.type == "squareRoot")
+        {
             result = Mathf.Pow(circle1.value, 0.5f);
-            if (TestIfIsInteger(result)) {
+            if (TestIfIsInteger(result))
+            {
                 result = Mathf.RoundToInt(result);
-            } 
-            
-            
-            
-            
-        } else if (opera.type == "cubeRoot") {
+            }
+
+
+
+
+        }
+        else if (opera.type == "cubeRoot")
+        {
             float value = circle1.value;
-            if (value < 0) {
+            if (value < 0)
+            {
                 result = -Mathf.Pow(-value, 1f / 3f);
                 Debug.Log(" (((((((((((((((((((((((((((((((((((((((((((((((( just did cubeRoot, value: " + value + ", and result: " + result);
-            } else if (value > 0) {
-                    result = Mathf.Pow(value, 1f / 3f);
-            } else {
+            }
+            else if (value > 0)
+            {
+                result = Mathf.Pow(value, 1f / 3f);
+            }
+            else
+            {
                 Debug.Log("problem: the circle value is zero");
             }
-            if (TestIfIsInteger(result)) {
+            if (TestIfIsInteger(result))
+            {
                 result = Mathf.RoundToInt(result);
             }
 
@@ -838,7 +939,8 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public List<OpsAndCircles> CreatePartB_GivenInitial(Circle newCircle1, Operator operatorAlreadyUsed) {
+    public List<OpsAndCircles> CreatePartB_GivenInitial(Circle newCircle1, Operator operatorAlreadyUsed)
+    {
 
         // List<OpsAndCircles>
 
@@ -864,31 +966,39 @@ public class PuzzleManager : MonoBehaviour
         List<float> circle2ValuesToConsider_Add_Subtract = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
         List<float> circle2ValuesToConsider_Mult_Divide = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
 
-        void ConsiderAddition(Circle circle1) {
+        void ConsiderAddition(Circle circle1)
+        {
             float value = circle1.value;
 
-            for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++) {
+            for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++)
+            {
                 float result = value + circle2ValuesToConsider_Add_Subtract[i];
-                if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && result != 0) {
+                if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && result != 0)
+                {
                     usableCircle2Values_Addition.Add(circle2ValuesToConsider_Add_Subtract[i]);
                 }
             }
-            if (usableCircle2Values_Addition.Count > 0) {
+            if (usableCircle2Values_Addition.Count > 0)
+            {
                 operatorList.Add("addition");
             }
         }
-        void ConsiderSubtraction(Circle circle1) {
+        void ConsiderSubtraction(Circle circle1)
+        {
             float value = circle1.value;
 
-            for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++) {
+            for (int i = 0; i < circle2ValuesToConsider_Add_Subtract.Count; i++)
+            {
                 float result = value - circle2ValuesToConsider_Add_Subtract[i];
                 //Debug.Log("the result we're about to test is: " + result);
-                if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && result != 0) {
+                if (result >= lowerLimitForResult && result <= upperLimitForResult && TestIfIsInteger(result) && result != 0)
+                {
                     usableCircle2Values_Subtraction.Add(circle2ValuesToConsider_Add_Subtract[i]);
                     //Debug.Log("it appears that " + result + " is an acceptable potential result... lowerLimitForResult: " + lowerLimitForResult);
                 }
             }
-            if (usableCircle2Values_Subtraction.Count > 0) {
+            if (usableCircle2Values_Subtraction.Count > 0)
+            {
                 operatorList.Add("subtraction");
             }
 
@@ -937,67 +1047,82 @@ public class PuzzleManager : MonoBehaviour
             }
 
         }
-        void ConsiderExponent2(Circle circle1) {
+        void ConsiderExponent2(Circle circle1)
+        {
             float value = circle1.value;
             // see if *value* is on the list of usable circle1s for exponent2
             List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, true, negativeNumbersAllowed, false);
-            if (usableCircle1ValuesForExponent2.Contains(value)) {
+            if (usableCircle1ValuesForExponent2.Contains(value))
+            {
                 //Debug.Log("the result from partA was: " + value + ", and we just added exponent2 as a potential operator for partB");
                 operatorList.Add("exponent2");
             }
         }
-        void ConsiderExponent3(Circle circle1) {
+        void ConsiderExponent3(Circle circle1)
+        {
             float value = circle1.value;
             // see if *value* is on the list of usable circle1s for exponent3
             List<float> usableCircle1ValuesForExponent3 = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, true, negativeNumbersAllowed, fractionsAllowed);
-            if (usableCircle1ValuesForExponent3.Contains(value)) {
+            if (usableCircle1ValuesForExponent3.Contains(value))
+            {
                 operatorList.Add("exponent3");
             }
         }
-        void ConsiderSquareRoot(Circle circle1) {
+        void ConsiderSquareRoot(Circle circle1)
+        {
             float value = circle1.value;
 
             List<float> usableCircle1ValuesForSquareRoot = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, true, false, fractionsAllowed);
-            if (usableCircle1ValuesForSquareRoot.Contains(value)) {
+            if (usableCircle1ValuesForSquareRoot.Contains(value))
+            {
                 operatorList.Add("squareRoot");
             }
         }
-        void ConsiderCubeRoot(Circle circle1) {
+        void ConsiderCubeRoot(Circle circle1)
+        {
             float value = circle1.value;
             List<float> usableCircle1ValuesForCubeRoot = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, true, negativeNumbersAllowed, fractionsAllowed);
-            if (usableCircle1ValuesForCubeRoot.Contains(value)) {
+            if (usableCircle1ValuesForCubeRoot.Contains(value))
+            {
                 operatorList.Add("cubeRoot");
             }
         }
-        void ConsiderAllOperators(Circle circle1) {
+        void ConsiderAllOperators(Circle circle1)
+        {
             string otherOperator = operatorAlreadyUsed.type;
             // tttppp
             ConsiderAddition(circle1);
             // tttppp
             ConsiderSubtraction(circle1);
-            if (multDivideAllowed == true) {
+            if (multDivideAllowed == true)
+            {
                 // tttppp
                 ConsiderMultiplication(circle1);
                 ConsiderDivision(circle1);
             }
-            if(exponentsAllowed == true) {
-                if (otherOperator != "squareRoot") {
+            if (exponentsAllowed == true)
+            {
+                if (otherOperator != "squareRoot")
+                {
                     // tttppp
                     ConsiderExponent2(circle1);
                 }
-                if (otherOperator != "cubeRoot") {
+                if (otherOperator != "cubeRoot")
+                {
                     // tttppp
                     ConsiderExponent3(circle1);
                 }
-                if (otherOperator != "exponent2") {
+                if (otherOperator != "exponent2")
+                {
                     // tttppp
                     ConsiderSquareRoot(circle1);
                 }
-                if (otherOperator != "exponent3") {
+                if (otherOperator != "exponent3")
+                {
                     // tttppp
                     ConsiderCubeRoot(circle1);
                 }
-            } 
+            }
         }
         ConsiderAllOperators(newCircle1);
 
@@ -1011,30 +1136,46 @@ public class PuzzleManager : MonoBehaviour
 
         float value = 0;
         // select the newCircle2, and add it to toReturn
-        if (operatorToUse == "addition") {
+        if (operatorToUse == "addition")
+        {
             int randomm = Random.Range(0, usableCircle2Values_Addition.Count);
             value = usableCircle2Values_Addition[randomm];
-        } else if (operatorToUse == "subtraction") {
+        }
+        else if (operatorToUse == "subtraction")
+        {
             int randomm = Random.Range(0, usableCircle2Values_Subtraction.Count);
             value = usableCircle2Values_Subtraction[randomm];
-        } else if (operatorToUse == "multiplication") {
+        }
+        else if (operatorToUse == "multiplication")
+        {
             int randomm = Random.Range(0, usableCircle2Values_Multiplication.Count);
             value = usableCircle2Values_Multiplication[randomm];
-        } else if (operatorToUse == "division") {
+        }
+        else if (operatorToUse == "division")
+        {
             int randomm = Random.Range(0, usableCircle2Values_Division.Count);
             value = usableCircle2Values_Division[randomm];
-        } else if (operatorToUse == "exponent2") { 
+        }
+        else if (operatorToUse == "exponent2")
+        {
             // no circle 2 needed
-        } else if (operatorToUse == "exponent3") {
+        }
+        else if (operatorToUse == "exponent3")
+        {
             // no circle 2 needed
-        } else if (operatorToUse == "squareRoot") {
+        }
+        else if (operatorToUse == "squareRoot")
+        {
             // no circle 2 needed
-        } else if (operatorToUse == "cubeRoot") {
+        }
+        else if (operatorToUse == "cubeRoot")
+        {
             // no circle 2 needed
         }
 
         Circle partB_Circle2 = null;
-        if (operatorToUse == "addition" || operatorToUse == "subtraction" || operatorToUse == "multiplication" || operatorToUse == "division") {
+        if (operatorToUse == "addition" || operatorToUse == "subtraction" || operatorToUse == "multiplication" || operatorToUse == "division")
+        {
             partB_Circle2 = CreateSpecificCircle(value);
             Debug.Log("PartB newCircle2 value: " + partB_Circle2.value);
         }
@@ -1107,11 +1248,11 @@ public class PuzzleManager : MonoBehaviour
             //      if it DOES work, then we've got our circle1 value... after all we were going to randomly pick one anyway
             //
             //      this doesn't address the possibility of choosing WHICH result we're going to use, though....... let's deal with that later
-            
-            
+
+
             // if the resultValue is a fraction, then the ONLY POSSIBLE circle1 value is also a fraction, and we don't need to waste time looking at integers
             // conversely, if resultValue is an integer, the we don't need to look at fractions
-            
+
             List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
 
             //if (TestIfIsInteger(resultValue)) { 
@@ -1141,18 +1282,23 @@ public class PuzzleManager : MonoBehaviour
                 if (circle2ValuesToConsider_Add_Subtract.Contains(potentialCircle2Value))
                 {
                     //Debug.Log("addition is viable: " + potentialCircle1Value + " as circle1 and " + potentialCircle2Value + " as circle2 gets us result of " + resultValue);
-                    if (ABC == 'A') {
+                    if (ABC == 'A')
+                    {
                         operatorList_1.Add("addition");
                         addition_circle1ValueToUse_1 = potentialCircle1Value;
                         addition_circle2ValueToUse_1 = potentialCircle2Value;
                         // so... if we do end up using addition, now we know the circle1 & circle2 values we will use
                         doneWithLoop = true;
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         operatorList_2.Add("addition");
                         addition_circle1ValueToUse_2 = potentialCircle1Value;
                         addition_circle2ValueToUse_2 = potentialCircle2Value;
                         doneWithLoop = true;
-                    } else if (ABC == 'C') { 
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
                 }
@@ -1187,18 +1333,23 @@ public class PuzzleManager : MonoBehaviour
                 if (circle2ValuesToConsider_Add_Subtract.Contains(potentialCircle2Value))
                 {
                     //Debug.Log("subtraction is viable: " + potentialCircle1Value + " as circle1 and " + potentialCircle2Value + " as circle2 gets us result of " + resultValue);
-                    if (ABC == 'A') {
+                    if (ABC == 'A')
+                    {
                         operatorList_1.Add("subtraction");
                         subtraction_circle1ValueToUse_1 = potentialCircle1Value;
                         subtraction_circle2ValueToUse_1 = potentialCircle2Value;
                         // so... if we do end up using addition, now we know the circle1 & circle2 values we will use
                         doneWithLoop = true;
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         operatorList_2.Add("subtraction");
                         subtraction_circle1ValueToUse_2 = potentialCircle1Value;
                         subtraction_circle2ValueToUse_2 = potentialCircle2Value;
                         doneWithLoop = true;
-                    } else if (ABC == 'C') { 
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
 
@@ -1214,16 +1365,22 @@ public class PuzzleManager : MonoBehaviour
                 }
             }
         }
-        bool IsThisNumberPrime(float resultValue) {
+        bool IsThisNumberPrime(float resultValue)
+        {
             int tally = 0;
-            for (int i = 1; i <= Mathf.Abs(resultValue); i++) { 
-                if (resultValue % i == 0) {
+            for (int i = 1; i <= Mathf.Abs(resultValue); i++)
+            {
+                if (resultValue % i == 0)
+                {
                     tally += 1;
                 }
             }
-            if (tally == 2) {
+            if (tally == 2)
+            {
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
@@ -1248,18 +1405,23 @@ public class PuzzleManager : MonoBehaviour
                 if (circle2ValuesToConsider_Mult_Divide.Contains(potentialCircle2Value))
                 {
                     //Debug.Log("multiplication is viable: " + potentialCircle1Value + " as circle1 and " + potentialCircle2Value + " as circle2 gets us result of " + resultValue);
-                    if (ABC == 'A') {
+                    if (ABC == 'A')
+                    {
                         operatorList_1.Add("multiplication");
                         multiplication_circle1ValueToUse_1 = potentialCircle1Value;
                         multiplication_circle2ValueToUse_1 = potentialCircle2Value;
                         // so... if we do end up using addition, now we know the circle1 & circle2 values we will use
                         doneWithLoop = true;
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         operatorList_2.Add("multiplication");
                         multiplication_circle1ValueToUse_2 = potentialCircle1Value;
                         multiplication_circle2ValueToUse_2 = potentialCircle2Value;
                         doneWithLoop = true;
-                    } else if (ABC == 'C') { 
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
                 }
@@ -1293,18 +1455,23 @@ public class PuzzleManager : MonoBehaviour
                 if (circle2ValuesToConsider_Mult_Divide.Contains(potentialCircle2Value))
                 {
                     //Debug.Log("division is viable: " + potentialCircle1Value + " as circle1 and " + potentialCircle2Value + " as circle2 gets us result of " + resultValue);
-                    if (ABC == 'A') {
+                    if (ABC == 'A')
+                    {
                         operatorList_1.Add("division");
                         division_circle1ValueToUse_1 = potentialCircle1Value;
                         division_circle2ValueToUse_1 = potentialCircle2Value;
                         // so... if we do end up using addition, now we know the circle1 & circle2 values we will use
                         doneWithLoop = true;
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         operatorList_2.Add("division");
                         division_circle1ValueToUse_2 = potentialCircle1Value;
                         division_circle2ValueToUse_2 = potentialCircle2Value;
                         doneWithLoop = true;
-                    } else if (ABC == 'C') { 
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
                 }
@@ -1322,9 +1489,12 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderExponent2(float resultValue, char ABC)
         {
             List<float> usableResults = new List<float>();
-            if (fractionsAllowed) {
+            if (fractionsAllowed)
+            {
                 usableResults = new List<float> { 0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
-            } else {
+            }
+            else
+            {
                 usableResults = new List<float> { 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
             }
 
@@ -1334,32 +1504,51 @@ public class PuzzleManager : MonoBehaviour
             {
                 // randomly assign circle1 to be either negative or positive            UNLESS NEGATIVES ARE TURNED OFF!!!!
                 int rando = Random.Range(1, 3);
-                if (negativeNumbersAllowed == false) {
+                if (negativeNumbersAllowed == false)
+                {
                     rando = 1;                          // if negativeNumbers are turned off...
                 }
-                if (rando == 1) {
-                    if (ABC == 'A') {
+                if (rando == 1)
+                {
+                    if (ABC == 'A')
+                    {
                         exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
-                    } else if (ABC == 'C') { 
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
-                } else {
-                    if (ABC == 'A') {
+                }
+                else
+                {
+                    if (ABC == 'A')
+                    {
                         exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
-                    } else if (ABC == 'C') {
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
                 }
                 //Debug.Log("exponent2 is viable: " + exponent2_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
-                if (ABC == 'A') {
+                if (ABC == 'A')
+                {
                     operatorList_1.Add("exponent2");
-                } else if (ABC == 'B') {
+                }
+                else if (ABC == 'B')
+                {
                     operatorList_2.Add("exponent2");
-                } else if (ABC == 'C') {
+                }
+                else if (ABC == 'C')
+                {
 
                 }
             }
@@ -1371,9 +1560,12 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderExponent3(float resultValue, char ABC)
         {
             List<float> usableResults = new List<float>();
-            if (negativeNumbersAllowed) {
+            if (negativeNumbersAllowed)
+            {
                 usableResults = new List<float> { -125, -64, -27, -8, 8, 27, 64, 125 };
-            } else {
+            }
+            else
+            {
                 usableResults = new List<float> { 8, 27, 64, 125 };
             }
 
@@ -1381,29 +1573,47 @@ public class PuzzleManager : MonoBehaviour
 
             if (usableResults.Contains(resultValue))
             {
-                if (resultValue < 0) {
-                    if (ABC == 'A') {
+                if (resultValue < 0)
+                {
+                    if (ABC == 'A')
+                    {
                         exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
-                    } else if (ABC == 'C') {
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
-                } else {
-                    if (ABC == 'A') {
+                }
+                else
+                {
+                    if (ABC == 'A')
+                    {
                         exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
-                    } else if (ABC == 'B') {
+                    }
+                    else if (ABC == 'B')
+                    {
                         exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
-                    } else if (ABC == 'C') {
+                    }
+                    else if (ABC == 'C')
+                    {
 
                     }
                 }
                 //Debug.Log("exponent3 is viable: " + exponent3_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
-                if (ABC == 'A') {
+                if (ABC == 'A')
+                {
                     operatorList_1.Add("exponent3");
-                } else if (ABC == 'B') {
+                }
+                else if (ABC == 'B')
+                {
                     operatorList_2.Add("exponent3");
-                } else if (ABC == 'C') {
+                }
+                else if (ABC == 'C')
+                {
 
                 }
             }
@@ -1413,7 +1623,8 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        void ConsiderSquareRoot(float resultValue, char ABC) {
+        void ConsiderSquareRoot(float resultValue, char ABC)
+        {
             List<float> usableResults = new List<float> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
             if (usableResults.Contains(resultValue))
@@ -1473,9 +1684,12 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderCubeRoot(float resultValue, char ABC)
         {
             List<float> usableResults = new List<float>();
-            if (negativeNumbersAllowed) {
+            if (negativeNumbersAllowed)
+            {
                 usableResults = new List<float> { -5, -4, -3, -2, 2, 3, 4, 5 };
-            } else {
+            }
+            else
+            {
                 usableResults = new List<float> { 2, 3, 4, 5 };
             }
 
@@ -1483,15 +1697,20 @@ public class PuzzleManager : MonoBehaviour
 
             if (usableResults.Contains(resultValue))
             {
-                if (ABC == 'A') {
+                if (ABC == 'A')
+                {
                     cubeRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
                     operatorList_1.Add("cubeRoot");
-                } else if (ABC == 'B') {
+                }
+                else if (ABC == 'B')
+                {
                     cubeRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_2 + " as circle1 gives us result of " + resultValue);
                     operatorList_2.Add("cubeRoot");
-                } else if (ABC == 'C') {
+                }
+                else if (ABC == 'C')
+                {
 
                 }
             }
@@ -1501,20 +1720,25 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        void ConsiderAllOperators(Circle potentialResult_1or2, char AorB) {
+        void ConsiderAllOperators(Circle potentialResult_1or2, char AorB)
+        {
 
             string otherOperator = operatorAlreadyUsed.type;
             float value = potentialResult_1or2.value;
 
-            if (Mathf.Abs(value) <= 2 * upperLimitForCircleValue) {
+            if (Mathf.Abs(value) <= 2 * upperLimitForCircleValue)
+            {
                 // tttppp
                 ConsiderAddition(value, AorB);
                 ConsiderSubtraction(value, AorB);
-            } else {
+            }
+            else
+            {
                 Debug.Log(value + " is too big, so we're skipping addition & subtraction");
             }
             // if valueOfResultA is a PRIME NUMBER, then we don't want to consider multiplication or division, because *1 and /1 are boring
-            if (multDivideAllowed == true) {
+            if (multDivideAllowed == true)
+            {
                 if (!IsThisNumberPrime(value))
                 {
                     // tttppp
@@ -1526,20 +1750,25 @@ public class PuzzleManager : MonoBehaviour
                     Debug.Log(value + " is a prime number, so we're skipping multiplication & division");
                 }
             }
-            if(exponentsAllowed == true) {
-                if (otherOperator != "squareRoot") {
+            if (exponentsAllowed == true)
+            {
+                if (otherOperator != "squareRoot")
+                {
                     // tttppp
                     ConsiderExponent2(value, AorB);
                 }
-                if (otherOperator != "cubeRoot") {
+                if (otherOperator != "cubeRoot")
+                {
                     // tttppp
                     ConsiderExponent3(value, AorB);
                 }
-                if (otherOperator != "exponent2") {
+                if (otherOperator != "exponent2")
+                {
                     // tttppp
                     ConsiderSquareRoot(value, AorB);
                 }
-                if (otherOperator != "exponent3") {
+                if (otherOperator != "exponent3")
+                {
                     // tttppp
                     ConsiderCubeRoot(value, AorB);
                 }
@@ -1547,7 +1776,8 @@ public class PuzzleManager : MonoBehaviour
         }
 
         ConsiderAllOperators(potentialResult1, 'A');
-        if (potentialResult2 != null) {
+        if (potentialResult2 != null)
+        {
             ConsiderAllOperators(potentialResult2, 'B');
         }
 
@@ -1623,9 +1853,12 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("cubeRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_1;
-                if (circle1Value < 0) {
+                if (circle1Value < 0)
+                {
                     resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
-                } else if (circle1Value > 0) {
+                }
+                else if (circle1Value > 0)
+                {
                     resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
                 }
 
@@ -1722,22 +1955,28 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("cubeRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = cubeRoot_circle1ValueToUse_2;
-                if (circle1Value < 0) {
+                if (circle1Value < 0)
+                {
                     resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
-                } else if (circle1Value > 0) {
+                }
+                else if (circle1Value > 0)
+                {
                     resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
                 }
             }
             if (circle1Value != 0)
             {
                 partA_circle1 = CreateSpecificCircle(circle1Value);
-            } else {
+            }
+            else
+            {
                 Debug.Log("(((((((((((((((((((((((((((((((((((((((((( caught a zero as circle1Value");
             }
 
             //partA_circle1 = CreateSpecificCircle(circle1Value);
             // we want partA_circle2 to REMAIN NULL if it's not going to be used!!!, not have a value of zero.... the only time a circle has a zero value and is on-screen is when the player screws up
-            if (circle2Value != 0) {
+            if (circle2Value != 0)
+            {
                 partA_circle2 = CreateSpecificCircle(circle2Value);
             }
             else
@@ -1757,18 +1996,26 @@ public class PuzzleManager : MonoBehaviour
 
         // compare the two operatorLists and see which one has the most options
 
-        if (operatorList_1.Count > operatorList_2.Count) {
+        if (operatorList_1.Count > operatorList_2.Count)
+        {
             Debug.Log("going with ResultA");
             GoWithResult_1();
-        } else if (operatorList_1.Count < operatorList_2.Count) {
+        }
+        else if (operatorList_1.Count < operatorList_2.Count)
+        {
             Debug.Log("going with ResultB");
             GoWithResult_2();
-        } else {
+        }
+        else
+        {
             int rando = Random.Range(1, 3);
-            if (rando == 1) {
+            if (rando == 1)
+            {
                 Debug.Log("going with ResultA, chosen randomly because the lists are the same size");
                 GoWithResult_1();
-            } else {
+            }
+            else
+            {
                 Debug.Log("going with ResultB, chosen randomly because the lists are the same size");
                 GoWithResult_2();
             }
@@ -1793,17 +2040,20 @@ public class PuzzleManager : MonoBehaviour
             //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
             circleGameObject.SetActive(false);
             Debug.Log("in SetCircle()....  circleData == null, so.... and circleData.value is nonexistent");
+            circleGameObject.GetComponent<Clickable>().partOfCurrentPuzzle = false;
             //return false;       // this circle is active = FALSE
         }
         else
         {
+            circleGameObject.GetComponent<Clickable>().partOfCurrentPuzzle = true;
             Debug.Log("in SetCircle()....  circleData is not null, circleData.value = " + circleData.value);
             float value = circleData.value;
-            if (TestIfIsInteger(value)) 
+            if (TestIfIsInteger(value))
             {
                 circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = value.ToString();
                 // turn off all the fraction stuff
-                for (int i = 1; i <= 3; i++) {
+                for (int i = 1; i <= 3; i++)
+                {
                     circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
@@ -1811,7 +2061,8 @@ public class PuzzleManager : MonoBehaviour
             // see whether a rational number will work, or if we have to use decimals
             {
                 bool isNegative = false;
-                if (value < 0) {
+                if (value < 0)
+                {
                     isNegative = true;
                     Debug.Log("um yah it is negative");
                 }
@@ -1822,13 +2073,17 @@ public class PuzzleManager : MonoBehaviour
                 int denominator = -99999;
 
                 bool rationalFound = false;
-                for (int i = 1; i <= 30 && rationalFound == false; i++) 
+                for (int i = 1; i <= 30 && rationalFound == false; i++)
                 {
-                    for (int j = 2; j <= 20 && rationalFound == false; j++) {
-                        if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j)) {
-                            if (rationalFound == false) {
+                    for (int j = 2; j <= 20 && rationalFound == false; j++)
+                    {
+                        if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j))
+                        {
+                            if (rationalFound == false)
+                            {
                                 numerator = i;
-                                if (isNegative) {
+                                if (isNegative)
+                                {
                                     numerator = -numerator;
                                 }
                                 denominator = j;
@@ -1840,7 +2095,7 @@ public class PuzzleManager : MonoBehaviour
                     }
                 }
 
-                if (rationalFound == true) 
+                if (rationalFound == true)
                 {
                     // here we set the values into the circle gameObject
                     circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";       // this child is for ints
@@ -1851,11 +2106,14 @@ public class PuzzleManager : MonoBehaviour
                     circleGameObject.transform.GetChild(1).GetComponent<TextMeshPro>().text = numerator.ToString();    // numerator value
                     circleGameObject.transform.GetChild(3).GetComponent<TextMeshPro>().text = denominator.ToString();
 
-                } else {
+                }
+                else
+                {
                     // if we got to this point it means that we have to portray the number in decimals
 
                     // IS THE NUMBER NEGATIVE?????
-                    if (isNegative) {
+                    if (isNegative)
+                    {
                         value *= -1;
                     }
 
@@ -1871,7 +2129,7 @@ public class PuzzleManager : MonoBehaviour
             //{
             //    // if the player screws up and gets a weird non-int number, we still need that number to appear on the circle
             //    // so, if it's one of our pre-approved fractions, go ahead with the below code, otherwise set the textMeshPro text to the new value
-                
+
 
             //    circleGameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             //    for (int i = 1; i <= 7; i++) {
@@ -1916,11 +2174,16 @@ public class PuzzleManager : MonoBehaviour
             circleGameObject.GetComponent<Clickable>().valueOfThisCircle_orGoal = value;
             circleGameObject.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
 
-            if (circleGameObject == CircleA) {
+            if (circleGameObject == CircleA)
+            {
                 circleData.circleGameObject_associatedWith = "CircleA";                                                 // this marks the circleData Circle class object
-            } else if (circleGameObject == CircleB) {
+            }
+            else if (circleGameObject == CircleB)
+            {
                 circleData.circleGameObject_associatedWith = "CircleB";
-            } else if (circleGameObject == CircleC) {
+            }
+            else if (circleGameObject == CircleC)
+            {
                 circleData.circleGameObject_associatedWith = "CircleC";
             }
 
@@ -2020,60 +2283,83 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
         }
         opAorB.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis = oppy.IDnumber;                  // this marks the GameObject
-        if (opAorB == OperatorA) {                                                                              // this marks the Operator class object
+        if (opAorB == OperatorA)
+        {                                                                              // this marks the Operator class object
             oppy.operatorGameObject_associatedWith = "OperatorA";
-        } else if (opAorB == OperatorB) {
+        }
+        else if (opAorB == OperatorB)
+        {
             oppy.operatorGameObject_associatedWith = "OperatorB";
         }
     }
 
-    public void RandomizeDefaultPositionsOfCircles() { 
+    public void RandomizeDefaultPositionsOfCircles()
+    {
 
     }
-    public void UpdateDefaultPositionsOfCircles(bool randomizingThisTimeWouldBeAnnoying) {
+    public void UpdateDefaultPositionsOfCircles(bool randomizingThisTimeWouldBeAnnoying)
+    {
         // need to know how many circles are active, and which ones are active
         int tally = 0;
         float defaultX = -4f;
-        if (CircleA.activeSelf) {
+        if (CircleA.activeSelf)
+        {
             tally += 1;
         }
-        if (CircleB.activeSelf) {
+        if (CircleB.activeSelf)
+        {
             tally += 1;
         }
-        if (CircleC.activeSelf) {
+        if (CircleC.activeSelf)
+        {
             tally += 1;
         }
-        if (tally == 3) {
+        if (tally == 3)
+        {
             float circleA_Yvalue = 2.5f;
             float cirlceB_Yvalue = 0;
             float circleC_Yvalue = -2.5f;
-            
-            if (debugModeOn == false) {         // no debugMode means random ordering
+
+            if (debugModeOn == false)
+            {         // no debugMode means random ordering
                 // 3 circles means 3! ways to configure them
                 int rando = Random.Range(1, 7);
-                if (rando == 1) {               // ABC
+                if (rando == 1)
+                {               // ABC
                     // do nothing, they're already in the correct spots
-                } else if (rando == 2) {        // ACB
+                }
+                else if (rando == 2)
+                {        // ACB
                     circleA_Yvalue = 2.5f;
                     cirlceB_Yvalue = -2.5f;
                     circleC_Yvalue = 0;
-                } else if (rando == 3) {        // BAC
+                }
+                else if (rando == 3)
+                {        // BAC
                     circleA_Yvalue = 0;
                     cirlceB_Yvalue = 2.5f;
                     circleC_Yvalue = -2.5f;
-                } else if (rando == 4) {        // BCA
+                }
+                else if (rando == 4)
+                {        // BCA
                     circleA_Yvalue = 0;
                     cirlceB_Yvalue = -2.5f;
                     circleC_Yvalue = 2.5f;
-                } else if (rando == 5) {        // CAB
+                }
+                else if (rando == 5)
+                {        // CAB
                     circleA_Yvalue = -2.5f;
                     cirlceB_Yvalue = 2.5f;
                     circleC_Yvalue = 0;
-                } else if (rando == 6) {        // CBA
+                }
+                else if (rando == 6)
+                {        // CBA
                     circleA_Yvalue = -2.5f;
                     cirlceB_Yvalue = 0;
                     circleC_Yvalue = 2.5f;
-                } else {
+                }
+                else
+                {
                     Debug.Log("shouldn't have gotten here");
                 }
             }
@@ -2081,25 +2367,31 @@ public class PuzzleManager : MonoBehaviour
             CircleAScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
             CircleBScript.defaultPosition = new Vector2(defaultX, cirlceB_Yvalue);
             CircleCScript.defaultPosition = new Vector2(defaultX, circleC_Yvalue);
-        } else if (tally == 2) {
+        }
+        else if (tally == 2)
+        {
             float circleA_Yvalue = 1.5f;
             float circleB_Yvalue = -1.5f;
 
-            if (debugModeOn == false && randomizingThisTimeWouldBeAnnoying == false) {
+            if (debugModeOn == false && randomizingThisTimeWouldBeAnnoying == false)
+            {
                 // there are 2! ways to order them, so this will be quick
                 Debug.Log("2 circles, gonna randomize positions");
                 int rando = Random.Range(1, 3);
-                if (rando == 2) {
+                if (rando == 2)
+                {
                     circleA_Yvalue = -1.5f;
                     circleB_Yvalue = 1.5f;
                 }
             }
 
-            if (randomizingThisTimeWouldBeAnnoying) { 
+            if (randomizingThisTimeWouldBeAnnoying)
+            {
                 // so, after an equation is solved, one of the two circles will be near the operators... the OTHER circle, if it's down low, should remain down low or vice-versa
 
                 // A is to the right, so examine B & C
-                if(CircleA.activeSelf && CircleA.transform.position.x > -2) {
+                if (CircleA.activeSelf && CircleA.transform.position.x > -2)
+                {
                     // CircleA just got changed, therefore the OTHER circle needs to be moved as little as possible... but right now we don't know if that other circle is CircleB or CircleC
                     if (CircleB.activeSelf)
                     {
@@ -2118,8 +2410,8 @@ public class PuzzleManager : MonoBehaviour
                             CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);
                             CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
                         }
-                    } 
-                    else if (CircleC.activeSelf) 
+                    }
+                    else if (CircleC.activeSelf)
                     {
                         if (CircleC.transform.position.y == 2.5f)
                         {
@@ -2221,7 +2513,8 @@ public class PuzzleManager : MonoBehaviour
                     }
                 }
             }
-            else {
+            else
+            {
                 if (CircleA.activeSelf && CircleB.activeSelf)
                 {
                     CircleAScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
@@ -2255,19 +2548,22 @@ public class PuzzleManager : MonoBehaviour
 
 
     }
-    public void SendAllCirclesToDefaultPositions() {
+    public void SendAllCirclesToDefaultPositions()
+    {
         CircleAScript.BeginMovementToDefaultPosition(false, true, true);
         CircleBScript.BeginMovementToDefaultPosition(false, true, true);
         CircleCScript.BeginMovementToDefaultPosition(false, true, true);
 
     }
-    public void TeleportAllCirclesToDefaultPositions() {
+    public void TeleportAllCirclesToDefaultPositions()
+    {
         CircleAScript.TeleportToDefaultPosition();
         CircleBScript.TeleportToDefaultPosition();
         CircleCScript.TeleportToDefaultPosition();
     }
 
-    public void UpdateDefaultPositionsOfOperators() {
+    public void UpdateDefaultPositionsOfOperators()
+    {
         float operatorA_Yvalue = 1.5f;
         float operatorB_Yvalue = -1.5f;
 
@@ -2286,15 +2582,18 @@ public class PuzzleManager : MonoBehaviour
         OperatorBScript.defaultPosition = new Vector2(1.5f, operatorB_Yvalue);
 
     }
-    public void SendAllOperatorsToDefaultPositions() { 
+    public void SendAllOperatorsToDefaultPositions()
+    {
 
     }
-    public void TeleportAllOperatorsToDefaultPositions() {
+    public void TeleportAllOperatorsToDefaultPositions()
+    {
         OperatorAScript.TeleportToDefaultPosition();
         OperatorBScript.TeleportToDefaultPosition();
     }
-    public void SkipPuzzle() {
-        
+    public void SkipPuzzle()
+    {
+
         CreateNewPuzzle();
     }
     //bool noErrorReceived = true;
@@ -2332,7 +2631,8 @@ public class PuzzleManager : MonoBehaviour
         PlayerPrefs.SetInt(debugPlayerPrefString, 0);
     }
 
-    public void TurnNegativeNumbersON() {
+    public void TurnNegativeNumbersON()
+    {
         negativeNumbersAllowed = true;
         lowerLimitForResult = -125;
         //lowerLimitForCircleValue = -20;
@@ -2340,7 +2640,8 @@ public class PuzzleManager : MonoBehaviour
         //GameManager.instance.negativeNumbersAllowed = true;
         //GameManager.instance.TurnNegativeNumbersON();
     }
-    public void TurnNegativeNumbersOFF() {
+    public void TurnNegativeNumbersOFF()
+    {
         negativeNumbersAllowed = false;
         lowerLimitForResult = 1;
         //lowerLimitForCircleValue = 1;
@@ -2348,23 +2649,28 @@ public class PuzzleManager : MonoBehaviour
         //GameManager.instance.negativeNumbersAllowed = false;
         //GameManager.instance.TurnNegativeNumbersOFF();
     }
-    public bool ReturnNegativeNumbersON_OFF() {
+    public bool ReturnNegativeNumbersON_OFF()
+    {
         return negativeNumbersAllowed;
     }
-    public void TurnFractionsON() {
+    public void TurnFractionsON()
+    {
         fractionsAllowed = true;
         PlayerPrefs.SetInt(fractionsPlayerPrefString, 1);
         //GameManager.instance.fractionsAllowed = true;
     }
-    public void TurnFractionsOFF() {
+    public void TurnFractionsOFF()
+    {
         fractionsAllowed = false;
         PlayerPrefs.SetInt(fractionsPlayerPrefString, 0);
         //GameManager.instance.fractionsAllowed = false;
     }
-    public bool ReturnFractionsON_OFF() {
+    public bool ReturnFractionsON_OFF()
+    {
         return fractionsAllowed;
     }
-    public void TurnExponentsON() {
+    public void TurnExponentsON()
+    {
         exponentsAllowed = true;
         PlayerPrefs.SetInt(exponentsPlayerPrefString, 1);
         //GameManager.instance.exponentsAllowed = true;
@@ -2375,33 +2681,41 @@ public class PuzzleManager : MonoBehaviour
         PlayerPrefs.SetInt(exponentsPlayerPrefString, 0);
         //GameManager.instance.exponentsAllowed = false;
     }
-    public bool ReturnExponentsON_OFF() {
+    public bool ReturnExponentsON_OFF()
+    {
         return exponentsAllowed;
     }
-    public void TurnMultDivideON() {
+    public void TurnMultDivideON()
+    {
         multDivideAllowed = true;
         PlayerPrefs.SetInt(multDividePlayerPrefString, 1);
         //GameManager.instance.multDivideAllowed = true;
     }
-    public void TurnMultDivideOFF() {
+    public void TurnMultDivideOFF()
+    {
         multDivideAllowed = false;
         PlayerPrefs.SetInt(multDividePlayerPrefString, 0);
         //GameManager.instance.multDivideAllowed = false;
     }
-    public bool ReturnMultDivideON_OFF() {
+    public bool ReturnMultDivideON_OFF()
+    {
         return multDivideAllowed;
     }
     // ************************************************************************************************************
     // ************************************************************************************************************
-    public bool CheckIfNumbersAreCloseEnough(float num1, float num2) {
+    public bool CheckIfNumbersAreCloseEnough(float num1, float num2)
+    {
         float marginOfError = 0.00001f;
-        if (Mathf.Abs(num1 - num2) < marginOfError) {
+        if (Mathf.Abs(num1 - num2) < marginOfError)
+        {
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
-    public void CreateNewPuzzle() 
+    public void CreateNewPuzzle()
     {
         Debug.Log("tesssst");
         Debug.Log("test message, CircleA.name: " + CircleA.name);
@@ -2417,13 +2731,18 @@ public class PuzzleManager : MonoBehaviour
         Debug.Log("***********************        *************************");
         int ABC = Random.Range(1, 3);   // this will determine whether we're starting by creating PartA, or starting by creating PartB
         char A_B_C = 'x';
-        if (ABC == 1) {
+        if (ABC == 1)
+        {
             A_B_C = 'A';
             Debug.Log("we start by creating PartA");
-        } else if (ABC == 2) {
+        }
+        else if (ABC == 2)
+        {
             A_B_C = 'B';
             Debug.Log("we start by creating PartB");
-        } else if (ABC == 3) {
+        }
+        else if (ABC == 3)
+        {
             A_B_C = 'C';
             //Debug.Log("we start by creating PartC");        // this isn't currently supported
         }
@@ -2445,66 +2764,97 @@ public class PuzzleManager : MonoBehaviour
         Circle inputCircleB = null;
         Circle outputCircle = null;
 
-        if (oppy.type == "addition") {
+        if (oppy.type == "addition")
+        {
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
             inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
-        } else if (oppy.type == "subtraction") {
+        }
+        else if (oppy.type == "subtraction")
+        {
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, false, negativeNumbersAllowed, false);
             // don't want circle1 to be 1, because 1 - x = B, where B MUST BE positive and not a fraction, is impossible
             inputCircleA = CreateRandomCircle(stuff);
             inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
-        } else if (oppy.type == "multiplication" || oppy.type == "division") {
+        }
+        else if (oppy.type == "multiplication" || oppy.type == "division")
+        {
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
             inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
             Debug.Log("%%%%%%%%%%%%%%%% ok we did division, and inputCircleA.value = " + inputCircleA.value + ", and inputCircleB.value = " + inputCircleB.value);
-        } else if (oppy.type == "exponent2") {
+        }
+        else if (oppy.type == "exponent2")
+        {
             List<float> stuff = null;
-            if (gameType == "kiddy") {
+            if (gameType == "kiddy")
+            {
                 stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
-            } else {
-                if (A_B_C == 'A') {
+            }
+            else
+            {
+                if (A_B_C == 'A')
+                {
                     stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
-                } else if (A_B_C == 'B') {
+                }
+                else if (A_B_C == 'B')
+                {
                     stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
                 }
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
-        } else if (oppy.type == "exponent3") {
+        }
+        else if (oppy.type == "exponent3")
+        {
             List<float> stuff = null;
-            if (gameType == "kiddy") {
+            if (gameType == "kiddy")
+            {
                 stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, false);
-            } else {
+            }
+            else
+            {
                 stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
-        } else if (oppy.type == "squareRoot") {
+        }
+        else if (oppy.type == "squareRoot")
+        {
             List<float> stuff = null;
-            if (gameType == "kiddy") {
+            if (gameType == "kiddy")
+            {
                 stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
-            } else {
-                if (A_B_C == 'B') {
+            }
+            else
+            {
+                if (A_B_C == 'B')
+                {
                     stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
-                } else if (A_B_C == 'A') {
+                }
+                else if (A_B_C == 'A')
+                {
                     stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
                 }
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
-        } else if (oppy.type == "cubeRoot") {
+        }
+        else if (oppy.type == "cubeRoot")
+        {
             List<float> stuff = null;
-            if (gameType == "kiddy") {
+            if (gameType == "kiddy")
+            {
                 stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, false);
-            } else {
+            }
+            else
+            {
                 stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
             }
             inputCircleA = CreateRandomCircle(stuff);
@@ -2535,7 +2885,8 @@ public class PuzzleManager : MonoBehaviour
         //Operator operator3 = null;
         Circle result = null;
 
-        if (gameType == "kiddy") {
+        if (gameType == "kiddy")
+        {
             // there will only be two circles
             // one operator is already defined, and we just need to add in a random 2nd operator for the user to not use it
             circle1 = inputCircleA;
@@ -2547,7 +2898,9 @@ public class PuzzleManager : MonoBehaviour
             result = outputCircle;
 
 
-        } else {
+        }
+        else
+        {
             // depending on what A_B_C is, will affect which of the following we choose:
             if (A_B_C == 'A')
             {
@@ -2585,7 +2938,8 @@ public class PuzzleManager : MonoBehaviour
                                                  // the above function will tell us which PartA result was used as the first input for PartB
                                                  //      we need to identify which PartA result was used, and then make the OTHER ONE appear in the puzzle
                 Circle resultFromPartA = (Circle)PartAStuff[3];
-                if (circle1 != null && circle2 != null) {
+                if (circle1 != null && circle2 != null)
+                {
                     Debug.Log("%%%%%%%%%%%%%%%%%%%% finished creating PartA, and circle1.value = " + circle1.value + ", and circle2.value = " + circle2.value);
                 }
                 Debug.Log("%%%%%%%%%%%%%%%%%%%%%%%%% resultFromPartA = " + resultFromPartA.value);
@@ -2602,8 +2956,8 @@ public class PuzzleManager : MonoBehaviour
                 {
                     Debug.Log("%%%%%%%%%% bbb");
                     circle3 = inputCircleA;
-                } 
-                else 
+                }
+                else
                 {
                     Debug.Log("%%%%%%%%% it DID NOT EQUAL EITHER OF THEM and i think i found the bug, because circle3 is remaining null");
                     Debug.Log("%%%%%% resultFromPartA: " + resultFromPartA.value + ", " + inputCircleA.value + ", " + inputCircleB.value);
@@ -2629,7 +2983,8 @@ public class PuzzleManager : MonoBehaviour
         //Debug.Log("final result: " + result.value);
 
 
-        void PutPuzzleIntoGame() {
+        void PutPuzzleIntoGame()
+        {
             // put the puzzle into the game for the user to see
 
             // how many valid circles do we have? 1 or 2 or 3?
@@ -2666,7 +3021,7 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-            MathInProgress.GetComponent<TextMeshPro>().text = "";
+            //MathInProgress.GetComponent<TextMeshPro>().text = "";
 
             SetOperator(OperatorA, operator1);
             SetOperator(OperatorB, operator2);
@@ -2685,19 +3040,28 @@ public class PuzzleManager : MonoBehaviour
             float circle1value;
             float circle2value;
             float circle3value;
-            if (circle1 != null) {
+            if (circle1 != null)
+            {
                 circle1value = circle1.value;
-            } else {
+            }
+            else
+            {
                 circle1value = -99999;
             }
-            if (circle2 != null) {
+            if (circle2 != null)
+            {
                 circle2value = circle2.value;
-            } else {
+            }
+            else
+            {
                 circle2value = -99999;
             }
-            if (circle3 != null) {
+            if (circle3 != null)
+            {
                 circle3value = circle3.value;
-            } else {
+            }
+            else
+            {
                 circle3value = -99999;
             }
             Debug.Log("circle1.value: " + circle1value + "         circle2.value: " + circle2value + "         circle3.value: " + circle3value);
@@ -2715,7 +3079,8 @@ public class PuzzleManager : MonoBehaviour
         //          the puzzle timer is RESET to 10 seconds & starts counting down
 
 
-        if (gameType == "timed") {
+        if (gameType == "timed")
+        {
             timerPuzzle.ResetPuzzleTimer();
             timerGlobal.UnpauseGlobalTimer();
             timerPuzzle.UnpausePuzzleTimer();
@@ -2723,17 +3088,76 @@ public class PuzzleManager : MonoBehaviour
             GameManager.instance.DecreaseNumberOfPuzzlesRemaining(1);
         }
 
-
+        // now make the circles operators & goal invisible so we can do animations before loading new puzzle
+        CircleA.SetActive(false);
+        CircleB.SetActive(false);
+        CircleC.SetActive(false);
+        OperatorA.SetActive(false);
+        OperatorB.SetActive(false);
+        Goal.SetActive(false);
 
 
 
 
     }
 
+    public void MakePuzzleAppear() {
+
+
+        if (CircleAScript.partOfCurrentPuzzle == true) {
+            CircleA.SetActive(true);
+            CircleAScript.defaultScale = CircleA.GetComponent<RectTransform>().localScale;
+            CircleA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+
+        }
+        if (CircleBScript.partOfCurrentPuzzle == true) {
+            CircleB.SetActive(true);
+            CircleBScript.defaultScale = CircleB.GetComponent<RectTransform>().localScale;
+            CircleB.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+
+        }
+        if (CircleCScript.partOfCurrentPuzzle == true) {
+            CircleC.SetActive(true);
+            CircleCScript.defaultScale = CircleC.GetComponent<RectTransform>().localScale;
+            CircleC.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+
+        }
+        
+        OperatorA.SetActive(true);
+        OperatorAScript.defaultScale = OperatorA.GetComponent<Transform>().localScale;
+        //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
+        //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+        OperatorA.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
+
+
+        OperatorB.SetActive(true);
+        OperatorBScript.defaultScale = OperatorB.GetComponent<Transform>().localScale;
+        //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
+        //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+        OperatorB.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
+
+
+        Goal.SetActive(true);
+        //Goal.GetComponent<Clickable>().defaultScale = Goal.GetComponent<RectTransform>().localScale;
+        Goal.GetComponent<Clickable>().defaultScale = Goal.GetComponent<Transform>().localScale;
+        //Goal.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
+        Goal.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
+
+
+        CircleAScript.growing = true;
+        CircleBScript.growing = true;
+        CircleCScript.growing = true;
+        OperatorAScript.growing = true;
+        OperatorBScript.growing = true;
+        Goal.GetComponent<Clickable>().growing = true;
+
+    }
+
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public void ResetColorsAndMath_Circles_Operators() {
+    public void ResetColorsAndMath_Circles_Operators()
+    {
         CircleA.GetComponent<SpriteRenderer>().color = whiteColor;
         CircleB.GetComponent<SpriteRenderer>().color = whiteColor;
         CircleC.GetComponent<SpriteRenderer>().color = whiteColor;
@@ -2760,8 +3184,10 @@ public class PuzzleManager : MonoBehaviour
         OperatorAScript.rotating = false;
         OperatorBScript.rotating = false;
     }
-    public void HighlightCircleGameObject(GameObject obby, int oneORtwo) {
-        if (oneORtwo == 1) {
+    public void HighlightCircleGameObject(GameObject obby, int oneORtwo)
+    {
+        if (oneORtwo == 1)
+        {
             highlightedCircle1 = obby;
             highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
             // move the circle over to -3.9f on x axis
@@ -2770,25 +3196,30 @@ public class PuzzleManager : MonoBehaviour
             //highlightedCircle1.GetComponent<Clickable>().wiggling = true;
             highlightedCircle1.GetComponent<Clickable>().BeginRotating();
 
-        } else if (oneORtwo == 2) {
+        }
+        else if (oneORtwo == 2)
+        {
             highlightedCircle2 = obby;
             highlightedCircle2.GetComponent<SpriteRenderer>().color = highlightedColor;
             highlightedCircle2.GetComponent<Clickable>().BeginRotating();
         }
     }
-    public void UNHighlightCircleGameObject(GameObject obby) {
+    public void UNHighlightCircleGameObject(GameObject obby)
+    {
         // stop the highlight animation and/or reverse the highlighted color and make it the normal color
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
         //highlightedCircle1.GetComponent<Clickable>().wiggling = false;
         //highlightedCircle1.GetComponent<Clickable>().BeginMovementToDefaultPosition();
         obby.GetComponent<Clickable>().EndRotating();
     }
-    public void HighLightOperatorGameObject(GameObject obby) {
+    public void HighLightOperatorGameObject(GameObject obby)
+    {
         highlightedOperator = obby;
         highlightedOperator.GetComponent<SpriteRenderer>().color = highlightedColor;
         highlightedOperator.GetComponent<Clickable>().BeginRotating();
     }
-    public void UNHighlightOperatorGameObject(GameObject obby) {
+    public void UNHighlightOperatorGameObject(GameObject obby)
+    {
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
         obby.GetComponent<Clickable>().EndRotating();
 
@@ -2796,7 +3227,8 @@ public class PuzzleManager : MonoBehaviour
 
     // ************************************************************************************************************
     // ************************************************************************************************************
-    public void AcceptClickedCircleOrOperator(GameObject gameObjectClicked) {
+    public void AcceptClickedCircleOrOperator(GameObject gameObjectClicked)
+    {
         if (circle1selected == false && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
         {
             // this is the stage where we select the first Circle... the player can change which one they want up until they click an operator
@@ -2810,8 +3242,11 @@ public class PuzzleManager : MonoBehaviour
             {
                 // do nothing
             }
-        } else if (circle1selected == true && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false) {
-            if (gameObjectClicked.CompareTag("circle")) {
+        }
+        else if (circle1selected == true && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
+        {
+            if (gameObjectClicked.CompareTag("circle"))
+            {
                 if (gameObjectClicked != highlightedCircle1)
                 {
                     // simply change which circle is highlighted
@@ -2827,12 +3262,15 @@ public class PuzzleManager : MonoBehaviour
                     circle1selected = false;
                     highlightedCircle1 = null;
                 }
-            } else if (gameObjectClicked.CompareTag("operator")) {
+            }
+            else if (gameObjectClicked.CompareTag("operator"))
+            {
                 highlightedOperator = gameObjectClicked;
                 HighLightOperatorGameObject(gameObjectClicked);
                 operatorSelected = true;    // this prevents the player from quickly clicking the other operator while the animation plays out, and causing a glitch
                 DetermineWhether_oneCircle_MathIsComplete();
-                if (math_oneCircle_IsComplete) {
+                if (math_oneCircle_IsComplete)
+                {
                     executingONEcircleMath = true;
                     executingTWOcircleMath = false;
                     ExecuteCompletionOf_oneCircle_Math(false);
@@ -2840,16 +3278,21 @@ public class PuzzleManager : MonoBehaviour
                 }
                 // adding this June 30 2022
                 DetermineWhether_twoCircle_MathIsComplete();
-                if (math_twoCircle_IsComplete) {
+                if (math_twoCircle_IsComplete)
+                {
                     executingONEcircleMath = false;
                     executingTWOcircleMath = true;
                     ExecuteCompletionOf_twoCircle_Math();
                 }
             }
-        } else if (circle1selected == true && operatorSelected == true && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false) { 
+        }
+        else if (circle1selected == true && operatorSelected == true && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
+        {
             // ready to accept circle2... CANNOT change circle1 at this point... but CAN CHANGE operator
-            if (gameObjectClicked.CompareTag("circle")) { 
-                if (gameObjectClicked == highlightedCircle1) {
+            if (gameObjectClicked.CompareTag("circle"))
+            {
+                if (gameObjectClicked == highlightedCircle1)
+                {
                     // buuuut... you CANNOT click the same circle because it has already disappeared
                     // but if you COULD click it: 
                     // undo EVERYTHING
@@ -2860,39 +3303,49 @@ public class PuzzleManager : MonoBehaviour
                     UNHighlightOperatorGameObject(highlightedOperator);
                     highlightedOperator = null;
                     operatorSelected = false;
-                } else {
+                }
+                else
+                {
                     value2 = GetValueOfClickedCircle(gameObjectClicked);
                     HighlightCircleGameObject(gameObjectClicked, 2);
                     circle2selected = true;
                     DetermineWhether_twoCircle_MathIsComplete();
-                    if (math_twoCircle_IsComplete) {
+                    if (math_twoCircle_IsComplete)
+                    {
                         executingONEcircleMath = false;
                         executingTWOcircleMath = true;
                         ExecuteCompletionOf_twoCircle_Math();
                         DetermineWhetherPuzzleIsSolved();
                     }
                 }
-            } else if (gameObjectClicked.CompareTag("operator")) { 
-                if (gameObjectClicked == highlightedOperator) {
+            }
+            else if (gameObjectClicked.CompareTag("operator"))
+            {
+                if (gameObjectClicked == highlightedOperator)
+                {
                     // you CANNOT CLICK on this operator because it has already disappeared
                     // unhighlight
                     UNHighlightOperatorGameObject(highlightedOperator);
                     highlightedOperator = null;
                     operatorSelected = false;
-                } else {
+                }
+                else
+                {
                     // change the operator
                     UNHighlightOperatorGameObject(highlightedOperator);
                     highlightedOperator = gameObjectClicked;
                     HighLightOperatorGameObject(gameObjectClicked);
                     DetermineWhether_oneCircle_MathIsComplete();
-                    if (math_oneCircle_IsComplete) {
+                    if (math_oneCircle_IsComplete)
+                    {
                         executingONEcircleMath = true;
                         executingTWOcircleMath = false;
                         ExecuteCompletionOf_oneCircle_Math(false);
                     }
                     // adding this June 30 2022
                     DetermineWhether_twoCircle_MathIsComplete();
-                    if (math_twoCircle_IsComplete) {
+                    if (math_twoCircle_IsComplete)
+                    {
                         executingONEcircleMath = false;
                         executingTWOcircleMath = true;
                         ExecuteCompletionOf_twoCircle_Math();
@@ -2909,27 +3362,34 @@ public class PuzzleManager : MonoBehaviour
     }
     // ************************************************************************************************************
     // ************************************************************************************************************
-    public string GetTypeOfClickedOperator(GameObject oppy) {
+    public string GetTypeOfClickedOperator(GameObject oppy)
+    {
         string toReturn = oppy.GetComponent<Clickable>().typeOfThisOperator;
         return toReturn;
     }
 
-    public float GetValueOfClickedCircle(GameObject circleClicked) {
+    public float GetValueOfClickedCircle(GameObject circleClicked)
+    {
         float value = 0;
-        if (circleClicked == CircleA) {
+        if (circleClicked == CircleA)
+        {
             //Debug.Log("CircleA was clicked");
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
             // find the circleData associated with CircleA... we can find it because we previously marked both the GameObject and the Circle so we know they're associated
             int IDnum = CircleA.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
-            for (int i = 0; i < listOfAllCircles.Count; i++) { 
-                if (listOfAllCircles[i].IDnumber == IDnum) {
+            for (int i = 0; i < listOfAllCircles.Count; i++)
+            {
+                if (listOfAllCircles[i].IDnumber == IDnum)
+                {
                     value = listOfAllCircles[i].value;
                 }
             }
             //Debug.Log("value of CircleA: " + value);
 
-        } else if (circleClicked == CircleB) {
+        }
+        else if (circleClicked == CircleB)
+        {
             //Debug.Log("CircleB was clicked");
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
@@ -2942,7 +3402,9 @@ public class PuzzleManager : MonoBehaviour
                 }
             }
             //Debug.Log("value of CircleB: " + value);
-        } else if (circleClicked == CircleC) {
+        }
+        else if (circleClicked == CircleC)
+        {
             //Debug.Log("CircleC was clicked");
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
@@ -2960,14 +3422,18 @@ public class PuzzleManager : MonoBehaviour
 
     }
 
-    public float GetValueOfGoal() {
+    public float GetValueOfGoal()
+    {
         return Goal.GetComponent<Clickable>().valueOfThisCircle_orGoal;
     }
 
-    public Circle GetCircle_classObject_OfClickedCircle_gameObject(GameObject circleClicked) {
+    public Circle GetCircle_classObject_OfClickedCircle_gameObject(GameObject circleClicked)
+    {
         int IDnum = circleClicked.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
-        for (int i = 0; i < listOfAllCircles.Count; i++) { 
-            if (listOfAllCircles[i].IDnumber == IDnum) {
+        for (int i = 0; i < listOfAllCircles.Count; i++)
+        {
+            if (listOfAllCircles[i].IDnumber == IDnum)
+            {
                 return listOfAllCircles[i];
             }
         }
@@ -2975,10 +3441,13 @@ public class PuzzleManager : MonoBehaviour
         return null;
     }
 
-    public Operator GetOperator_classObject_OfClickedOperator_gameObject(GameObject operatorClicked) {
+    public Operator GetOperator_classObject_OfClickedOperator_gameObject(GameObject operatorClicked)
+    {
         int IDnum = operatorClicked.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis;
-        for (int i = 0; i < listOfAllOperators.Count; i++) { 
-            if (listOfAllOperators[i].IDnumber == IDnum) {
+        for (int i = 0; i < listOfAllOperators.Count; i++)
+        {
+            if (listOfAllOperators[i].IDnumber == IDnum)
+            {
                 return listOfAllOperators[i];
             }
         }
@@ -2986,15 +3455,18 @@ public class PuzzleManager : MonoBehaviour
         return null;
     }
 
-    public void DetermineWhether_oneCircle_MathIsComplete() {
+    public void DetermineWhether_oneCircle_MathIsComplete()
+    {
         // if the operator is ADD/SUBT/MULT/DIVI, then a second Circle must be clicked
         //      otherwise, just 1 circle and then 1 operator is enough
 
         //math_oneCircle_IsComplete = true;
 
-        if (circle1selected && operatorSelected) {
+        if (circle1selected && operatorSelected)
+        {
             string temp = GetTypeOfClickedOperator(highlightedOperator);
-            if (temp == "exponent2" || temp == "exponent3" || temp == "squareRoot" || temp == "cubeRoot") {
+            if (temp == "exponent2" || temp == "exponent3" || temp == "squareRoot" || temp == "cubeRoot")
+            {
                 math_oneCircle_IsComplete = true;
             }
         }
@@ -3007,30 +3479,40 @@ public class PuzzleManager : MonoBehaviour
 
         //math_twoCircle_IsComplete = true;
 
-        if (circle1selected && operatorSelected && circle2selected) {
+        if (circle1selected && operatorSelected && circle2selected)
+        {
             string temp = GetTypeOfClickedOperator(highlightedOperator);
-            if (temp == "exponent2" || temp == "exponent3" || temp == "squareRoot" || temp == "cubeRoot") {
+            if (temp == "exponent2" || temp == "exponent3" || temp == "squareRoot" || temp == "cubeRoot")
+            {
                 // do nothing
-            } else {
+            }
+            else
+            {
                 math_twoCircle_IsComplete = true;
             }
         }
 
     }
-    public void SetCircleAsDoneMoving(GameObject circleThatMoved) { 
+    public void SetCircleAsDoneMoving(GameObject circleThatMoved)
+    {
         //asdfasdf        // need to reset the moving status at end of the math
         // identify which circle this is
-        if (circleThatMoved == highlightedCircle1) {
+        if (circleThatMoved == highlightedCircle1)
+        {
             circle1DoneMoving = true;
-        } else if (circleThatMoved == highlightedCircle2) {
+        }
+        else if (circleThatMoved == highlightedCircle2)
+        {
             circle2DoneMoving = true;
         }
 
     }
-    public void ExecuteCompletionOf_oneCircle_Math(bool circleDoneMovingToOperator) {
+    public void ExecuteCompletionOf_oneCircle_Math(bool circleDoneMovingToOperator)
+    {
 
         // move the circle to the operator
-        if (circleDoneMovingToOperator == false && executingONEcircleMath) {
+        if (circleDoneMovingToOperator == false && executingONEcircleMath)
+        {
 
             // make the operator & circle move toward each other in the middle (-1, 0)
             //Vector2 midPoint = new Vector2(-1, 0);
@@ -3046,7 +3528,8 @@ public class PuzzleManager : MonoBehaviour
             highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
         }
 
-        if (circleDoneMovingToOperator == true && executingONEcircleMath) {
+        if (circleDoneMovingToOperator == true && executingONEcircleMath)
+        {
             // when the circle gets to a certain point, it disappears
             highlightedCircle1.SetActive(false);
             highlightedOperator.SetActive(false);
@@ -3075,20 +3558,25 @@ public class PuzzleManager : MonoBehaviour
     public void ExecuteCompletionOf_twoCircle_Math()
     {
         DEBUG_outputCircleValues("about to ExecuteCompletionOf_twoCircle_Math()");
-        if (executingTWOcircleMath && circle1DoneMoving == false && circle2DoneMoving == false) {
+        if (executingTWOcircleMath && circle1DoneMoving == false && circle2DoneMoving == false)
+        {
             // identify which circle is higher, so they curve up & down correctly
-            if(highlightedCircle1.transform.position.y > highlightedCircle2.transform.position.y) {
+            if (highlightedCircle1.transform.position.y > highlightedCircle2.transform.position.y)
+            {
                 highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
                 highlightedCircle2.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
-            } else {
+            }
+            else
+            {
                 highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
                 highlightedCircle2.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
             }
 
 
-        } 
-        
-        if (circle1DoneMoving && circle2DoneMoving) {
+        }
+
+        if (circle1DoneMoving && circle2DoneMoving)
+        {
 
             //Vector2 sparkleStartPos = highlightedOperator.transform.position;
             //Vector2 offset1 = new Vector2(Random.Range(-2, 5), Random.Range(-1, 2));
@@ -3138,42 +3626,52 @@ public class PuzzleManager : MonoBehaviour
 
     }
 
-    public void DetermineWhetherPuzzleIsSolved() {
+    public void DetermineWhetherPuzzleIsSolved()
+    {
         Debug.Log("about to DetermineWhetherPuzzleIsSolved()");
         // if there is only 1 circle remaining, and 0 operators remaining
         int circleTally = 0;
         GameObject temp = null;
-        if (CircleA.activeSelf) {
+        if (CircleA.activeSelf)
+        {
             circleTally += 1;
             temp = CircleA;
         }
-        if (CircleB.activeSelf) {
+        if (CircleB.activeSelf)
+        {
             circleTally += 1;
             temp = CircleB;
         }
-        if (CircleC.activeSelf) {
+        if (CircleC.activeSelf)
+        {
             circleTally += 1;
             temp = CircleC;
         }
 
         int operatorTally = 0;
-        if (OperatorA.activeSelf) {
+        if (OperatorA.activeSelf)
+        {
             operatorTally += 1;
         }
-        if (OperatorB.activeSelf) {
+        if (OperatorB.activeSelf)
+        {
             operatorTally += 1;
         }
 
-        if (gameType == "kiddy") { 
-            if (circleTally == 1 && operatorTally == 1) {
+        if (gameType == "kiddy")
+        {
+            if (circleTally == 1 && operatorTally == 1)
+            {
                 float circleValue = GetValueOfClickedCircle(temp);
                 float goalValue = GetValueOfGoal();
-                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue)) {
+                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue))
+                {
                     //Debug.Log("in kiddy mode: there is 1 circle and 1 operators, and the goal has been reached");
                     GameManager.instance.IncreaseNumberOfCompleted(1);
                     GameManager.instance.ChangeStat_Easy("solved", 1);
                     // get rid of the useless operator
-                    if (OperatorA.activeSelf) {
+                    if (OperatorA.activeSelf)
+                    {
                         // if this is the remaining operator, then make it fall away
                         //OperatorA.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorA.GetComponent<Clickable>().ShrinkAndDisappear();
@@ -3181,7 +3679,8 @@ public class PuzzleManager : MonoBehaviour
                         Debug.Log("about to change stat for OperatorB, type: " + tempOp.type);
                         GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
                     }
-                    if (OperatorB.activeSelf) {
+                    if (OperatorB.activeSelf)
+                    {
                         // if this is the remaining operator, then make it fall away
                         //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
@@ -3190,15 +3689,19 @@ public class PuzzleManager : MonoBehaviour
                         GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
                     }
                     AnimatePuzzleSolved(temp, false, false);
-                } else {
+                }
+                else
+                {
                     //Debug.Log("there is 1 circle and 0 operators------------------------------------------ but the goal is not reached! you FAIL!");
                     // get rid of the useless operator
-                    if (OperatorA.activeSelf) {
+                    if (OperatorA.activeSelf)
+                    {
                         // if this is the remaining operator, then make it fall away
                         //OperatorA.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorA.GetComponent<Clickable>().ShrinkAndDisappear();
                     }
-                    if (OperatorB.activeSelf) {
+                    if (OperatorB.activeSelf)
+                    {
                         // if this is the remaining operator, then make it fall away
                         //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
                         OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
@@ -3208,38 +3711,50 @@ public class PuzzleManager : MonoBehaviour
                     AnimatePuzzleFailed(temp, false, false);
                     GameManager.instance.ResolveConflictUNFAVORABLY();
                 }
-            } else {
-                DEBUG_outputCircleValues("puzzle not solved yet (kiddy)");
-                
             }
-        } 
+            else
+            {
+                DEBUG_outputCircleValues("puzzle not solved yet (kiddy)");
+
+            }
+        }
         else if (gameType == "timed" || gameType == "endless")
         {
-            if (circleTally == 1 && operatorTally == 0) {
+            if (circleTally == 1 && operatorTally == 0)
+            {
                 // if the 1 circle value is the same as the goal
                 float circleValue = GetValueOfClickedCircle(temp);
                 float goalValue = GetValueOfGoal();
-                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue)) {
+                if (CheckIfNumbersAreCloseEnough(circleValue, goalValue))
+                {
                     //Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
-                    if (gameType == "timed") {
+                    if (gameType == "timed")
+                    {
                         GameManager.instance.IncreaseScore(10);
-                    } else if (gameType == "endless") {
+                    }
+                    else if (gameType == "endless")
+                    {
                         GameManager.instance.IncreaseNumberOfCompleted(1);
                         GameManager.instance.ChangeStat_Endless("solved", 1);
                         GameManager.instance.ChangeStat_Endless(operator1_forStats, 1);
                         GameManager.instance.ChangeStat_Endless(operator2_forStats, 1);
-                    } 
+                    }
                     AnimatePuzzleSolved(temp, false, false);
-                } else {
+                }
+                else
+                {
                     //Debug.Log("there is 1 circle and 0 operators------------------------------------------ but the goal is not reached! you FAIL!");
-                    if (gameType == "endless") {
+                    if (gameType == "endless")
+                    {
                         GameManager.instance.IncreaseNumberOfFailed(1);
                         GameManager.instance.ChangeStat_Endless("failed", 1);
                     }
                     AnimatePuzzleFailed(temp, false, false);
                     GameManager.instance.ResolveConflictUNFAVORABLY();
                 }
-            } else {
+            }
+            else
+            {
                 DEBUG_outputCircleValues("puzzle not solved yet (timed/endless)");
             }
         }
@@ -3248,10 +3763,13 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-    public void AnimatePuzzleSolved(GameObject finalCircle, bool circleHasReachedGoal, bool explosionFinished) {
-  
-        if (circleHasReachedGoal == false) {
-            if (gameType == "timed") {
+    public void AnimatePuzzleSolved(GameObject finalCircle, bool circleHasReachedGoal, bool explosionFinished)
+    {
+
+        if (circleHasReachedGoal == false)
+        {
+            if (gameType == "timed")
+            {
                 // stop the timers
                 timerGlobal.PauseGlobalTimer();
                 timerPuzzle.PausePuzzleTimer();
@@ -3263,15 +3781,17 @@ public class PuzzleManager : MonoBehaviour
                     bonusTimeNotify.BeginMove(timeToAdd);
                 }
             }
-            
+
 
 
 
             finalCircle.GetComponent<Clickable>().BeginMovementToTarget(Goal.transform.position, "goal", true, true);
 
-        } else {
+        }
+        else
+        {
             // begin "animating" the explosion
-   
+
             //explosion.StartExplosion();
             float xDestination = -7;
             float yDestination = -3.5f;
@@ -3294,14 +3814,19 @@ public class PuzzleManager : MonoBehaviour
             else
             {
                 CreateNewPuzzle();
+                //// temporary
+                //GameManager.instance.BuyRocket();
             }
-            
-            
+
+
         }
     }
-    public void AnimatePuzzleFailed(GameObject finalCircle, bool circleHasReachedGoal, bool fallingIntoToiletComplete) {
-        if(circleHasReachedGoal == false) {
-            if (gameType == "timed") {
+    public void AnimatePuzzleFailed(GameObject finalCircle, bool circleHasReachedGoal, bool fallingIntoToiletComplete)
+    {
+        if (circleHasReachedGoal == false)
+        {
+            if (gameType == "timed")
+            {
                 // stop the timers
                 timerGlobal.PauseGlobalTimer();
                 timerPuzzle.PausePuzzleTimer();
@@ -3312,23 +3837,33 @@ public class PuzzleManager : MonoBehaviour
             float newX = Goal.transform.position.x - 1.5f;
             float newY = Goal.transform.position.y;
             finalCircle.GetComponent<Clickable>().BeginMovementToTarget(new Vector2(newX, newY), "goalThenToilet", true, true);
-        } else {
+
+        }
+        else
+        {
             // animate the circle bouncing OFF OF the goal and falling down
-            
+
+
             if (fallingIntoToiletComplete == true)
             {
                 // then load a new puzzle
-                if (gameType == "timed") {
+                if (gameType == "timed")
+                {
                     if (timerGlobal.GetTimeRemaining() > 0)
                     {
                         CreateNewPuzzle();
                     }
-                } else {
+                }
+                else
+                {
                     CreateNewPuzzle();
                 }
 
-            } else {
+            }
+            else
+            {
                 finalCircle.GetComponent<Clickable>().SendCircleToToilet(0);
+                Goal.GetComponent<Clickable>().shrinking = true;
             }
 
         }
@@ -3344,10 +3879,12 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-    public void CombineCircle1_and_Operator() { 
+    public void CombineCircle1_and_Operator()
+    {
 
     }
-    public void Reverse_CombineCircle1_and_Operator() { 
+    public void Reverse_CombineCircle1_and_Operator()
+    {
 
     }
 
@@ -3364,7 +3901,8 @@ public class PuzzleManager : MonoBehaviour
 
     public void DEBUG_outputCircleValues(string location)
     {
-        if (debugMessagesOn) {
+        if (debugMessagesOn)
+        {
             Debug.Log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ location: " + location);
             Debug.Log("CircleA: " + CircleA.GetComponent<Clickable>().valueOfThisCircle_orGoal);
             Debug.Log("CircleB: " + CircleB.GetComponent<Clickable>().valueOfThisCircle_orGoal);
@@ -3380,7 +3918,8 @@ public class PuzzleManager : MonoBehaviour
     //    }
     //}
 
-    public void ConvertToRational() {
+    public void ConvertToRational()
+    {
 
         float testFloat = 4.999f;
         Debug.Log("testFloat: " + testFloat);
@@ -3390,7 +3929,8 @@ public class PuzzleManager : MonoBehaviour
         Circle temp = GetCircle_classObject_OfClickedCircle_gameObject(CircleA);
         float value = temp.value;
         bool isNegative = false;
-        if (value < 0) {
+        if (value < 0)
+        {
             isNegative = true;
         }
 
@@ -3401,10 +3941,14 @@ public class PuzzleManager : MonoBehaviour
 
         bool rationalFound = false;
 
-        for (int i = 1; i <= 30; i++) { 
-            for (int j = 2; j <= 10; j++) { 
-                if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j)) {
-                    if (rationalFound == false) {
+        for (int i = 1; i <= 30; i++)
+        {
+            for (int j = 2; j <= 10; j++)
+            {
+                if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j))
+                {
+                    if (rationalFound == false)
+                    {
                         if (isNegative)
                         {
                             Debug.Log("negative: ");
@@ -3426,6 +3970,3 @@ public class PuzzleManager : MonoBehaviour
 
 
 }
-
-
-
