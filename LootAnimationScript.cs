@@ -20,6 +20,7 @@ public class LootAnimationScript : MonoBehaviour
 
     TextMeshPro quantityText;
     int quantity;
+    bool quantityTextSet = false;
 
     public bool movingToSecondSpot = false;
     public float secondSpeed = 1;
@@ -32,6 +33,8 @@ public class LootAnimationScript : MonoBehaviour
     SpriteRenderer spriteRenderer;
     public float fadeSpeed = 1;
 
+    public TextMeshProUGUI inventoryText;
+    TurnGreenThenFadeBlack inventoryTextGreenThenBlackScript;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +42,7 @@ public class LootAnimationScript : MonoBehaviour
         spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         quantityText = transform.GetChild(1).GetComponent<TextMeshPro>();
         quantityText.text = "";
+        inventoryTextGreenThenBlackScript = inventoryText.GetComponent<TurnGreenThenFadeBlack>();
     }
 
     // Update is called once per frame
@@ -48,8 +52,12 @@ public class LootAnimationScript : MonoBehaviour
         if (movingToFirstSpot) {
             transform.position = Vector2.MoveTowards(transform.position, firstSpot, Time.deltaTime * firstSpeed);
             if (Vector2.Distance(transform.position, firstSpot) < 0.01f) {
+                if (quantityTextSet == false) {
+                    quantityText.text = "+" + quantity;
+                    quantityTextSet = true;
+                }
                 movingToFirstSpot = false;
-                quantityText.text = "+" + quantity;
+
                 StartCoroutine(WaitAMoment());
             }
 
@@ -75,7 +83,54 @@ public class LootAnimationScript : MonoBehaviour
                 quantityText.text = "";
                 gameObject.SetActive(false);
                 spriteRenderer.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
-                GameManager.instance.LootRocket();
+
+                // add ONLY THIS type of loot to inventory
+
+                // money, fuel, nitrous
+                // Scrap metal, electronics
+                // bullets, rockets, bombs, caltrops, flamethrower
+                
+                if (whatIsThisThing == "money") {
+                    GameManager.instance.LootMoney();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "fuel") {
+                    GameManager.instance.LootFuel();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "nitrous") {
+                    GameManager.instance.LootNitrous();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "scrapMetal") {
+                    GameManager.instance.LootScrapMetal();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "electronics") {
+                    GameManager.instance.LootElectronics();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "bullets") {
+                    GameManager.instance.LootBullets();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "rocket") {
+                    GameManager.instance.LootRocket();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "bombs") {
+                    GameManager.instance.LootBombs();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "caltrops") {
+                    GameManager.instance.LootCaltrops();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+                else if (whatIsThisThing == "flamethrower") {
+                    GameManager.instance.LootFlamethrower();
+                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                }
+
                 GameManager.instance.ShowLevelUI_ammo_and_inventory_Display();
             }
 
@@ -91,10 +146,15 @@ public class LootAnimationScript : MonoBehaviour
         movingToSecondSpot = true;
     }
 
-    public void StartMovement(int quan) {
+    public void StartMovement(int quan, Vector2 spot) {
         //quantityText.text = "";       // for some reason uncommenting this produces an error
+
+        firstSpot = spot;
+        
         quantity = quan;
         movingToFirstSpot = true;
+        quantityTextSet = false;
+        //Debug.Log("####################################################################################in " + gameObject.name);
     }
 
 }

@@ -39,7 +39,7 @@ public class VehicleBounce : MonoBehaviour
     //public float xpTextSpeed = 3;
 
 
-    public int sparklesArrived = 0;
+    //public int sparklesArrived = 0;
 
     public bool swerving = false;
     public Vector3 swerveZoom_1;
@@ -118,18 +118,18 @@ public class VehicleBounce : MonoBehaviour
             }
         }
 
-        if (sparklesArrived == 6)
-        {
-            //ShowXPgain();
-            GameManager.instance.IncreaseXP();
-            sparklesArrived = 0;
-            //BeginSwerve();
-            //GameManager.instance.PlayExplosion();
-            GameManager.instance.ResolveConflictFavorably();
-            //GameManager.instance.EnemyAppears();
-            //GameManager.instance.EnemyDies();
-            //GameManager.instance.FireRocket();
-        }
+        //if (sparklesArrived == 6)
+        //{
+        //    //ShowXPgain();
+        //    //GameManager.instance.IncreaseXP();
+        //    sparklesArrived = 0;
+        //    //BeginSwerve();
+        //    //GameManager.instance.PlayExplosion();
+        //    GameManager.instance.ResolveConflictFavorably();
+        //    //GameManager.instance.EnemyAppears();
+        //    //GameManager.instance.EnemyDies();
+        //    //GameManager.instance.FireRocket();
+        //}
         //if (xpAppear) {
         //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
 
@@ -253,7 +253,7 @@ public class VehicleBounce : MonoBehaviour
         driftForwardBackward(0);
     }
     public void AddSparkleArrived() {
-        sparklesArrived += 1;
+        //sparklesArrived += 1;
     }
 
     //public void ShowXPgain() {

@@ -71,18 +71,18 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-    public GameObject sparkle1;
-    public GameObject sparkle2;
-    public GameObject sparkle3;
-    public GameObject sparkle4;
-    public GameObject sparkle5;
-    public GameObject sparkle6;
-    Sparkle sparkleScript1;
-    Sparkle sparkleScript2;
-    Sparkle sparkleScript3;
-    Sparkle sparkleScript4;
-    Sparkle sparkleScript5;
-    Sparkle sparkleScript6;
+    //public GameObject sparkle1;
+    //public GameObject sparkle2;
+    //public GameObject sparkle3;
+    //public GameObject sparkle4;
+    //public GameObject sparkle5;
+    //public GameObject sparkle6;
+    //Sparkle sparkleScript1;
+    //Sparkle sparkleScript2;
+    //Sparkle sparkleScript3;
+    //Sparkle sparkleScript4;
+    //Sparkle sparkleScript5;
+    //Sparkle sparkleScript6;
 
     public GameObject vehicle;
 
@@ -219,12 +219,12 @@ public class PuzzleManager : MonoBehaviour
         }
 
 
-        sparkleScript1 = sparkle1.GetComponent<Sparkle>();
-        sparkleScript2 = sparkle2.GetComponent<Sparkle>();
-        sparkleScript3 = sparkle3.GetComponent<Sparkle>();
-        sparkleScript4 = sparkle4.GetComponent<Sparkle>();
-        sparkleScript5 = sparkle5.GetComponent<Sparkle>();
-        sparkleScript6 = sparkle6.GetComponent<Sparkle>();
+        //sparkleScript1 = sparkle1.GetComponent<Sparkle>();
+        //sparkleScript2 = sparkle2.GetComponent<Sparkle>();
+        //sparkleScript3 = sparkle3.GetComponent<Sparkle>();
+        //sparkleScript4 = sparkle4.GetComponent<Sparkle>();
+        //sparkleScript5 = sparkle5.GetComponent<Sparkle>();
+        //sparkleScript6 = sparkle6.GetComponent<Sparkle>();
     }
 
     // Update is called once per frame
@@ -3689,6 +3689,7 @@ public class PuzzleManager : MonoBehaviour
                         GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
                     }
                     AnimatePuzzleSolved(temp, false, false);
+                    GameManager.instance.ResolveConflictFavorably();
                 }
                 else
                 {
@@ -3740,6 +3741,7 @@ public class PuzzleManager : MonoBehaviour
                         GameManager.instance.ChangeStat_Endless(operator2_forStats, 1);
                     }
                     AnimatePuzzleSolved(temp, false, false);
+                    GameManager.instance.ResolveConflictFavorably();
                 }
                 else
                 {
@@ -3795,12 +3797,12 @@ public class PuzzleManager : MonoBehaviour
             //explosion.StartExplosion();
             float xDestination = -7;
             float yDestination = -3.5f;
-            sparkleScript1.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
-            sparkleScript2.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
-            sparkleScript3.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
-            sparkleScript4.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
-            sparkleScript5.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
-            sparkleScript6.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript1.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript2.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript3.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript4.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript5.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
+            //sparkleScript6.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
 
             if (gameType == "timed")
             {

@@ -76,21 +76,18 @@ public class GameManager : MonoBehaviour
     string stat_easy_skipped = "stat_easy_skipped";
     string stat_easy_failed = "stat_easy_failed";
 
-    public TextMeshProUGUI xpGainText;
-    string XP_amount = "XP_amount";
-    public TextMeshProUGUI xpDisplay;
-    public TextMeshProUGUI xpDisplayForInventoryScreen;
-    public bool readyToFadeColorFromGreenToBlack = false;
-    float t = 0;
 
-    public TextMeshProUGUI weaponList;
-    public TextMeshProUGUI partsList;
+    string moneyInInventory = "moneyInInventory";
+    string fuelInInventory = "fuelInInventory";         // this will be a float
+    string nitrousInInventory = "nitrousInInventory";   // this will be a float
+    string scrapmetalInInventory = "scrapmetalInInventory";
+    string electronicsInInventory = "electronicsInInventory";
+
     string bulletsInInventory = "bulletsInInventory";
     string rocketsInInventory = "rocketsInInventory";
     string bombsInInventory = "bombsInInventory";
-    string scrapmetalInInventory = "scrapmetalInInventory";
-    string gunpowderInInventory = "gunpowderInInventory";
-    string wiringInInventory = "wiringInInventory";
+    string caltropsInInventory = "caltropsInInventory";
+    string flamethrowerInInventory = "flamethrowerInInventory";
 
 
     public Animator explodey;
@@ -105,17 +102,63 @@ public class GameManager : MonoBehaviour
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
-    public TextMeshProUGUI LevelUI_ammoDisplay_bullets;
-    public TextMeshProUGUI LevelUI_ammoDisplay_rockets;
-    public TextMeshProUGUI LevelUI_ammoDisplay_bombs;
-    public TextMeshProUGUI LevelUI_ammoDisplay_caltrops;
-    public TextMeshProUGUI LevelUI_ammoDisplay_flamethrower;
-    public TextMeshProUGUI LevelUI_scrapMetal;
-    public TextMeshProUGUI LevelUI_electronics;
+
+    public TextMeshProUGUI LevelUI_inventoryDisplay_money;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_fuel;
+    public TextMeshProUGUI LevelULI_inventoryDisplay_nitrous;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_scrapMetal;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_electronics;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_bullets;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_rockets;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_bombs;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_caltrops;
+    public TextMeshProUGUI LevelUI_inventoryDisplay_flamethrower;
+
+    public GameObject FuelGauge;
+    FuelGaugeScript fuelGaugeScript;
+
+
+
+    public GameObject LOOT_money_icon;
+    LootAnimationScript LOOT_money_script;
+    int LOOT_money_quantity;
+
+    public GameObject LOOT_fuel_icon;
+    LootAnimationScript LOOT_fuel_script;
+    int LOOT_fuel_quantity;
+
+    public GameObject LOOT_nitrous_icon;
+    LootAnimationScript LOOT_nitrous_script;
+    int LOOT_nitrous_quantity;
+
+    public GameObject LOOT_scrapMetal_icon;
+    LootAnimationScript LOOT_scrapMetal_script;
+    int LOOT_scrapMetal_quantity;
+
+    public GameObject LOOT_electronics_icon;
+    LootAnimationScript LOOT_electronics_script;
+    int LOOT_electronics_quantity;
+
+    // ammo
+    public GameObject LOOT_bullets_icon;
+    LootAnimationScript LOOT_bullets_script;
+    int LOOT_bullets_quantity;
 
     public GameObject LOOT_rocket_icon;
-    public LootAnimationScript LOOT_rocket_script;
-    public int LOOT_rocket_quantity;
+    LootAnimationScript LOOT_rocket_script;
+    int LOOT_rocket_quantity;
+
+    public GameObject LOOT_bombs_icon;
+    LootAnimationScript LOOT_bombs_script;
+    int LOOT_bombs_quantity;
+
+    public GameObject LOOT_caltrops_icon;
+    LootAnimationScript LOOT_caltrops_script;
+    int LOOT_caltrops_quantity;
+
+    public GameObject LOOT_flamethrower_icon;
+    LootAnimationScript LOOT_flamethrower_script;
+    int LOOT_flamethrower_quantity;
 
 
 
@@ -137,7 +180,22 @@ public class GameManager : MonoBehaviour
         instance = this;
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
         timerPuzzle = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
+
+        fuelGaugeScript = FuelGauge.GetComponent<FuelGaugeScript>();
+
+        LOOT_money_script = LOOT_money_icon.GetComponent<LootAnimationScript>();
+        LOOT_fuel_script = LOOT_fuel_icon.GetComponent<LootAnimationScript>();
+        LOOT_nitrous_script = LOOT_nitrous_icon.GetComponent<LootAnimationScript>();
+        LOOT_scrapMetal_script = LOOT_scrapMetal_icon.GetComponent<LootAnimationScript>();
+        LOOT_electronics_script = LOOT_electronics_icon.GetComponent<LootAnimationScript>();
+
+        LOOT_bullets_script = LOOT_bullets_icon.GetComponent<LootAnimationScript>();
         LOOT_rocket_script = LOOT_rocket_icon.GetComponent<LootAnimationScript>();
+        LOOT_bombs_script = LOOT_bombs_icon.GetComponent<LootAnimationScript>();
+        LOOT_caltrops_script = LOOT_caltrops_icon.GetComponent<LootAnimationScript>();
+        LOOT_flamethrower_script = LOOT_flamethrower_icon.GetComponent<LootAnimationScript>();
+        
+
         DisplayMainMenu();
     }
 
@@ -149,19 +207,7 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (readyToFadeColorFromGreenToBlack)
-        {
-            //Color currentColor = timerText.color;
-            //float fadeAmount = currentColor.a - (fadeSpeed * Time.deltaTime);
-            t += Time.deltaTime / 1.5f; // Divided by 5 to make it 5 seconds.
-            xpDisplay.color = Color.Lerp(Color.green, Color.black, t);
 
-            if (xpDisplay.color == Color.black)
-            {
-                readyToFadeColorFromGreenToBlack = false;
-                t = 0;
-            }
-        }
     }
 
     public void DisplayMainMenu()
@@ -417,49 +463,13 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(true);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
-        ShowXP();
 
         // update & display ammo levels
         ShowLevelUI_ammo_and_inventory_Display();
 
 
     }
-    public void DisplayInventory()
-    {
 
-        string NumWithSpaces(int totalSpacesWanted, int theNumber)
-        {
-            int temp = totalSpacesWanted - theNumber.ToString().Length;
-            string toReturn = "";
-            for (int i = 0; i < temp; i++)
-            {
-                toReturn += "_";
-            }
-            toReturn += theNumber.ToString();
-            return toReturn;
-        }
-
-        weaponList.text =
-            "Bullets" + NumWithSpaces(10, PlayerPrefs.GetInt("bulletsInInventory", 0)) + "\n" +
-            "Rockets" + NumWithSpaces(10, PlayerPrefs.GetInt("rocketsInInventory", 0)) + "\n";
-
-        partsList.text =
-            "Scrap Metal" + NumWithSpaces(10, PlayerPrefs.GetInt("scrapmetalInInventory", 0)) + "\n" +
-            "Gun Powder" + NumWithSpaces(10, PlayerPrefs.GetInt("gunpowderInInventory", 0)) + "\n" +
-            "Wiring" + NumWithSpaces(10, PlayerPrefs.GetInt("wiringInInventory", 0)) + "\n";
-
-        MainMenuUI.SetActive(false);
-        StatsUI.SetActive(false);
-        OptionsUI.SetActive(false);
-        LevelUI.SetActive(false);
-        CirclesParent.SetActive(false);
-        //MathInProgress.SetActive(false);
-        OperatorsParent.SetActive(false);
-        GoalParent.SetActive(false);
-        GameOverUI.SetActive(false);
-        InventoryUI.SetActive(true);
-        xpDisplayForInventoryScreen.text = "XP: " + PlayerPrefs.GetInt(XP_amount);
-    }
     public void StartTimedGame()
     {
         PuzzleManager.instance.gameType = "timed";
@@ -593,74 +603,6 @@ public class GameManager : MonoBehaviour
             numberFailed = 0;
             UpdateCompletedSkippedFailed();
         }
-
-    }
-    public void IncreaseXP()
-    {
-        // check which toggles are active
-        int XPtoGrant = 1;
-        if (PuzzleManager.instance.ReturnNegativeNumbersON_OFF()) { XPtoGrant += 1; }
-        if (PuzzleManager.instance.ReturnFractionsON_OFF()) { XPtoGrant += 1; }
-        if (PuzzleManager.instance.ReturnExponentsON_OFF()) { XPtoGrant += 1; }
-        if (PuzzleManager.instance.ReturnMultDivideON_OFF()) { XPtoGrant += 1; }
-
-        if (gameType == "endless")
-        {
-            // multiplier of 2 because this is "normal mode"
-            XPtoGrant *= 2;
-        }
-        else if (gameType == "kiddy")
-        {
-            // do nothing
-        }
-        else if (gameType == "timed")
-        {
-            // do nothing for now
-        }
-        else if (gameType == "hard")
-        {
-            // do nothing for now, but probably a multiplier of 3 or 4
-        }
-
-        //ShowXPgain(XPtoGrant);
-        xpGainText.GetComponent<XPnotify>().BeginMove(XPtoGrant);
-
-
-        if (PlayerPrefs.HasKey(XP_amount))
-        {
-            int currentXP = PlayerPrefs.GetInt(XP_amount);
-            currentXP += XPtoGrant;
-            PlayerPrefs.SetInt(XP_amount, currentXP);
-            Debug.Log("xp just set to " + currentXP);
-            //xpDisplay.text = "Total XP: " + currentXP;
-        }
-        else
-        {
-            // then we create the playerPrefs key
-            PlayerPrefs.SetInt(XP_amount, XPtoGrant);
-            //xpDisplay.text = "";
-        }
-    }
-    public void ShowXP()
-    {
-        if (PlayerPrefs.HasKey(XP_amount))
-        {
-            xpDisplay.text = "$" + PlayerPrefs.GetInt(XP_amount);
-        }
-        else
-        {
-            xpDisplay.text = "";
-        }
-    }
-    public void ShowXPgainWithGreenFade()
-    {
-        //xpGainText.gameObject.SetActive(true);
-        //xpGainText.text = "+ " + xpAmount + " XP";
-        int currentXP = PlayerPrefs.GetInt(XP_amount);
-        xpDisplay.text = "$" + currentXP;
-        Debug.Log("inside ShowXPWithGreenFade: xp is " + currentXP);
-        xpDisplay.color = Color.green;
-        readyToFadeColorFromGreenToBlack = true;
 
     }
 
@@ -915,50 +857,46 @@ public class GameManager : MonoBehaviour
     //  ************************************************************************************************************************************
     public void BuyBullets()
     {
-        // take away XP
-        int tempy = PlayerPrefs.GetInt(XP_amount);
-        if (tempy >= 10)
-        {
-            PlayerPrefs.SetInt(XP_amount, tempy - 10);
+        //// take away XP
+        //int tempy = PlayerPrefs.GetInt(XP_amount);
+        //if (tempy >= 10)
+        //{
+        //    PlayerPrefs.SetInt(XP_amount, tempy - 10);
 
-            // add bullets to inventory
-            PlayerPrefs.SetInt(bulletsInInventory, PlayerPrefs.GetInt(bulletsInInventory) + 10);
+        //    // add bullets to inventory
+        //    PlayerPrefs.SetInt(bulletsInInventory, PlayerPrefs.GetInt(bulletsInInventory) + 10);
 
-            DisplayInventory();
-        }
-        else
-        {
-            // do nothing cuz you are POOR
-            Debug.Log("omg so poor");
-        }
+        //}
+        //else
+        //{
+        //    // do nothing cuz you are POOR
+        //    Debug.Log("omg so poor");
+        //}
 
     }
     public void BuyRocket()
     {
-        // take away XP
-        int tempy = PlayerPrefs.GetInt(XP_amount);
-        if (tempy >= 10)
-        {
-            PlayerPrefs.SetInt(XP_amount, tempy - 10);
+        //// take away XP
+        //int tempy = PlayerPrefs.GetInt(XP_amount);
+        //if (tempy >= 10)
+        //{
+        //    PlayerPrefs.SetInt(XP_amount, tempy - 10);
 
-            // add bullets to inventory
-            PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 1);
-            Debug.Log("bought a rocket");
+        //    // add bullets to inventory
+        //    PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 1);
+        //    Debug.Log("bought a rocket");
 
-            //DisplayInventory();
-            ShowLevelUI_ammo_and_inventory_Display();
-        }
-        else
-        {
-            // do nothing cuz you are POOR
-            Debug.Log("omg so poor");
-        }
+        //    //DisplayInventory();
+        //    ShowLevelUI_ammo_and_inventory_Display();
+        //}
+        //else
+        //{
+        //    // do nothing cuz you are POOR
+        //    Debug.Log("omg so poor");
+        //}
 
     }
-    public void LootRocket() {
-        PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory, 0) + LOOT_rocket_quantity);
-        ShowLevelUI_ammo_and_inventory_Display();
-    }
+
     public void SpendRocket()
     {
         int tempy = PlayerPrefs.GetInt(rocketsInInventory);
@@ -979,10 +917,34 @@ public class GameManager : MonoBehaviour
 
     public void ShowLevelUI_ammo_and_inventory_Display()
     {
+
+        // money, fuel, nitrous
+        // Scrap metal, electronics
+        // bullets, rockets, bombs, caltrops, flamethrower
+
+        int numMoney = PlayerPrefs.GetInt(moneyInInventory, 0);
+        float numFuel = PlayerPrefs.GetFloat(fuelInInventory, 0);
+        float numNitrous = PlayerPrefs.GetFloat(nitrousInInventory, 0);
+        int numScrapMetal = PlayerPrefs.GetInt(scrapmetalInInventory, 0);
+        int numElectronics = PlayerPrefs.GetInt(electronicsInInventory, 0);
+
         int numBullets = PlayerPrefs.GetInt(bulletsInInventory, 0);
         int numRockets = PlayerPrefs.GetInt(rocketsInInventory, 0);
-        LevelUI_ammoDisplay_bullets.text = numBullets.ToString();
-        LevelUI_ammoDisplay_rockets.text = numRockets.ToString();
+        int numBombs = PlayerPrefs.GetInt(bombsInInventory, 0);
+        int numCaltrops = PlayerPrefs.GetInt(caltropsInInventory, 0);
+        int numFlamethrower = PlayerPrefs.GetInt(flamethrowerInInventory, 0);
+
+        LevelUI_inventoryDisplay_money.text = "$" + numMoney;
+        LevelUI_inventoryDisplay_fuel.text = numFuel.ToString("F2");
+        LevelULI_inventoryDisplay_nitrous.text = numNitrous.ToString("F2");
+        LevelUI_inventoryDisplay_scrapMetal.text = numScrapMetal.ToString();
+        LevelUI_inventoryDisplay_electronics.text = numElectronics.ToString();
+
+        LevelUI_inventoryDisplay_bullets.text = numBullets.ToString();
+        LevelUI_inventoryDisplay_rockets.text = numRockets.ToString();
+        LevelUI_inventoryDisplay_bombs.text = numBombs.ToString();
+        LevelUI_inventoryDisplay_caltrops.text = numCaltrops.ToString();
+        LevelUI_inventoryDisplay_flamethrower.text = numFlamethrower.ToString();
 
     }
 
@@ -1079,18 +1041,187 @@ public class GameManager : MonoBehaviour
     }
 
     public void SpawnLoot(Vector2 startPosition, float zAxisRotationSpeed) {
-        int bulletsSpawned = 1;
-        // turn on bullet icon & animate it
+
+        // money, fuel, nitrous
+        // Scrap metal, electronics
+        // bullets, rockets, bombs, caltrops, flamethrower
 
 
-        LOOT_rocket_quantity = Random.Range(1, 4);
-        LOOT_rocket_icon.SetActive(true);
-        LOOT_rocket_icon.transform.position = startPosition + new Vector2(0, 0.5f);
-        LOOT_rocket_script.StartMovement(LOOT_rocket_quantity);
+
+
+        // There is always: 
+        //      money, fuel, scrapMetal
+
+        // The other 2 loot slots are randomly selected from:
+        //      nitrous, electronics
+        //      ammo, 5 types
+        //              .... therefore need to choose which 2 we will use, there are 7 things to choose from, so:
+        List<int> options = new List<int> {1, 2, 3, 4, 5, 6, 7};
+        //Debug.Log("just created List<int> options: " + options[0] + " " + options[1] + " " + options[2]);
+        // create a random INDEX
+        int randomIndex1 = Random.Range(0, options.Count);
+        int rando1 = options[randomIndex1];
+        options.Remove(rando1);
+        // create a random INDEX
+        int randomIndex2 = Random.Range(0, options.Count);
+        int rando2 = options[randomIndex2];
+        options.Remove(rando2);
+
+        // 1: nitrous, 2: electronics, 3: bullets, 4: rockets, 5: bombs, 6: caltrops, 7: flamethrower
+        List<int> results = new List<int> { rando1, rando2 };
+        Debug.Log("results list: " + results[0] + " " + results[1]);
+
+        Vector2 spot1 = new Vector2(6, 5.5f);
+        Vector2 spot2 = new Vector2(6, 4.5f);
+        Vector2 spot3 = new Vector2(6, 3.5f);
+        Vector2 spot4 = new Vector2(6, 2.5f);
+        Vector2 spot5 = new Vector2(6, 1.5f);
+        List<Vector2> remainingSpots = new List<Vector2> { spot4, spot5 };
+
+
+        // always money
+        LOOT_money_quantity = Random.Range(1, 10);
+        LOOT_money_icon.SetActive(true);
+        LOOT_money_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+        LOOT_money_script.StartMovement(LOOT_money_quantity, spot1);
+
+        // always fuel
+        LOOT_fuel_quantity = Random.Range(3, 10);
+        LOOT_fuel_icon.SetActive(true);
+        LOOT_fuel_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+        LOOT_fuel_script.StartMovement(LOOT_fuel_quantity, spot2);
+
+
+        // nitrous goes here
+        // 1: nitrous, 2: electronics, 3: bullets, 4: rockets, 5: bombs, 6: caltrops, 7: flamethrower
+        if (results.Contains(1))
+        {
+            LOOT_nitrous_quantity = Random.Range(3, 10);
+            LOOT_nitrous_icon.SetActive(true);
+            LOOT_nitrous_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_nitrous_script.StartMovement(LOOT_nitrous_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+
+        // always scrapMetal
+        LOOT_scrapMetal_quantity = Random.Range(5, 20);
+        LOOT_scrapMetal_icon.SetActive(true);
+        LOOT_scrapMetal_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+        LOOT_scrapMetal_script.StartMovement(LOOT_scrapMetal_quantity, spot3);
+
+        if (results.Contains(2))
+        {
+            LOOT_electronics_quantity = Random.Range(5, 10);
+            LOOT_electronics_icon.SetActive(true);
+            LOOT_electronics_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            // assign the first spot on the list of spots (remainingSpots), then remove that spot from the list of spots so it won't be used twice
+            LOOT_electronics_script.StartMovement(LOOT_electronics_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+
+        // ammo
+        // 1: nitrous, 2: electronics, 3: bullets, 4: rockets, 5: bombs, 6: caltrops, 7: flamethrower
+        if (results.Contains(3))
+        {
+            LOOT_bullets_quantity = Random.Range(1, 18);
+            LOOT_bullets_icon.SetActive(true);
+            LOOT_bullets_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_bullets_script.StartMovement(LOOT_bullets_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+        if (results.Contains(4))
+        {
+            LOOT_rocket_quantity = Random.Range(1, 4);
+            LOOT_rocket_icon.SetActive(true);
+            LOOT_rocket_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_rocket_script.StartMovement(LOOT_rocket_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+        if (results.Contains(5))
+        {
+            LOOT_bombs_quantity = Random.Range(1, 4);
+            LOOT_bombs_icon.SetActive(true);
+            LOOT_bombs_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_bombs_script.StartMovement(LOOT_bombs_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+        if (results.Contains(6))
+        {
+            LOOT_caltrops_quantity = Random.Range(1, 4);
+            LOOT_caltrops_icon.SetActive(true);
+            LOOT_caltrops_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_caltrops_script.StartMovement(LOOT_caltrops_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+        if (results.Contains(7))
+        {
+            LOOT_flamethrower_quantity = Random.Range(1, 4);
+            LOOT_flamethrower_icon.SetActive(true);
+            LOOT_flamethrower_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+            LOOT_flamethrower_script.StartMovement(LOOT_flamethrower_quantity, remainingSpots[0]);
+            remainingSpots.Remove(remainingSpots[0]);
+        }
+
+
+
+
 
 
 
     }
+    public void LootMoney() {
+        PlayerPrefs.SetInt(moneyInInventory, PlayerPrefs.GetInt(moneyInInventory, 0) + LOOT_money_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootFuel() {
+        // can't go over 100% full
+        float temp = PlayerPrefs.GetFloat(fuelInInventory, 0) + LOOT_fuel_quantity;
+        if (temp >= 100) {
+            temp = 100;
+        }
+        PlayerPrefs.SetFloat(fuelInInventory, temp);
+        fuelGaugeScript.AddFuelToGauge(LOOT_fuel_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootNitrous() {
+        // can't go over 100% full
+        float temp = PlayerPrefs.GetFloat(nitrousInInventory, 0) + LOOT_nitrous_quantity;
+        if (temp >= 100) {
+            temp = 100;
+        }
+        PlayerPrefs.SetFloat(nitrousInInventory, temp);
+        // animate here, just like with fuel                *************************************
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootScrapMetal() {
+        PlayerPrefs.SetInt(scrapmetalInInventory, PlayerPrefs.GetInt(scrapmetalInInventory, 0) + LOOT_scrapMetal_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootElectronics() {
+        PlayerPrefs.SetInt(electronicsInInventory, PlayerPrefs.GetInt(electronicsInInventory, 0) + LOOT_electronics_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootBullets() {
+        PlayerPrefs.SetInt(bulletsInInventory, PlayerPrefs.GetInt(bulletsInInventory, 0) + LOOT_bullets_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootRocket() {
+        PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory, 0) + LOOT_rocket_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootBombs() {
+        PlayerPrefs.SetInt(bombsInInventory, PlayerPrefs.GetInt(bombsInInventory, 0) + LOOT_bombs_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootCaltrops() {
+        PlayerPrefs.SetInt(caltropsInInventory, PlayerPrefs.GetInt(caltropsInInventory, 0) + LOOT_caltrops_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+    public void LootFlamethrower() {
+        PlayerPrefs.SetInt(flamethrowerInInventory, PlayerPrefs.GetInt(flamethrowerInInventory, 0) + LOOT_flamethrower_quantity);
+        ShowLevelUI_ammo_and_inventory_Display();
+    }
+
     public void PlayerExplodes()
     {
         explodey.transform.position = playerVehicle.transform.position + new Vector3(-6.6f, -3.95f, 0);

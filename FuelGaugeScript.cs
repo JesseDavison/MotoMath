@@ -40,6 +40,9 @@ public class FuelGaugeScript : MonoBehaviour
 
                 Vector3 temp = transform.rotation.eulerAngles;
 
+                PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
+                GameManager.instance.ShowLevelUI_ammo_and_inventory_Display();
+
 
                 // BETTER:
                 //      F(x) = ((-2 * angle) / 100) * x + angle
@@ -69,4 +72,19 @@ public class FuelGaugeScript : MonoBehaviour
         //transform.Rotate(0, 0, zAxisRotationSpeed);
 
     }
+
+    public void AddFuelToGauge(float amount) {
+        fuelAmount += amount;
+        if (fuelAmount >= 100) {
+            fuelAmount = 100;
+        }
+
+        Vector3 temp = transform.rotation.eulerAngles;
+
+        temp.z = ((-2f * angle) / 100f) * fuelAmount + angle;
+
+        transform.rotation = Quaternion.Euler(temp);
+
+    }
+
 }

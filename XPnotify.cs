@@ -100,7 +100,7 @@ public class XPnotify : MonoBehaviour
 
                 if ((Vector2.Distance(rectTransform.anchoredPosition, endPos) < distanceToDisappearAt))
                 {
-                    GameManager.instance.ShowXPgainWithGreenFade();
+                    //GameManager.instance.ShowXPgainWithGreenFade();       // commented out as part of replacing XP gain with looting money
                     gameObject.SetActive(false);
                     readyToMove = false;
                     reachedTopOfFloat = false;
