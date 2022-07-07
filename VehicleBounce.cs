@@ -56,7 +56,7 @@ public class VehicleBounce : MonoBehaviour
 
     public bool supposedToBeOffScreen = false;
 
-
+    bool nitrousBoosting = false;
     //public bool isThisARocket = false;
     //public float rocketExplosionXPos;
 
@@ -115,6 +115,15 @@ public class VehicleBounce : MonoBehaviour
                 // wait a random amount of time, then get a different goalXpos
                 readyToMoveAgain = false;
                 StartCoroutine(waitToMoveAgain());
+            }
+        }
+
+        if (supposedToBeOffScreen == true) { 
+            if (transform.position.x <= -9) {
+                gameObject.SetActive(false);
+                supposedToBeOffScreen = false;
+                gameObject.transform.position = new Vector2(20, transform.position.y);
+                GameManager.instance.enemyInRange = false;
             }
         }
 
@@ -215,7 +224,11 @@ public class VehicleBounce : MonoBehaviour
 
     public void driftForwardBackward(float forcedSpeed) {
         // pick a spot to go to
-        if (supposedToBeOffScreen == false) {
+
+        if (nitrousBoosting == true) {
+            goalXpos = Random.Range(8.2f, 8.5f);
+            readyToMoveAgain = true;
+        } else if (supposedToBeOffScreen == false) {
             goalXpos = Random.Range(minXpos, maxXpos);
 
 
@@ -237,6 +250,14 @@ public class VehicleBounce : MonoBehaviour
         }
 
         
+    }
+    public void DriveToMiddle_forNitrousBoost() {
+        readyToMoveAgain = true;
+        nitrousBoosting = true;
+    }
+    public void EndNitrousBoost() {
+        nitrousBoosting = false;
+        driftForwardBackward(0);
     }
     public void DriveAwayForward() {
         goalXpos = 21;
