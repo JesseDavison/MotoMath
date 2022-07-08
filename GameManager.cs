@@ -103,6 +103,8 @@ public class GameManager : MonoBehaviour
     public GameObject caltrops_2;
     public GameObject caltrops_3;
     public GameObject caltrops_4;
+    bool slowingDownFromBlownTire;
+    public float blownTireSlowdownAmountToSubtract;
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
@@ -170,7 +172,13 @@ public class GameManager : MonoBehaviour
     int LOOT_flamethrower_quantity;
 
 
-
+    public Animator DustCloud;
+    public float durationOfDustCloud;
+    public GameObject backgroundThing_1;
+    public GameObject backgroundThing_2;
+    public GameObject backgroundThing_3;
+    public GameObject backgroundThing_4;
+    public GameObject backgroundThing_5;
 
 
 
@@ -253,6 +261,54 @@ public class GameManager : MonoBehaviour
             
 
         }
+        else if (slowingDownFromBlownTire) {
+            if (Time.timeScale > 0.25f) {
+                Time.timeScale -= blownTireSlowdownAmountToSubtract;
+            } else if (Time.timeScale <= 0.25f) {
+                Time.timeScale = 0;
+
+                // animate puff of dust
+                PlayDustCloud();
+
+
+                // set background speed to zero
+                backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
+                backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
+                backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
+                backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
+                backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
+
+
+                // be ready for background to be set to default speed
+
+                // set playerVehicle speed to 0
+                playerVehicle.GetComponent<VehicleBounce>().SetSpeedToZeroAfterBlownTire();
+
+
+                // restore timescale to 1
+                Time.timeScale = 1;
+                slowingDownFromBlownTire = false;
+
+            }
+        
+
+
+
+
+        }
+    }
+    public void StartBlownTireSlowdown() {
+        // have enemy drive off, THEN everything slows down
+        basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward();
+        StartCoroutine(WaitBeforeBlowingTire());
+    }
+    IEnumerator WaitBeforeBlowingTire() {
+        yield return new WaitForSeconds(1);
+        slowingDownFromBlownTire = true;
+        playerVehicle.GetComponent<VehicleBounce>().AnimateBlownTire();
+    }
+    public void RestoreBlownTire_speed() { 
+
     }
 
     public void DisplayMainMenu()
@@ -1067,7 +1123,15 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(durationOfExplosion);
         explodey.gameObject.SetActive(false);
     }
-
+    public void PlayDustCloud() {
+        DustCloud.gameObject.SetActive(true);
+        DustCloud.Play("dustCloud_1", -1, 0f);
+        StartCoroutine(DustCloudDisableAfterAnimation());
+    }
+    IEnumerator DustCloudDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfDustCloud);
+        DustCloud.gameObject.SetActive(false);
+    }
 
     public void EnemyAppears()
     {
@@ -1580,7 +1644,8 @@ public class GameManager : MonoBehaviour
         {
             int rando = Random.Range(1, 3);
             if (rando == 1) {
-                EnemyFires_Rocket();
+                //EnemyFires_Rocket();
+                EnemyFires_Caltrops(false);
             } else if (rando == 2) {
                 EnemyFires_Caltrops(false);
             }

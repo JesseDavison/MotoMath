@@ -15,6 +15,7 @@ public class backgroundScroll : MonoBehaviour
     public float zoomMultiplier;
 
     public float speed = -3;
+    public float defaultSpeed;
     public float startSpot;
     public float resetSpot;
 
@@ -81,4 +82,12 @@ public class backgroundScroll : MonoBehaviour
         transform.position = (Vector2)transform.position + vector * randomizedMultiplier;
         transform.position = new Vector3(transform.position.x, transform.position.y, defaultZposition);
     }
+
+    public void SetSpeedToZero() {
+        speed = 0;
+    }
+    public void RestoreSpeed() {
+        speed = defaultSpeed;
+    }
+
 }

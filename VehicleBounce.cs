@@ -12,10 +12,13 @@ public class VehicleBounce : MonoBehaviour
     public bool midBounce = false;
     public float postBounceFallSpeed = 5;
     public float bounceHeight = 0.1f;
+    public float flatTireBounceHeight = 0.2f;
+    public float defaultBounceHeight;
 
     public float minHorizontalSpeed = 0.1f;
     public float maxHorizontalSpeed = 2;
     public float actualHorizontalSpeed;
+    public float actualHorizontalSpeed_default;
     public float minXpos = -2;
     public float minXpos_default;
     public float maxXpos = 0.5f;
@@ -62,7 +65,11 @@ public class VehicleBounce : MonoBehaviour
     //public bool isThisARocket = false;
     //public float rocketExplosionXPos;
 
+    bool rockingFromBlownTire;
+    public float rockingSpeed;
+    public Transform vehicleSprite;
 
+    public float flickMeAround;
 
 
     // Start is called before the first frame update
@@ -73,6 +80,8 @@ public class VehicleBounce : MonoBehaviour
 
         StartCoroutine(bounceLoop());
         driftForwardBackward(30);
+
+        //vehicleSprite = transform.GetChild(0);
 
         //bounceLoop();
         //xpTextOriginalPos = xpText.transform.position;
@@ -193,12 +202,28 @@ public class VehicleBounce : MonoBehaviour
         //    }
         //}
 
+        if (rockingFromBlownTire == true) {
+            
+            // go from -3 to 3, on the CHILD sprite object
+            
+            //transform.Rotate(0, 0, rockingSpeed);
+            vehicleSprite.Rotate(0, 0, rockingSpeed);
+
+            if (vehicleSprite.rotation.z > flickMeAround || vehicleSprite.rotation.z < -flickMeAround) {
+                rockingSpeed *= -1;
+            }
+
+        }
+
 
     }
 
 
 
-
+    IEnumerator Wait_thenRestoreDefaultXPosition() {
+        yield return new WaitForSeconds(2);
+        ResetXpositionsToDefaultAfterCaltrops();
+    }
 
     IEnumerator waitToMoveAgain() {
         float delay = Random.Range(minTimeBetweenMOVE, maxTimeBetweenMOVE);
@@ -262,6 +287,7 @@ public class VehicleBounce : MonoBehaviour
         minXpos = 11;
         maxXpos = 14;
         driftForwardBackward(0);
+        StartCoroutine(Wait_thenRestoreDefaultXPosition());
     }
     public void ResetXpositionsToDefaultAfterCaltrops() {
         minXpos = minXpos_default;
@@ -347,6 +373,46 @@ public class VehicleBounce : MonoBehaviour
         swerve_2_complete = false;
         swerving = true;
     }
+
+    public void AnimateBlownTire() {
+        // increased bumpiness:
+        minTimeBetweenBounce = 0.01f;
+        maxTimeBetweenBounce = 0.3f;
+        bounceHeight = flatTireBounceHeight;
+
+        // vehicle rocks (rotates) back & forth slightly
+        rockingFromBlownTire = true;
+
+        
+
+
+        // these need to be restored to defaults at some point
+
+    }
+    public void ResetBlownTireStuff() {
+        minTimeBetweenBounce = 0.05f;
+        maxTimeBetweenBounce = 0.7f;
+        bounceHeight = 0.07f;
+        rockingFromBlownTire = false;
+    }
+    public void SetSpeedToZeroAfterBlownTire() {
+        actualHorizontalSpeed = 0;
+        midBounce = false;
+        postBounceFallSpeed = 0;
+        readyToMoveAgain = false;
+        swerving = false;
+        rockingFromBlownTire = false;
+        bounceHeight = 0;
+        // stop animation
+        transform.GetChild(0).GetComponent<Animator>().enabled = false;
+
+    }
+    public void RestoreSpeed() {
+        actualHorizontalSpeed = actualHorizontalSpeed_default;
+
+        /// and RESTORE ALL THE OTHER STUFF
+    }
+
 
 
     //public void SetGoalPosForRocket(int xPos, int speed, float targetXPos) {
