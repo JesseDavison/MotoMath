@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = Time.timeScale * usingNitrousMultiplier;
                 if (Time.timeScale >= 5.01f) {
                     Time.timeScale = 5;
-                    basicEnemy.GetComponent<VehicleBounce>().DriveAwayBackward();
+
                     fullSpeedAchieved = true;
                     StartCoroutine(Nitrous_waitForMomentBeforeReturningNormalSpeed());
                     Debug.Log("max speed achieved");
@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour
             else if (readyToSlowDown == true)
             {
                 Time.timeScale *= 0.99f;
-                if (Time.timeScale <= 1) {
+                if (Time.timeScale < 1) {
                     Time.timeScale = 1;
                     readyToSlowDown = false;
                     usingNitrous = false;
@@ -238,7 +238,10 @@ public class GameManager : MonoBehaviour
                     Debug.Log("back to normal speed");
                     fuelGaugeScript.StartFuelConsumption();
                     playerVehicle.GetComponent<VehicleBounce>().EndNitrousBoost();
-                    //basicEnemy.GetComponent<VehicleBounce>().
+                    basicEnemy.GetComponent<VehicleBounce>().BringVehicleBackOnScreen();
+                    LoadNewPuzzleAfterSKIP();
+                    Debug.Log("LoadNewPuzzleAfterSKIP");
+
                 }
             }
             
@@ -506,6 +509,7 @@ public class GameManager : MonoBehaviour
         ShowLevelUI_ammo_and_inventory_Display();
 
 
+
     }
 
     public void StartTimedGame()
@@ -579,43 +583,17 @@ public class GameManager : MonoBehaviour
 
             PlayerPrefs.SetFloat(nitrousInInventory, 0);
             ShowLevelUI_ammo_and_inventory_Display();
-            // make the animated bottle "empty"
 
             // make the player speed up
-
             usingNitrous = true;
             playerVehicle.GetComponent<VehicleBounce>().DriveToMiddle_forNitrousBoost();
             // if an enemy is there, it should fall back and go away
 
 
-
-            if (gameType == "timed")
-            {
-                if (puzzlesRemaining <= 1)
-                {
-                    DisplayGameOver(false, true);
-                }
-                else
-                {
-                    float timeRemaining = timerGlobal.GetTimeRemaining();
-                    float timeToTakeAway = timeRemaining / puzzlesRemaining;
-                    timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
-                    PuzzleManager.instance.CreateNewPuzzle();
-                }
-            }
-            else if (gameType == "endless")
-            {
-                IncreaseNumberOfSkipped(1);
-                ChangeStat_Endless("skipped", 1);
-                PuzzleManager.instance.CreateNewPuzzle();
-            }
-            else if (gameType == "kiddy")
-            {
-                IncreaseNumberOfSkipped(1);
-                ChangeStat_Easy("skipped", 1);
-                PuzzleManager.instance.CreateNewPuzzle();
-            }
-
+            // make circles, operators, & goal disappear left-ward
+            PuzzleManager.instance.MakeCirclesOperatorsGoal_moveLeftForNitrous();
+            // IF ENEMY IS ON SCREEN:
+            basicEnemy.GetComponent<VehicleBounce>().DriveAwayBackward();
 
         }
 
@@ -628,6 +606,39 @@ public class GameManager : MonoBehaviour
         readyToSlowDown = true;
 
     }
+    public void LoadNewPuzzleAfterSKIP() {
+
+
+        if (gameType == "timed")
+        {
+            if (puzzlesRemaining <= 1)
+            {
+                DisplayGameOver(false, true);
+            }
+            else
+            {
+                float timeRemaining = timerGlobal.GetTimeRemaining();
+                float timeToTakeAway = timeRemaining / puzzlesRemaining;
+                timerGlobal.SubtractFromGlobalTimer(timeToTakeAway);
+                PuzzleManager.instance.CreateNewPuzzle();
+            }
+        }
+        else if (gameType == "endless")
+        {
+            IncreaseNumberOfSkipped(1);
+            ChangeStat_Endless("skipped", 1);
+            PuzzleManager.instance.CreateNewPuzzle();
+        }
+        else if (gameType == "kiddy")
+        {
+            IncreaseNumberOfSkipped(1);
+            ChangeStat_Easy("skipped", 1);
+            PuzzleManager.instance.CreateNewPuzzle();
+        }
+    }
+    //IEnumerator ShowNextPuzzleAfterNitrousEnds() { 
+    //    //yield return new WaitForSeconds()
+    //}
     public void DecreaseNumberOfPuzzlesRemaining(int amount)
     {
         puzzlesRemaining -= amount;
@@ -947,7 +958,6 @@ public class GameManager : MonoBehaviour
 
         //    // add bullets to inventory
         PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 2);
-        ShowLevelUI_ammo_and_inventory_Display();
 
         //if (Time.timeScale == 1) {
         //    Time.timeScale = 2;
@@ -1025,7 +1035,7 @@ public class GameManager : MonoBehaviour
         LevelUI_inventoryDisplay_money.text = "$" + numMoney;
         LevelUI_inventoryDisplay_fuel.text = numFuel.ToString("F2");
         LevelULI_inventoryDisplay_nitrous.text = numNitrous.ToString("F2");
-        AnimateNitrous();
+        AnimateNitrous(numNitrous);
         LevelUI_inventoryDisplay_scrapMetal.text = numScrapMetal.ToString();
         LevelUI_inventoryDisplay_electronics.text = numElectronics.ToString();
 
@@ -1280,10 +1290,13 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetFloat(nitrousInInventory, temp);
         ShowLevelUI_ammo_and_inventory_Display();
     }
-    public void AnimateNitrous() {
-        float temp = PlayerPrefs.GetFloat(nitrousInInventory);
+    public void AnimateNitrous(float amount) {
+        //float amount = PlayerPrefs.GetFloat(nitrousInInventory);
         // animate here, just like with fuel                *************************************
-        if (temp == 0)
+
+        Debug.Log("inside AnimateNitrous(), and amount = " + amount);
+        
+        if (amount <= 0)
         {
             nitrousBottle_animator.SetBool("nitrous_level0", true);
             nitrousBottle_animator.SetBool("nitrous_level1", false);
@@ -1291,7 +1304,7 @@ public class GameManager : MonoBehaviour
             nitrousBottle_animator.SetBool("nitrous_level3", false);
             nitrousBottle_animator.SetBool("nitrous_level4", false);
         }
-        else if (temp > 0 && temp < 30)
+        else if (amount > 0 && amount < 30)
         {
             nitrousBottle_animator.SetBool("nitrous_level0", false);
             nitrousBottle_animator.SetBool("nitrous_level1", true);
@@ -1299,7 +1312,7 @@ public class GameManager : MonoBehaviour
             nitrousBottle_animator.SetBool("nitrous_level3", false);
             nitrousBottle_animator.SetBool("nitrous_level4", false);
         }
-        else if (temp >= 30 && temp < 70)
+        else if (amount >= 30 && amount < 70)
         {
             nitrousBottle_animator.SetBool("nitrous_level0", false);
             nitrousBottle_animator.SetBool("nitrous_level1", false);
@@ -1307,7 +1320,7 @@ public class GameManager : MonoBehaviour
             nitrousBottle_animator.SetBool("nitrous_level3", false);
             nitrousBottle_animator.SetBool("nitrous_level4", false);
         }
-        else if (temp >= 70 && temp < 100)
+        else if (amount >= 70 && amount < 100)
         {
             nitrousBottle_animator.SetBool("nitrous_level0", false);
             nitrousBottle_animator.SetBool("nitrous_level1", false);
@@ -1315,7 +1328,7 @@ public class GameManager : MonoBehaviour
             nitrousBottle_animator.SetBool("nitrous_level3", true);
             nitrousBottle_animator.SetBool("nitrous_level4", false);
         }
-        else if (temp == 100)
+        else if (amount >= 100)
         {
             nitrousBottle_animator.SetBool("nitrous_level0", false);
             nitrousBottle_animator.SetBool("nitrous_level1", false);

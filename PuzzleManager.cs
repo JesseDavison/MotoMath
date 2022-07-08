@@ -52,17 +52,22 @@ public class PuzzleManager : MonoBehaviour
     public GameObject CircleA;
     public GameObject CircleB;
     public GameObject CircleC;
+    float circleDefaultScale = 2;
     public Clickable CircleAScript;
     public Clickable CircleBScript;
     public Clickable CircleCScript;
     //public GameObject MathInProgress;
     public GameObject OperatorA;
     public GameObject OperatorB;
+    float operatorDefaultScale = 2.2f;
     public Clickable OperatorAScript;
     public Clickable OperatorBScript;
     public GameObject Goal;
+    float goalDefaultScale = 1.4f;
     // https://store.steampowered.com/app/868270/The_Cycle_Frontier/?snr=1_4_4__118
     public GameObject ExplosionImage;
+    public Animator smallExplosionOfGoal;
+    public float durationOfSmallExplosion;
     Explosion explosion;
 
     // if the player solves the puzzle, these strings will be used to update the stats via ChangeStat_Endless() & ChangeStat_Easy()
@@ -83,6 +88,8 @@ public class PuzzleManager : MonoBehaviour
     //Sparkle sparkleScript4;
     //Sparkle sparkleScript5;
     //Sparkle sparkleScript6;
+
+
 
     public GameObject vehicle;
 
@@ -153,6 +160,8 @@ public class PuzzleManager : MonoBehaviour
         OperatorAScript = OperatorA.GetComponent<Clickable>();
         OperatorBScript = OperatorB.GetComponent<Clickable>();
         explosion = ExplosionImage.GetComponent<Explosion>();
+
+
 
         // toggles
         ToggleDebugON = GameObject.FindGameObjectWithTag("ToggleDebugON");      // the FindGameObjectWithTag function only works if the object is ACTIVE
@@ -2578,8 +2587,8 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        OperatorAScript.defaultPosition = new Vector2(1.5f, operatorA_Yvalue);
-        OperatorBScript.defaultPosition = new Vector2(1.5f, operatorB_Yvalue);
+        OperatorAScript.defaultPosition = new Vector2(0.3f, operatorA_Yvalue);
+        OperatorBScript.defaultPosition = new Vector2(0.3f, operatorB_Yvalue);
 
     }
     public void SendAllOperatorsToDefaultPositions()
@@ -3096,42 +3105,46 @@ public class PuzzleManager : MonoBehaviour
         OperatorB.SetActive(false);
         Goal.SetActive(false);
 
+        StartCoroutine(WaitBeforeNext_MakePuzzleAppear());
 
 
 
     }
-
+    IEnumerator WaitBeforeNext_MakePuzzleAppear() {
+        yield return new WaitForSeconds(1);
+        MakePuzzleAppear();
+    }
     public void MakePuzzleAppear() {
 
 
         if (CircleAScript.partOfCurrentPuzzle == true) {
             CircleA.SetActive(true);
-            CircleAScript.defaultScale = CircleA.GetComponent<RectTransform>().localScale;
+            //CircleAScript.defaultScale = CircleA.GetComponent<RectTransform>().localScale;
             CircleA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
 
         }
         if (CircleBScript.partOfCurrentPuzzle == true) {
             CircleB.SetActive(true);
-            CircleBScript.defaultScale = CircleB.GetComponent<RectTransform>().localScale;
+            //CircleBScript.defaultScale = CircleB.GetComponent<RectTransform>().localScale;
             CircleB.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
 
         }
         if (CircleCScript.partOfCurrentPuzzle == true) {
             CircleC.SetActive(true);
-            CircleCScript.defaultScale = CircleC.GetComponent<RectTransform>().localScale;
+            //CircleCScript.defaultScale = CircleC.GetComponent<RectTransform>().localScale;
             CircleC.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
 
         }
         
         OperatorA.SetActive(true);
-        OperatorAScript.defaultScale = OperatorA.GetComponent<Transform>().localScale;
+        //OperatorAScript.defaultScale = OperatorA.GetComponent<Transform>().localScale;
         //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
         //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
         OperatorA.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
 
 
         OperatorB.SetActive(true);
-        OperatorBScript.defaultScale = OperatorB.GetComponent<Transform>().localScale;
+        //OperatorBScript.defaultScale = OperatorB.GetComponent<Transform>().localScale;
         //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
         //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
         OperatorB.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
@@ -3139,9 +3152,10 @@ public class PuzzleManager : MonoBehaviour
 
         Goal.SetActive(true);
         //Goal.GetComponent<Clickable>().defaultScale = Goal.GetComponent<RectTransform>().localScale;
-        Goal.GetComponent<Clickable>().defaultScale = Goal.GetComponent<Transform>().localScale;
+        //Goal.GetComponent<Clickable>().defaultScale = Goal.GetComponent<Transform>().localScale;
         //Goal.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
         Goal.GetComponent<Transform>().localScale = new Vector2(0.1f, 0.1f);
+        Goal.transform.position = new Vector2(4.5f, 0);
 
 
         CircleAScript.growing = true;
@@ -3152,7 +3166,14 @@ public class PuzzleManager : MonoBehaviour
         Goal.GetComponent<Clickable>().growing = true;
 
     }
-
+    public void MakeCirclesOperatorsGoal_moveLeftForNitrous() {
+        CircleAScript.BeginMovementOffscreenToLeft();
+        CircleBScript.BeginMovementOffscreenToLeft();
+        CircleCScript.BeginMovementOffscreenToLeft();
+        OperatorAScript.BeginMovementOffscreenToLeft();
+        OperatorBScript.BeginMovementOffscreenToLeft();
+        Goal.GetComponent<Clickable>().BeginMovementOffscreenToLeft();
+    }
     // ************************************************************************************************************
     // ************************************************************************************************************
 
@@ -3595,6 +3616,7 @@ public class PuzzleManager : MonoBehaviour
             //sparkleScript5.BeginSparkleMovement(sparkleStartPos, offset5);
             //sparkleScript6.BeginSparkleMovement(sparkleStartPos, offset6);
 
+
             highlightedCircle1.SetActive(false);
             highlightedOperator.SetActive(false);
             highlightedCircle2.SetActive(false);
@@ -3804,24 +3826,40 @@ public class PuzzleManager : MonoBehaviour
             //sparkleScript5.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
             //sparkleScript6.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
 
+            Debug.Log("Abc 123");
+
+            smallExplosionOfGoal.gameObject.SetActive(true);
+            smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
+            StartCoroutine(ExplosionDisableAfterAnimation());
+
+
+
+
+
             if (gameType == "timed")
             {
                 if (timerGlobal.GetTimeRemaining() > 0)
                 {
                     //Debug.Log("AnimatePuzzleSolved() is now about to CreateNewPuzzle()");
                     CreateNewPuzzle();
+
                     //          it may be a good idea to create the new puzzle before it's needed, but that will require some work
                 }
             }
             else
             {
                 CreateNewPuzzle();
+
                 //// temporary
                 //GameManager.instance.BuyRocket();
             }
 
 
         }
+    }
+    IEnumerator ExplosionDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfSmallExplosion);
+        smallExplosionOfGoal.gameObject.SetActive(false);
     }
     public void AnimatePuzzleFailed(GameObject finalCircle, bool circleHasReachedGoal, bool fallingIntoToiletComplete)
     {

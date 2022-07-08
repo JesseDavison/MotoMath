@@ -51,6 +51,7 @@ public class Clickable : MonoBehaviour
 
     public bool partOfCurrentPuzzle = false;
 
+
     public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
@@ -69,6 +70,13 @@ public class Clickable : MonoBehaviour
         defaultPosition = target;
         destination = defaultPosition;
         readyToMove = true;
+    }
+    public void BeginMovementOffscreenToLeft() {
+        speed = defaultSpeed;
+        curvePath = false;
+        destination = transform.position - new Vector3(18, 0, 0);
+        readyToMove = true;
+        destinationText = "left of screen for nitrous";     // have to change destinationText so it doesn't trigger puzzle solve
     }
     public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp, bool fadingToWhite) {
         changingToWhite = fadingToWhite;
@@ -209,9 +217,10 @@ public class Clickable : MonoBehaviour
         if (growing) {
             transform.localScale = Vector3.MoveTowards(transform.localScale, defaultScale, Time.deltaTime * speed);
             speed *= speedMultiplier;
-            if (transform.localScale.x == defaultScale.x) {
+            if (transform.localScale.x >= defaultScale.x) {
                 growing = false;
                 speed = defaultSpeed;
+                transform.localScale = defaultScale;
             }
         }
     }

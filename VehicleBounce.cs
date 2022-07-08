@@ -252,8 +252,8 @@ public class VehicleBounce : MonoBehaviour
         
     }
     public void DriveToMiddle_forNitrousBoost() {
-        readyToMoveAgain = true;
         nitrousBoosting = true;
+        driftForwardBackward(0);
     }
     public void EndNitrousBoost() {
         nitrousBoosting = false;
