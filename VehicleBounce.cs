@@ -17,7 +17,9 @@ public class VehicleBounce : MonoBehaviour
     public float maxHorizontalSpeed = 2;
     public float actualHorizontalSpeed;
     public float minXpos = -2;
+    public float minXpos_default;
     public float maxXpos = 0.5f;
+    public float maxXpos_default;
     //public bool moving = true;
 
     public float currentXpos;
@@ -80,7 +82,7 @@ public class VehicleBounce : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
 
 
     }
@@ -118,7 +120,7 @@ public class VehicleBounce : MonoBehaviour
             }
         }
 
-        if (supposedToBeOffScreen == true) { 
+        if (supposedToBeOffScreen == true) {
             if (transform.position.x <= -9) {
                 gameObject.SetActive(false);
                 supposedToBeOffScreen = false;
@@ -148,7 +150,7 @@ public class VehicleBounce : MonoBehaviour
         //    }
         //}
 
-        if (swerving) { 
+        if (swerving) {
             // move "back" by changing zoom, then over-correct, then back to zoom 1
             if (swerve_1_complete == false) {
                 // move towards first swerve position
@@ -207,7 +209,7 @@ public class VehicleBounce : MonoBehaviour
 
 
     IEnumerator bounceLoop() {
-        
+
         float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
         yield return new WaitForSeconds(delay);
         //Debug.Log("bouncing");
@@ -249,11 +251,21 @@ public class VehicleBounce : MonoBehaviour
             readyToMoveAgain = true;
         }
 
-        
+
     }
     public void DriveToMiddle_forNitrousBoost() {
         nitrousBoosting = true;
         driftForwardBackward(0);
+    }
+    public void DriveToForwardPosition_forDroppingCaltrops() {
+        // change min & max X positions
+        minXpos = 11;
+        maxXpos = 14;
+        driftForwardBackward(0);
+    }
+    public void ResetXpositionsToDefaultAfterCaltrops() {
+        minXpos = minXpos_default;
+        maxXpos = maxXpos_default;
     }
     public void EndNitrousBoost() {
         nitrousBoosting = false;

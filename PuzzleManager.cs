@@ -3829,7 +3829,7 @@ public class PuzzleManager : MonoBehaviour
             Debug.Log("Abc 123");
 
             smallExplosionOfGoal.gameObject.SetActive(true);
-            smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
+            //smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
             StartCoroutine(ExplosionDisableAfterAnimation());
 
 

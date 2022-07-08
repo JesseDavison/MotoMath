@@ -99,6 +99,10 @@ public class GameManager : MonoBehaviour
     public GameObject basicEnemyHull;
     public int puzzleSolvesSinceLastEnemy = 0;
     public GameObject rocket;
+    public GameObject caltrops_1;
+    public GameObject caltrops_2;
+    public GameObject caltrops_3;
+    public GameObject caltrops_4;
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
@@ -1101,11 +1105,29 @@ public class GameManager : MonoBehaviour
     {
 
     }
-    public void EnemyFiresRocket()
+    public void EnemyFires_Rocket()
     {
         rocket.transform.position = basicEnemy.transform.position + new Vector3(0, 0.5f, 0);
         rocket.SetActive(true);
         rocket.GetComponent<Rocket>().LaunchRocketBackward();
+
+    }
+    public void EnemyFires_Caltrops(bool favorable) {
+        // if enemy is in middle of screen, should make the enemy move forward before the caltrops land
+        basicEnemy.GetComponent<VehicleBounce>().DriveToForwardPosition_forDroppingCaltrops();
+
+        caltrops_1.transform.position = basicEnemy.transform.position;
+        caltrops_2.transform.position = basicEnemy.transform.position;
+        caltrops_3.transform.position = basicEnemy.transform.position;
+        caltrops_4.transform.position = basicEnemy.transform.position;
+        caltrops_1.SetActive(true);
+        caltrops_2.SetActive(true);
+        caltrops_3.SetActive(true);
+        caltrops_4.SetActive(true);
+        caltrops_1.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
+        caltrops_2.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
+        caltrops_3.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
+        caltrops_4.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
 
     }
     public void EnemyFiresGuns()
@@ -1500,8 +1522,17 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            int rando = Random.Range(1, 3);
+
+
             // the enemy is here, so kill it and make explosion
-            SpendRocket();
+           if (rando == 1) {
+                SpendRocket();
+            }
+           else if (rando == 2) {
+                EnemyFires_Caltrops(true);
+            }
+
 
             // or shoot guns
 
@@ -1547,13 +1578,20 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            int rando = Random.Range(1, 3);
+            if (rando == 1) {
+                EnemyFires_Rocket();
+            } else if (rando == 2) {
+                EnemyFires_Caltrops(false);
+            }
 
-            EnemyFiresRocket();
 
 
             // or enemy fires guns
 
-            // or enemy drops caltrops
+
+
+            // or.... player attacks and misses?
 
 
 

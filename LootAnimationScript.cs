@@ -51,6 +51,7 @@ public class LootAnimationScript : MonoBehaviour
 
         if (movingToFirstSpot) {
             transform.position = Vector2.MoveTowards(transform.position, firstSpot, Time.deltaTime * firstSpeed);
+            firstSpeed *= firstSpeedMultiplier;
             if (Vector2.Distance(transform.position, firstSpot) < 0.01f) {
                 if (quantityTextSet == false) {
                     quantityText.text = "+" + quantity;
@@ -67,6 +68,7 @@ public class LootAnimationScript : MonoBehaviour
         }
         else if (movingToSecondSpot) {
             transform.position = Vector2.MoveTowards(transform.position, secondSpot, Time.deltaTime * secondSpeed);
+            secondSpeed *= secondSpeedMultiplier;
             if (Vector2.Distance(transform.position, secondSpot) < 0.01f)
             {
                 movingToSecondSpot = false;
@@ -150,7 +152,10 @@ public class LootAnimationScript : MonoBehaviour
         //quantityText.text = "";       // for some reason uncommenting this produces an error
 
         firstSpot = spot;
-        
+
+        firstSpeed = firstSpeedDefault;
+        secondSpeed = secondSpeedDefault;
+
         quantity = quan;
         movingToFirstSpot = true;
         quantityTextSet = false;
