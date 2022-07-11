@@ -10,6 +10,8 @@ public class PuzzleManager : MonoBehaviour
 {
     public static PuzzleManager instance;
 
+    bool gameOver;
+
     public string gameType;     // this is set by GameManager.cs, in StartTimedGame() and StartEndlessGame(), and is either "endless" or "timed"
 
     public bool debugMessagesOn = true;    // change this to turn on/off debug.log messages, only changeable via code
@@ -3105,10 +3107,19 @@ public class PuzzleManager : MonoBehaviour
         OperatorB.SetActive(false);
         Goal.SetActive(false);
 
-        StartCoroutine(WaitBeforeNext_MakePuzzleAppear());
+        if (gameOver == false) {
+            StartCoroutine(WaitBeforeNext_MakePuzzleAppear());
+        }
 
 
 
+
+    }
+    public void SetGameOver() {
+        gameOver = true;
+    }
+    public void UndoGameOver() {
+        gameOver = false;
     }
     IEnumerator WaitBeforeNext_MakePuzzleAppear() {
         yield return new WaitForSeconds(1);
@@ -3930,7 +3941,14 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-
+    public void ShrinkAndDisappear_allCirclesOperatorsGoal() {
+        CircleAScript.ShrinkAndDisappear();
+        CircleBScript.ShrinkAndDisappear();
+        CircleCScript.ShrinkAndDisappear();
+        OperatorAScript.ShrinkAndDisappear();
+        OperatorAScript.ShrinkAndDisappear();
+        Goal.GetComponent<Clickable>().ShrinkAndDisappear();
+    }
 
 
 

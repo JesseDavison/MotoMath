@@ -39,7 +39,7 @@ public class CaltropsBounce : MonoBehaviour
     public GameObject CaltropSprite;
     public GameObject PlayerVehicle;
     bool swerveSent = false;
-    bool vehicleDamagedByCaltrops;
+    bool vehicleIsToBeDamagedByCaltrops;
 
 
     public int bounceCount = 0;
@@ -106,12 +106,12 @@ public class CaltropsBounce : MonoBehaviour
             transform.position = pos;
         }
 
-        if (transform.position.x < 2.5f) {
-            if (swerveSent == false && vehicleDamagedByCaltrops == false)
+        if (stuckInGround == true && transform.position.x < 2.5f) {
+            if (swerveSent == false && vehicleIsToBeDamagedByCaltrops == false)
             {
                 PlayerVehicle.GetComponent<VehicleBounce>().BeginSwerve();
-                swerveSent = true;
-            } else if (vehicleDamagedByCaltrops == true)
+                swerveSent = true;  // so the same caltrops isn't sending a swerve message over & over
+            } else if (vehicleIsToBeDamagedByCaltrops == true)
             {
                 GameManager.instance.StartBlownTireSlowdown();
 
@@ -151,9 +151,9 @@ public class CaltropsBounce : MonoBehaviour
     public void LaunchCaltrops(bool favorable)
     {
         if (favorable == true) {
-            vehicleDamagedByCaltrops = false;
+            vehicleIsToBeDamagedByCaltrops = false;
         } else {
-            vehicleDamagedByCaltrops = true;      // this makes the player vehicle not swerve
+            vehicleIsToBeDamagedByCaltrops = true;      // this makes the player vehicle not swerve
         }
         startPosition = transform.position;
         CaltropSprite.transform.rotation = Quaternion.Euler(0, 0, 0);

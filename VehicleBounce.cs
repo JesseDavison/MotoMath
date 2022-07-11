@@ -5,6 +5,9 @@ using TMPro;
 
 public class VehicleBounce : MonoBehaviour
 {
+
+    public string whatVehicleIsThis;
+    
     Vector3 originalPos;
     public float currentYpos;
     public float minTimeBetweenBounce = 0.2f;
@@ -60,6 +63,7 @@ public class VehicleBounce : MonoBehaviour
     public bool initialAppearanceCompleted = false;
 
     public bool supposedToBeOffScreen = false;
+    bool supposedToBeStill = false;
 
     bool nitrousBoosting = false;
     //public bool isThisARocket = false;
@@ -68,8 +72,12 @@ public class VehicleBounce : MonoBehaviour
     bool rockingFromBlownTire;
     public float rockingSpeed;
     public Transform vehicleSprite;
+    bool dropBombOnStoppedPlayer = false;
 
     public float flickMeAround;
+
+
+
 
 
     // Start is called before the first frame update
@@ -97,123 +105,146 @@ public class VehicleBounce : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (midBounce) {
-
-
-
-
-            if (Mathf.Abs(transform.position.y - originalPos.y) < 0.001f)
+        if (supposedToBeStill == false) {
+            if (midBounce)
             {
-                midBounce = false;
-                transform.position = new Vector3(transform.position.x, goalYpos, originalPos.z);
-                StartCoroutine(bounceLoop());
 
+
+
+
+                if (Mathf.Abs(transform.position.y - originalPos.y) < 0.001f)
+                {
+                    midBounce = false;
+                    transform.position = new Vector3(transform.position.x, goalYpos, originalPos.z);
+                    StartCoroutine(bounceLoop());
+
+                }
             }
-        }
 
-        Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
+            Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
 
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
-
-
-        transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);     // with SmoothDamp a lower speed means FASTER movement
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, goalYpos, originalPos.z), Time.deltaTime * postBounceFallSpeed);
 
 
+            transform.position = Vector3.SmoothDamp(transform.position, newGoal, ref velocity, Time.deltaTime * actualHorizontalSpeed);     // with SmoothDamp a lower speed means FASTER movement
 
-        if (readyToMoveAgain && supposedToBeOffScreen == false) {
-            if (Mathf.Abs(goalXpos - transform.position.x) < 0.01f && readyToMoveAgain)
+
+
+            if (readyToMoveAgain && supposedToBeOffScreen == false)
             {
-                // wait a random amount of time, then get a different goalXpos
-                readyToMoveAgain = false;
-                StartCoroutine(waitToMoveAgain());
-            }
-        }
-
-        if (supposedToBeOffScreen == true) {
-            if (transform.position.x <= -9) {
-                gameObject.SetActive(false);
-                supposedToBeOffScreen = false;
-                gameObject.transform.position = new Vector2(20, transform.position.y);
-                GameManager.instance.enemyInRange = false;
-            }
-        }
-
-        //if (sparklesArrived == 6)
-        //{
-        //    //ShowXPgain();
-        //    //GameManager.instance.IncreaseXP();
-        //    sparklesArrived = 0;
-        //    //BeginSwerve();
-        //    //GameManager.instance.PlayExplosion();
-        //    GameManager.instance.ResolveConflictFavorably();
-        //    //GameManager.instance.EnemyAppears();
-        //    //GameManager.instance.EnemyDies();
-        //    //GameManager.instance.FireRocket();
-        //}
-        //if (xpAppear) {
-        //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
-
-        //    if (xpText.transform.position.y >= -1.4f) {
-        //        xpAppear = false;
-        //        xpText.SetActive(false);
-        //    }
-        //}
-
-        if (swerving) {
-            // move "back" by changing zoom, then over-correct, then back to zoom 1
-            if (swerve_1_complete == false) {
-                // move towards first swerve position
-                transform.position = new Vector3(transform.position.x, transform.position.y, swerve1_Zvalue);
-                transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_1, Time.deltaTime * swerveSpeed_1);
-                //swerveSpeed_1 *= swerveSpeedMultiplier;
-
-
-                if (Vector3.Distance(transform.localScale, swerveZoom_1) < 0.01f) {
-                    swerve_1_complete = true;
-                }
-
-
-            } else if (swerve_2_complete == false) {
-                // move towards second swerve position
-                transform.position = new Vector3(transform.position.x, transform.position.y, swerve2_Zvalue);
-                transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_2, Time.deltaTime * swerveSpeed_2);
-                //swerveSpeed_1 *= swerveSpeedMultiplier;
-
-                if (Vector3.Distance(transform.localScale, swerveZoom_2) < 0.01f) {
-                    swerve_2_complete = true;
-                }
-
-            }
-            else {
-                // move towards resting zoom level of 1
-                transform.position = new Vector3(transform.position.x, transform.position.y, 1);    // 1 is the default z value
-                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * swerveSpeed_2);
-
-                if (Vector3.Distance(transform.localScale, Vector3.one) < 0.01f) {
-                    swerving = false;
-                    transform.localScale = Vector3.one;
+                if (Mathf.Abs(goalXpos - transform.position.x) < 0.01f && readyToMoveAgain)
+                {
+                    // wait a random amount of time, then get a different goalXpos
+                    readyToMoveAgain = false;
+                    StartCoroutine(waitToMoveAgain());
                 }
             }
-        }
-        //if (isThisARocket) { 
-        //    if (transform.position.x > rocketExplosionXPos) {
-        //        GameManager.instance.EnemyDies();
-        //        gameObject.SetActive(false);
-        //    }
-        //}
 
-        if (rockingFromBlownTire == true) {
-            
-            // go from -3 to 3, on the CHILD sprite object
-            
-            //transform.Rotate(0, 0, rockingSpeed);
-            vehicleSprite.Rotate(0, 0, rockingSpeed);
-
-            if (vehicleSprite.rotation.z > flickMeAround || vehicleSprite.rotation.z < -flickMeAround) {
-                rockingSpeed *= -1;
+            if (supposedToBeOffScreen == true)
+            {
+                if (transform.position.x <= -9)
+                {
+                    gameObject.SetActive(false);
+                    supposedToBeOffScreen = false;
+                    gameObject.transform.position = new Vector2(20, transform.position.y);
+                    GameManager.instance.enemyInRange = false;
+                }
+                if (dropBombOnStoppedPlayer && transform.position.x >= 7)
+                {
+                    dropBombOnStoppedPlayer = false;
+                    GameManager.instance.EnemyFiresBomb();
+                    Debug.Log("BOMB launched");
+                }
             }
 
+            //if (sparklesArrived == 6)
+            //{
+            //    //ShowXPgain();
+            //    //GameManager.instance.IncreaseXP();
+            //    sparklesArrived = 0;
+            //    //BeginSwerve();
+            //    //GameManager.instance.PlayExplosion();
+            //    GameManager.instance.ResolveConflictFavorably();
+            //    //GameManager.instance.EnemyAppears();
+            //    //GameManager.instance.EnemyDies();
+            //    //GameManager.instance.FireRocket();
+            //}
+            //if (xpAppear) {
+            //    xpText.transform.position = Vector3.MoveTowards(xpText.transform.position, xpTextEndPos, Time.deltaTime * xpTextSpeed);
+
+            //    if (xpText.transform.position.y >= -1.4f) {
+            //        xpAppear = false;
+            //        xpText.SetActive(false);
+            //    }
+            //}
+
+            if (swerving)
+            {
+                // move "back" by changing zoom, then over-correct, then back to zoom 1
+                if (swerve_1_complete == false)
+                {
+                    // move towards first swerve position
+                    transform.position = new Vector3(transform.position.x, transform.position.y, swerve1_Zvalue);
+                    transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_1, Time.deltaTime * swerveSpeed_1);
+                    //swerveSpeed_1 *= swerveSpeedMultiplier;
+
+
+                    if (Vector3.Distance(transform.localScale, swerveZoom_1) < 0.01f)
+                    {
+                        swerve_1_complete = true;
+                    }
+
+
+                }
+                else if (swerve_2_complete == false)
+                {
+                    // move towards second swerve position
+                    transform.position = new Vector3(transform.position.x, transform.position.y, swerve2_Zvalue);
+                    transform.localScale = Vector3.Lerp(transform.localScale, swerveZoom_2, Time.deltaTime * swerveSpeed_2);
+                    //swerveSpeed_1 *= swerveSpeedMultiplier;
+
+                    if (Vector3.Distance(transform.localScale, swerveZoom_2) < 0.01f)
+                    {
+                        swerve_2_complete = true;
+                    }
+
+                }
+                else
+                {
+                    // move towards resting zoom level of 1
+                    transform.position = new Vector3(transform.position.x, transform.position.y, 1);    // 1 is the default z value
+                    transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * swerveSpeed_2);
+
+                    if (Vector3.Distance(transform.localScale, Vector3.one) < 0.01f)
+                    {
+                        swerving = false;
+                        transform.localScale = Vector3.one;
+                    }
+                }
+            }
+            //if (isThisARocket) { 
+            //    if (transform.position.x > rocketExplosionXPos) {
+            //        GameManager.instance.EnemyDies();
+            //        gameObject.SetActive(false);
+            //    }
+            //}
+
+            if (rockingFromBlownTire == true)
+            {
+
+                // go from -3 to 3, on the CHILD sprite object
+
+                //transform.Rotate(0, 0, rockingSpeed);
+                vehicleSprite.Rotate(0, 0, rockingSpeed);
+
+                if (vehicleSprite.rotation.z > flickMeAround || vehicleSprite.rotation.z < -flickMeAround)
+                {
+                    rockingSpeed *= -1;
+                }
+
+            }
         }
+
 
 
     }
@@ -274,6 +305,9 @@ public class VehicleBounce : MonoBehaviour
 
             // toggle the boolean
             readyToMoveAgain = true;
+        } else if (rockingFromBlownTire == true) {
+            //goalXpos = 5.5f;
+            //readyToMoveAgain = true;
         }
 
 
@@ -301,6 +335,13 @@ public class VehicleBounce : MonoBehaviour
         goalXpos = 21;
         readyToMoveAgain = true;
         supposedToBeOffScreen = true;
+    }
+    public void DriveAwayForward_andDropBombOnStoppedPlayer() {
+        goalXpos = 40;
+        readyToMoveAgain = true;
+        supposedToBeOffScreen = true;
+        dropBombOnStoppedPlayer = true;
+        //asdfasdfasdf
     }
     public void DriveAwayBackward() {
         goalXpos = -10;
@@ -383,9 +424,6 @@ public class VehicleBounce : MonoBehaviour
         // vehicle rocks (rotates) back & forth slightly
         rockingFromBlownTire = true;
 
-        
-
-
         // these need to be restored to defaults at some point
 
     }
@@ -396,21 +434,37 @@ public class VehicleBounce : MonoBehaviour
         rockingFromBlownTire = false;
     }
     public void SetSpeedToZeroAfterBlownTire() {
-        actualHorizontalSpeed = 0;
-        midBounce = false;
-        postBounceFallSpeed = 0;
-        readyToMoveAgain = false;
-        swerving = false;
-        rockingFromBlownTire = false;
-        bounceHeight = 0;
+        supposedToBeStill = true;
+
+        ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
+        //actualHorizontalSpeed = 0;
+        //midBounce = false;
+        //postBounceFallSpeed = 0;
+        //readyToMoveAgain = false;
+        //swerving = false;
+        //rockingFromBlownTire = false;
+        //bounceHeight = 0;
         // stop animation
-        transform.GetChild(0).GetComponent<Animator>().enabled = false;
+        if (whatVehicleIsThis == "bike") {
+            transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
+        }
+
 
     }
     public void RestoreSpeed() {
-        actualHorizontalSpeed = actualHorizontalSpeed_default;
+        supposedToBeStill = false;
+        transform.position = new Vector2(-5, 0);
+
+        if (whatVehicleIsThis == "bike") {
+            transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = true;
+            transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true); // turn off normal version
+            transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(false); // turn on destroyed version
+        }
 
         /// and RESTORE ALL THE OTHER STUFF
+
+
+
     }
 
 

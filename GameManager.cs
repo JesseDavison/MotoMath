@@ -108,6 +108,8 @@ public class GameManager : MonoBehaviour
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
+    public GameObject bomb;
+
 
     public TextMeshProUGUI LevelUI_inventoryDisplay_money;
     public TextMeshProUGUI LevelUI_inventoryDisplay_fuel;
@@ -264,11 +266,14 @@ public class GameManager : MonoBehaviour
         else if (slowingDownFromBlownTire) {
             if (Time.timeScale > 0.25f) {
                 Time.timeScale -= blownTireSlowdownAmountToSubtract;
+                Debug.Log("current timescale: " + Time.timeScale);
             } else if (Time.timeScale <= 0.25f) {
                 Time.timeScale = 0;
 
                 // animate puff of dust
                 PlayDustCloud();
+                fuelGaugeScript.StopFuelConsumption();
+                slowingDownFromBlownTire = false;
 
 
                 // set background speed to zero
@@ -286,8 +291,20 @@ public class GameManager : MonoBehaviour
 
 
                 // restore timescale to 1
-                Time.timeScale = 1;
-                slowingDownFromBlownTire = false;
+                Time.timeScale = 1;     // change timescale after the game restarts
+                //slowingDownFromBlownTire = false;
+
+
+
+                // now, have enemy drive by
+                basicEnemy.GetComponent<VehicleBounce>().BringVehicleBackOnScreen();
+                //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
+                basicEnemy.SetActive(true);
+                basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
+                basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward_andDropBombOnStoppedPlayer();
+
+                Debug.Log("enemy should be active");
+
 
             }
         
@@ -299,13 +316,16 @@ public class GameManager : MonoBehaviour
     }
     public void StartBlownTireSlowdown() {
         // have enemy drive off, THEN everything slows down
+        playerVehicle.GetComponent<VehicleBounce>().AnimateBlownTire();
         basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward();
+        // shrink the circles, operators, & goal
+        //PuzzleManager.instance.ShrinkAndDisappear_allCirclesOperatorsGoal();
         StartCoroutine(WaitBeforeBlowingTire());
     }
     IEnumerator WaitBeforeBlowingTire() {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0);
         slowingDownFromBlownTire = true;
-        playerVehicle.GetComponent<VehicleBounce>().AnimateBlownTire();
+
     }
     public void RestoreBlownTire_speed() { 
 
@@ -574,6 +594,8 @@ public class GameManager : MonoBehaviour
 
     public void StartTimedGame()
     {
+        PuzzleManager.instance.UndoGameOver();
+        fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "timed";
         gameType = "timed";
         ResetScore();
@@ -586,9 +608,20 @@ public class GameManager : MonoBehaviour
         PuzzleTimer.SetActive(true);
         PuzzleTimerThatMoves.SetActive(true);
         SetNumberOfPuzzlesRemaining(20);     // change to 20 later
+
+
+        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_4.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_5.GetComponent<backgroundScroll>().RestoreSpeed();
+
     }
     public void StartEndlessGame()
     {
+        PuzzleManager.instance.UndoGameOver();
+        fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "endless";
         gameType = "endless";
         ResetScore();
@@ -604,9 +637,20 @@ public class GameManager : MonoBehaviour
 
         PuzzlesRemainingDisplay.text = "";
 
+
+        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_4.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_5.GetComponent<backgroundScroll>().RestoreSpeed();
+
+
     }
     public void StartKiddyGame()
     {
+        PuzzleManager.instance.UndoGameOver();
+        fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "kiddy";
         gameType = "kiddy";
         ResetScore();
@@ -621,6 +665,16 @@ public class GameManager : MonoBehaviour
         //SetNumberOfPuzzlesRemaining(20);     // change to 20 later
 
         PuzzlesRemainingDisplay.text = "";
+
+
+        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_4.GetComponent<backgroundScroll>().RestoreSpeed();
+        backgroundThing_5.GetComponent<backgroundScroll>().RestoreSpeed();
+
+
     }
     public void EndGameEarly()
     {        // tie this to the "Main Menu" button in the level UI
@@ -1071,7 +1125,18 @@ public class GameManager : MonoBehaviour
             Debug.Log("no rockets to shoot!");
         }
     }
-
+    public void SpendBomb() {
+        int temp = PlayerPrefs.GetInt(bombsInInventory);
+        if (temp >= 1) {
+            PlayerPrefs.SetInt(bombsInInventory, temp - 1);
+            LaunchBomb();
+            ShowLevelUI_ammo_and_inventory_Display();
+        }
+        else
+        {
+            Debug.Log("no bombs to launch");
+        }
+    }
 
     public void ShowLevelUI_ammo_and_inventory_Display()
     {
@@ -1106,7 +1171,10 @@ public class GameManager : MonoBehaviour
         LevelUI_inventoryDisplay_flamethrower.text = numFlamethrower.ToString();
 
     }
-
+    public void ChangePreferredWeapon(GameObject whichAmmoType) {
+        string temp = whichAmmoType.name;
+        Debug.Log("clicked!>>>>>>  " + temp);
+    }
 
 
     //  ************************************************************************************************************************************
@@ -1129,7 +1197,8 @@ public class GameManager : MonoBehaviour
         StartCoroutine(DustCloudDisableAfterAnimation());
     }
     IEnumerator DustCloudDisableAfterAnimation() {
-        yield return new WaitForSeconds(durationOfDustCloud);
+        yield return new WaitForSecondsRealtime(durationOfDustCloud);
+        Debug.Log("Dust cloud should be disabled now");
         DustCloud.gameObject.SetActive(false);
     }
 
@@ -1169,6 +1238,11 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    public void LaunchBomb() {
+        bomb.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
+        bomb.SetActive(true);
+        bomb.GetComponent<Bomb>().LaunchBomb_PlayerToEnemy(basicEnemy.transform.position);
+    }
     public void EnemyFires_Rocket()
     {
         rocket.transform.position = basicEnemy.transform.position + new Vector3(0, 0.5f, 0);
@@ -1179,6 +1253,8 @@ public class GameManager : MonoBehaviour
     public void EnemyFires_Caltrops(bool favorable) {
         // if enemy is in middle of screen, should make the enemy move forward before the caltrops land
         basicEnemy.GetComponent<VehicleBounce>().DriveToForwardPosition_forDroppingCaltrops();
+        // make the player vehicle move to middle of screen?
+        //playerVehicle.GetComponent<VehicleBounce>().
 
         caltrops_1.transform.position = basicEnemy.transform.position;
         caltrops_2.transform.position = basicEnemy.transform.position;
@@ -1198,7 +1274,16 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    public void EnemyFiresBomb() {
+        // move bomb to location of firer
+        bomb.transform.position = basicEnemy.transform.position + new Vector3(0, 1.5f, 0);
+        //Debug.Log("in EnemyFiresBomb(), and bomb y pos at: " + bomb.transform.position.y);
+        string temp = playerVehicle.GetComponent<VehicleBounce>().whatVehicleIsThis;
+        bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(playerVehicle.transform.position, temp);
 
+        // set endpoint as location of firee
+
+    }
 
     public void EnemyExplodes()
     {
@@ -1463,6 +1548,10 @@ public class GameManager : MonoBehaviour
         PlayExplosion();
         //playerVehicle.SetActive(false);
     }
+    public void BombExplodes() {
+        explodey.transform.position = bomb.transform.position + new Vector3(-6.6f, -3.95f, 0);
+        PlayExplosion();
+    }
     public void ResolveConflictFavorably()
     {
         // need to work out UI
@@ -1586,15 +1675,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 3);
+            int rando = Random.Range(1, 4);
 
 
             // the enemy is here, so kill it and make explosion
            if (rando == 1) {
                 SpendRocket();
-            }
+           }
            else if (rando == 2) {
                 EnemyFires_Caltrops(true);
+           } 
+           else if (rando == 3) {
+                SpendBomb();
             }
 
 
@@ -1646,8 +1738,12 @@ public class GameManager : MonoBehaviour
             if (rando == 1) {
                 //EnemyFires_Rocket();
                 EnemyFires_Caltrops(false);
+                // don't load another puzzle cuz yer ded
+                PuzzleManager.instance.SetGameOver();
             } else if (rando == 2) {
                 EnemyFires_Caltrops(false);
+                // don't load another puzzle cuz yer ded
+                PuzzleManager.instance.SetGameOver();
             }
 
 
