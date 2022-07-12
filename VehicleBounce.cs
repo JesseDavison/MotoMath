@@ -448,8 +448,13 @@ public class VehicleBounce : MonoBehaviour
         if (whatVehicleIsThis == "bike") {
             transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
         }
-
-
+    }
+    public void SetSpeedToZero() {
+        supposedToBeStill = true;
+        if (whatVehicleIsThis == "bike")
+        {
+            transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
+        }
     }
     public void RestoreSpeed() {
         supposedToBeStill = false;

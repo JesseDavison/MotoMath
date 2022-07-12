@@ -19,7 +19,9 @@ public class AmmoPreferred : MonoBehaviour
 
     private void OnMouseDown()
     {
-        GameManager.instance.ChangePreferredWeapon(gameObject);
+
+        Debug.Log("you clicked the click");
+        //GameManager.instance.ChangePreferredWeapon(gameObject);
 
 
 

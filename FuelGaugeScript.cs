@@ -93,4 +93,6 @@ public class FuelGaugeScript : MonoBehaviour
     public void StartFuelConsumption() {
         fuelBeingBurned = true;
     }
+
+
 }

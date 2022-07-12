@@ -37,6 +37,8 @@ public class HullWrecking : MonoBehaviour
 
     public GameObject hullSprite;
 
+    bool thisIsEnemyHull;
+
 
 
     // Start is called before the first frame update
@@ -92,7 +94,14 @@ public class HullWrecking : MonoBehaviour
 
                 endPosition = new Vector2(-16, bouncingOffset);
                 zAxisRotationSpeed = Random.Range(30, 60f);
-            }
+            } 
+            //else if (thisIsEnemyHull == false) {
+            //    time = 0;
+            //    randomCurveMagnifier = GetRandomBounceMagnifier(0, 0);
+
+            //    endPosition = new Vector2(1.5f, bouncingOffset);
+            //    zAxisRotationSpeed = Random.Range(5, 10);
+            //}
 
             // rotation stuff
             //gameObject.transform.GetChild(0);
@@ -102,14 +111,33 @@ public class HullWrecking : MonoBehaviour
 
         }
 
-        if (transform.position.x < -4 && swerveSent == false) {
-            swerveSent = true;
-            playerVehicle.GetComponent<VehicleBounce>().BeginSwerve();
-        } else if (transform.position.x < -15) {
-            finishedBouncing = true;
-            doingABounce = false;
-            gameObject.SetActive(false);
+        if (thisIsEnemyHull == true) 
+        {
+            if (transform.position.x < -4 && swerveSent == false)
+            {
+                swerveSent = true;
+                playerVehicle.GetComponent<VehicleBounce>().BeginSwerve();
+            }
+            else if (transform.position.x < -15)
+            {
+                finishedBouncing = true;
+                doingABounce = false;
+                gameObject.SetActive(false);
+            }
         }
+        else
+        {
+            if (transform.position.x < -15) 
+            {
+                finishedBouncing = true;
+                doingABounce = false;
+                gameObject.SetActive(false);
+                GameManager.instance.DisplayGameOver(false, true);
+            }
+
+        }
+
+
 
 
 
@@ -127,7 +155,12 @@ public class HullWrecking : MonoBehaviour
         return rando;
     }
 
-    public void BeginBouncing() {
+    public void BeginBouncing(bool isThisEnemy) {
+        if (isThisEnemy) {
+            thisIsEnemyHull = true;
+        } else {
+            thisIsEnemyHull = false;
+        }
         startPosition = transform.position;
         hullSprite.transform.Rotate(new Vector3(0, 0, 0));
         gameObject.SetActive(true);
@@ -147,7 +180,7 @@ public class HullWrecking : MonoBehaviour
         finishedBouncing = false;
         time = 0;
 
-        GameManager.instance.SpawnLoot(startPosition, zAxisRotationSpeed);
+        //GameManager.instance.SpawnLoot(startPosition);
 
 
     }
