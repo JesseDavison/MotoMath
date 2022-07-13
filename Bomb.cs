@@ -43,27 +43,44 @@ public class Bomb : MonoBehaviour
             transform.position = pos;
             //Debug.Log("bomb at: " + transform.position.x + ", " + transform.position.y);
 
-            if (target == "player" && transform.position.x <= endPosition.x + 0.2f && transform.position.y <= 1.3f) {
-                // play explosion
-                //Debug.Log("about to explode bomb, y pos at: " + transform.position.y);
-                gameObject.SetActive(false);
-                launched = false;
-                GameManager.instance.BombExplodes();
+            if (target == "player") {
 
-                // turn player into destroyed version
-                if (playerVehicle == "bike") {
-                    player.transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(false); // turn off normal version
-                    player.transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(true); // turn on destroyed version
+
+                if (transform.position.x <= player.transform.position.x + 0.4f && transform.position.y <= 1.3f)
+                {
+                    // play explosion
+                    //Debug.Log("about to explode bomb, y pos at: " + transform.position.y);
+                    gameObject.SetActive(false);
+                    launched = false;
+
+                    GameManager.instance.PlayerExplodes();
+
+                    //GameManager.instance.BombExplodes();
+
+                    //// turn player into destroyed version
+                    //if (playerVehicle == "bike") {
+                    //    player.SetActive(false);
+
+                    //    asdf
+
+                    //    player.transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(false); // turn off normal version
+                    //    player.transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(true); // turn on destroyed version
+                    //}
+
+
+
+                    // activate end of game summary screen
+                    GameManager.instance.DisplayGameOver(false, true);
+
                 }
-
-
-
-                // activate end of game summary screen
-                GameManager.instance.DisplayGameOver(false, true);
-
-
+                else if (transform.position.y <= 0.51f)
+                {
+                    // start rolling 
+                    transform.GetChild(0).transform.Rotate(0, 0, 50);
+                }
             }
-            else if (target == "enemy") {
+            else if (target == "enemy") 
+            {
                 if (transform.position.x >= endPosition.x - 1.5f && transform.position.y <= 1.3f)
                 {
                     gameObject.SetActive(false);
@@ -88,13 +105,13 @@ public class Bomb : MonoBehaviour
 
 
     }
-    public void LaunchBomb_EnemyToPlayer(Vector3 playerPosition, string playerVehicleType) {
-
+    public void LaunchBomb_EnemyToPlayer(string playerVehicleType) {
+        transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, 0);
         target = "player";
         gameObject.SetActive(true);
         //Debug.Log("bomb launnnnnn, and y pos is " + transform.position.y);
         launched = true;
-        endPosition = new Vector3(playerPosition.x, 0.5f, 0);
+        endPosition = new Vector2(-2, 0.5f);
         playerVehicle = playerVehicleType;
         time = 0;
 

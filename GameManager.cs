@@ -175,6 +175,15 @@ public class GameManager : MonoBehaviour
     LootAnimationScript LOOT_flamethrower_script;
     int LOOT_flamethrower_quantity;
 
+    public GameObject GunfireGameObject;
+    public Animator Gunfire;
+    public float durationOfGunfire;
+    bool shootingBullets;
+    public GameObject Gunfire_hitting_GameObject;
+    public Animator Gunfire_hitting;
+
+
+
     string preferredAmmo = "rockets";
     public GameObject ammoHighlighter;
 
@@ -267,7 +276,8 @@ public class GameManager : MonoBehaviour
             
 
         }
-        else if (playerSlowingDown && slowingDownFromBlownTire) {
+        else if (playerSlowingDown && slowingDownFromBlownTire) 
+        {
             if (Time.timeScale > 0.25f) {
                 Time.timeScale -= blownTireSlowdownAmountToSubtract;
                 Debug.Log("current timescale: " + Time.timeScale);
@@ -314,7 +324,8 @@ public class GameManager : MonoBehaviour
             }
         
         }
-        else if (playerSlowingDown && slowingDownFromPlayerExploding) {
+        else if (playerSlowingDown && slowingDownFromPlayerExploding) 
+        {
             if (Time.timeScale > 0.25f)
             {
                 Time.timeScale -= blownTireSlowdownAmountToSubtract;
@@ -362,6 +373,15 @@ public class GameManager : MonoBehaviour
 
 
             }
+        }
+        else if (shootingBullets)
+        {
+            // keep the gunfire animation "attached" to the player vehicle
+            //      if player is bike....
+
+            GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
+            Gunfire_hitting_GameObject.transform.position = basicEnemy.transform.position + new Vector3(-1.98f, 0.54f, -2);
+
         }
     }
     public void StartBlownTireSlowdown() {
@@ -1182,6 +1202,27 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void ShootBullets() {
+        shootingBullets = true;
+        
+        Gunfire.gameObject.SetActive(true);     // turns on the animation
+        Gunfire.Play("gunfire_animation", -1, 0f);
+
+        Gunfire_hitting.gameObject.SetActive(true);
+        Gunfire_hitting.Play("gunfire_hitting_animation", -1, 0f);
+
+        StartCoroutine(GunfireDisableAfterAnimation());
+    }
+    IEnumerator GunfireDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfGunfire);
+        Gunfire.gameObject.SetActive(false);
+        Gunfire_hitting.gameObject.SetActive(false);
+        shootingBullets = false;
+
+    }
+
+
+
     public void SpendRocket()
     {
         int tempy = PlayerPrefs.GetInt(rocketsInInventory);
@@ -1253,6 +1294,7 @@ public class GameManager : MonoBehaviour
         if (temp == "BULLET icon") {
             ammoHighlighter.transform.localPosition = new Vector2(-187.5f, highlighterYposition);
             preferredAmmo = "bullets";
+            Debug.Log("preferred ammo: " + preferredAmmo);
         } else if (temp == "ROCKET icon") {
             ammoHighlighter.transform.localPosition = new Vector2(-131.84f, highlighterYposition);
             preferredAmmo = "rockets";
@@ -1371,7 +1413,7 @@ public class GameManager : MonoBehaviour
         bomb.transform.position = basicEnemy.transform.position + new Vector3(0, 1.5f, 0);
         //Debug.Log("in EnemyFiresBomb(), and bomb y pos at: " + bomb.transform.position.y);
         string temp = playerVehicle.GetComponent<VehicleBounce>().whatVehicleIsThis;
-        bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(playerVehicle.transform.position, temp);
+        bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(temp);
 
         // set endpoint as location of firee
 
@@ -1783,8 +1825,8 @@ public class GameManager : MonoBehaviour
         else
         {
 
-            if (preferredAmmo == "bullets") { 
-                
+            if (preferredAmmo == "bullets") {
+                ShootBullets();
             } else if (preferredAmmo == "rockets") {
                 SpendRocket();
             } else if (preferredAmmo == "bombs") {
@@ -1855,8 +1897,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 4);
-            if (rando == 1) {
+            int rando = Random.Range(1, 2);
+            if (rando == 2) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
@@ -1865,7 +1907,7 @@ public class GameManager : MonoBehaviour
                 EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 3) {
+            } else if (rando == 1) {
                 EnemyFiresBomb();
                 PuzzleManager.instance.SetGameOver();
             }
