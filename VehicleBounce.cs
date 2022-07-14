@@ -69,16 +69,16 @@ public class VehicleBounce : MonoBehaviour
     //public bool isThisARocket = false;
     //public float rocketExplosionXPos;
 
-    bool rockingFromBlownTire;
+    public bool rockingFromBlownTire;
     public float rockingSpeed;
     public Transform vehicleSprite;
     bool dropBombOnStoppedPlayer = false;
 
     public float flickMeAround;
 
-
-
-
+    public bool rockingFromGettingShot;
+    public float flickMeAroundGettingShot;
+    public float gettingShotRockingSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -152,7 +152,7 @@ public class VehicleBounce : MonoBehaviour
                 if (dropBombOnStoppedPlayer && transform.position.x >= 7)
                 {
                     dropBombOnStoppedPlayer = false;
-                    GameManager.instance.EnemyFiresBomb();
+                    GameManager.instance.EnemyFiresBomb(false);
                     Debug.Log("BOMB launched");
                 }
             }
@@ -222,14 +222,7 @@ public class VehicleBounce : MonoBehaviour
                     }
                 }
             }
-            //if (isThisARocket) { 
-            //    if (transform.position.x > rocketExplosionXPos) {
-            //        GameManager.instance.EnemyDies();
-            //        gameObject.SetActive(false);
-            //    }
-            //}
-
-            if (rockingFromBlownTire == true)
+            else if (rockingFromBlownTire == true)
             {
 
                 // go from -3 to 3, on the CHILD sprite object
@@ -243,6 +236,17 @@ public class VehicleBounce : MonoBehaviour
                 }
 
             }
+            //else if (rockingFromGettingShot == true)
+            //{
+
+            //    vehicleSprite.Rotate(gettingShotRockingSpeed, gettingShotRockingSpeed * 0.75f, 0);
+            //    Debug.Log("rotation.x: " + vehicleSprite.rotation.x);
+
+            //    if (vehicleSprite.rotation.x > flickMeAroundGettingShot || vehicleSprite.rotation.x < -flickMeAroundGettingShot)
+            //    {
+            //        gettingShotRockingSpeed *= -1;
+            //    }
+            //}
         }
 
 
@@ -414,7 +418,22 @@ public class VehicleBounce : MonoBehaviour
         swerve_2_complete = false;
         swerving = true;
     }
+    // *******************************************************************************************************
+    public void AnimateGettingShot() {
+        
+        
+        rockingFromGettingShot = true;
 
+    }
+    public void ResetGettingShotStuff() {
+
+
+        rockingFromGettingShot = false;
+        //vehicleSprite.transform.Rotate(new Vector3(0, 0, 5));
+        vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    // *******************************************************************************************************
     public void AnimateBlownTire() {
         // increased bumpiness:
         minTimeBetweenBounce = 0.01f;
@@ -432,6 +451,8 @@ public class VehicleBounce : MonoBehaviour
         maxTimeBetweenBounce = 0.7f;
         bounceHeight = 0.07f;
         rockingFromBlownTire = false;
+        //vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
+        vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
     public void SetSpeedToZeroAfterBlownTire() {
         supposedToBeStill = true;
@@ -449,6 +470,7 @@ public class VehicleBounce : MonoBehaviour
             transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
         }
     }
+    // *******************************************************************************************************
     public void SetSpeedToZero() {
         supposedToBeStill = true;
         if (whatVehicleIsThis == "bike")
@@ -465,21 +487,10 @@ public class VehicleBounce : MonoBehaviour
             transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true); // turn off normal version
             transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(false); // turn on destroyed version
         }
-
-        /// and RESTORE ALL THE OTHER STUFF
-
-
-
     }
 
 
 
-    //public void SetGoalPosForRocket(int xPos, int speed, float targetXPos) {
-    //    goalXpos = xPos;
-    //    actualHorizontalSpeed = speed;      // higher number means slower movement
-    //    rocketExplosionXPos = targetXPos;
 
-
-    //}
 
 }

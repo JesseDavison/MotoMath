@@ -36,8 +36,11 @@ public class HullWrecking : MonoBehaviour
     public bool swerveSent = false;
 
     public GameObject hullSprite;
+    public GameObject hullSmallFlame;
 
     bool thisIsEnemyHull;
+
+    bool playerIsStandingStill_soBounceOnlyOnce;
 
 
 
@@ -83,8 +86,17 @@ public class HullWrecking : MonoBehaviour
 
             //}
 
-
-            if (time >= 1) {
+            if (playerIsStandingStill_soBounceOnlyOnce) { 
+                if (time >= 1) {
+                    randomCurveMagnifier = 0;
+                    speed = 0;
+                    zAxisRotationSpeed = 0;
+                    // set the vehicle upside-down????
+                    hullSprite.transform.rotation = Quaternion.Euler(0, 0, 180);
+                    // turn on the HULL FIRE 
+                    hullSmallFlame.SetActive(true);
+                }
+            } else if (time >= 1) {
                 time = 0;
                 randomCurveMagnifier = GetRandomBounceMagnifier(0, 0);
                 if (!speedAlreadyMultiplied) {
@@ -155,18 +167,29 @@ public class HullWrecking : MonoBehaviour
         return rando;
     }
 
-    public void BeginBouncing(bool isThisEnemy) {
-        if (isThisEnemy) {
-            thisIsEnemyHull = true;
-        } else {
+    public void BeginBouncing(bool playerIsTarget, bool playerIsMoving) {
+        if (playerIsTarget) {
             thisIsEnemyHull = false;
+            playerIsStandingStill_soBounceOnlyOnce = !playerIsMoving;
+        } else {
+            thisIsEnemyHull = true;
+            playerIsStandingStill_soBounceOnlyOnce = false;
         }
+
         startPosition = transform.position;
         hullSprite.transform.Rotate(new Vector3(0, 0, 0));
         gameObject.SetActive(true);
         //endPosition = new Vector2(transform.position.x - bounceDistanceX, transform.position.y);
-        float rando = Random.Range(-5, 5);
-        endPosition = new Vector2(transform.position.x + rando, bouncingOffset);
+
+        if (playerIsTarget && playerIsMoving == false) {
+            float randomFloat = Random.Range(-6.5f, -3.5f);
+            endPosition = new Vector2(randomFloat, bouncingOffset);
+            Debug.Log("endPosition.x " + endPosition.x + " ....  endPosition.y " + endPosition.y);
+        } else {
+            float rando = Random.Range(-5, 5);
+            endPosition = new Vector2(transform.position.x + rando, bouncingOffset);
+        }
+
         randomCurveMagnifier = GetRandomBounceMagnifier(4, 9);
         zAxisRotationSpeed = Random.Range(2, 13f);
         int randy = Random.Range(1, 3);
@@ -184,6 +207,12 @@ public class HullWrecking : MonoBehaviour
 
 
     }
+
+    public void ResetHullForFutureUse() {
+        gameObject.SetActive(false);
+        hullSmallFlame.SetActive(false);
+    }
+
     void ContinueBouncing() {
         Debug.Log("entered ContinueBouncing()");
         startPosition = transform.position;

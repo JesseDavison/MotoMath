@@ -19,6 +19,7 @@ public class Bomb : MonoBehaviour
     string target;
 
     public GameObject player;
+    bool isThePlayerMoving;
 
     public float zAxisRotationSpeed;
 
@@ -53,7 +54,13 @@ public class Bomb : MonoBehaviour
                     gameObject.SetActive(false);
                     launched = false;
 
-                    GameManager.instance.PlayerExplodes();
+                    if (isThePlayerMoving == true) {
+                        GameManager.instance.PlayerExplodes(true);
+                    } else {
+                        GameManager.instance.PlayerExplodes(false);
+                    }
+
+
 
                     //GameManager.instance.BombExplodes();
 
@@ -105,7 +112,8 @@ public class Bomb : MonoBehaviour
 
 
     }
-    public void LaunchBomb_EnemyToPlayer(string playerVehicleType) {
+    public void LaunchBomb_EnemyToPlayer(string playerVehicleType, bool playerIsMoving) {
+        isThePlayerMoving = playerIsMoving;
         transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, 0);
         target = "player";
         gameObject.SetActive(true);

@@ -77,7 +77,7 @@ public class Rocket : MonoBehaviour
             } else {
                 targetXPOS = player.transform.position.x;
                 if (transform.position.x < targetXPOS) {
-                    GameManager.instance.PlayerExplodes();
+                    GameManager.instance.PlayerExplodes(true);
                     gameObject.SetActive(false);
                 }
             }

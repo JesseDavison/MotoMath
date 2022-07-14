@@ -178,9 +178,15 @@ public class GameManager : MonoBehaviour
     public GameObject GunfireGameObject;
     public Animator Gunfire;
     public float durationOfGunfire;
-    bool shootingBullets;
+    bool shootingBullets_atEnemy;
     public GameObject Gunfire_hitting_GameObject;
     public Animator Gunfire_hitting;
+    int numberOfBulletsBeingShot;
+    int numberOfBulletsShot;
+    public int delayBetweenBulletDecrease;
+    int bulletDelayCounter;
+    int tempInventoryAmount;
+
 
 
 
@@ -195,7 +201,8 @@ public class GameManager : MonoBehaviour
     public GameObject backgroundThing_4;
     public GameObject backgroundThing_5;
 
-
+    public Animator SmallFlameAnimation_onEnemy;
+    public float durationOfSmallFlame;
 
 
     // Start is called before the first frame update
@@ -278,9 +285,9 @@ public class GameManager : MonoBehaviour
         }
         else if (playerSlowingDown && slowingDownFromBlownTire) 
         {
-            if (Time.timeScale > 0.25f) {
+            if (Time.timeScale > 0.2f) {
                 Time.timeScale -= blownTireSlowdownAmountToSubtract;
-                Debug.Log("current timescale: " + Time.timeScale);
+                Debug.Log("current timescale: " + Time.timeScale + " slowingDownFromBlownTire: " + slowingDownFromBlownTire);
             } else if (Time.timeScale <= 0.25f) {
                 Time.timeScale = 0;
 
@@ -326,7 +333,7 @@ public class GameManager : MonoBehaviour
         }
         else if (playerSlowingDown && slowingDownFromPlayerExploding) 
         {
-            if (Time.timeScale > 0.25f)
+            if (Time.timeScale > 0.2f)
             {
                 Time.timeScale -= blownTireSlowdownAmountToSubtract;
                 Debug.Log("current timescale: " + Time.timeScale);
@@ -374,13 +381,33 @@ public class GameManager : MonoBehaviour
 
             }
         }
-        else if (shootingBullets)
+        else if (shootingBullets_atEnemy)
         {
-            // keep the gunfire animation "attached" to the player vehicle
-            //      if player is bike....
 
             GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
             Gunfire_hitting_GameObject.transform.position = basicEnemy.transform.position + new Vector3(-1.98f, 0.54f, -2);
+
+            if (numberOfBulletsShot < numberOfBulletsBeingShot) 
+            {
+                bulletDelayCounter += 1;
+                if (bulletDelayCounter >= delayBetweenBulletDecrease) {
+                    bulletDelayCounter = 0;
+                    tempInventoryAmount -= 1;
+                    numberOfBulletsShot += 1;
+                    LevelUI_inventoryDisplay_bullets.text = tempInventoryAmount.ToString();
+
+                }
+
+
+
+            } else if (numberOfBulletsShot == numberOfBulletsBeingShot) 
+            {
+                numberOfBulletsBeingShot = 999;
+                // set the playerprefs int, so the amount remains correct
+                PlayerPrefs.SetInt(bulletsInInventory, tempInventoryAmount);
+                Debug.Log("bullet inventory updated");
+            }
+
 
         }
     }
@@ -404,7 +431,7 @@ public class GameManager : MonoBehaviour
             playerSlowingDown = true;
             // have enemy drive off, THEN everything slows down
             //playerVehicle.GetComponent<VehicleBounce>().AnimateExplodingPlayer();
-            PlayerExplodes();
+            PlayerExplodes(false);
             basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward();
             // shrink the circles, operators, & goal
             //PuzzleManager.instance.ShrinkAndDisappear_allCirclesOperatorsGoal();
@@ -678,6 +705,7 @@ public class GameManager : MonoBehaviour
 
     public void StartTimedGame()
     {
+        basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "timed";
@@ -707,6 +735,7 @@ public class GameManager : MonoBehaviour
     }
     public void StartEndlessGame()
     {
+        basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "endless";
@@ -739,6 +768,7 @@ public class GameManager : MonoBehaviour
     }
     public void StartKiddyGame()
     {
+        basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "kiddy";
@@ -1180,7 +1210,7 @@ public class GameManager : MonoBehaviour
         //    Debug.Log("timescale is 1");
         //}
 
-
+        PlayerPrefs.SetInt(bulletsInInventory, 1000);
         PlayerPrefs.SetFloat(nitrousInInventory, 100);
         ShowLevelUI_ammo_and_inventory_Display();
 
@@ -1203,7 +1233,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void ShootBullets() {
-        shootingBullets = true;
+        shootingBullets_atEnemy = true;
         
         Gunfire.gameObject.SetActive(true);     // turns on the animation
         Gunfire.Play("gunfire_animation", -1, 0f);
@@ -1211,18 +1241,33 @@ public class GameManager : MonoBehaviour
         Gunfire_hitting.gameObject.SetActive(true);
         Gunfire_hitting.Play("gunfire_hitting_animation", -1, 0f);
 
+        basicEnemy.GetComponent<VehicleBounce>().AnimateGettingShot();
+
         StartCoroutine(GunfireDisableAfterAnimation());
     }
     IEnumerator GunfireDisableAfterAnimation() {
         yield return new WaitForSeconds(durationOfGunfire);
         Gunfire.gameObject.SetActive(false);
         Gunfire_hitting.gameObject.SetActive(false);
-        shootingBullets = false;
+        shootingBullets_atEnemy = false;
+        PlaySmallFireOnEnemy();
 
     }
 
 
-
+    public void SpendBullets() {
+        int temp = PlayerPrefs.GetInt(bulletsInInventory);
+        if (temp >= 8) {
+            numberOfBulletsShot = 0;
+            tempInventoryAmount = PlayerPrefs.GetInt(bulletsInInventory);
+            numberOfBulletsBeingShot = Random.Range(8, 18);
+            ShootBullets();
+        }
+        else
+        {
+            Debug.Log("not enough bullets to shoot");
+        }
+    }
     public void SpendRocket()
     {
         int tempy = PlayerPrefs.GetInt(rocketsInInventory);
@@ -1289,23 +1334,24 @@ public class GameManager : MonoBehaviour
         string temp = whichAmmoType.name;
         Debug.Log("clicked!>>>>>>  " + temp);
 
-        float highlighterYposition = 188.93f;
+        float highlighterYposition = -36.07f;
 
         if (temp == "BULLET icon") {
-            ammoHighlighter.transform.localPosition = new Vector2(-187.5f, highlighterYposition);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-187.5f, highlighterYposition, 1);
+            Debug.Log("wft   " + ammoHighlighter.GetComponent<RectTransform>().anchoredPosition.y);
             preferredAmmo = "bullets";
             Debug.Log("preferred ammo: " + preferredAmmo);
         } else if (temp == "ROCKET icon") {
-            ammoHighlighter.transform.localPosition = new Vector2(-131.84f, highlighterYposition);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-131.84f, highlighterYposition, 1);
             preferredAmmo = "rockets";
         } else if (temp == "BOMB icon") {
-            ammoHighlighter.transform.localPosition = new Vector2(-80.4f, highlighterYposition);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-80.4f, highlighterYposition, 1);
             preferredAmmo = "bombs";
         } else if (temp == "CALTROPS icon") {
-            ammoHighlighter.transform.localPosition = new Vector2(-23.1f, highlighterYposition);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-23.1f, highlighterYposition, 1);
             preferredAmmo = "caltrops";
         } else if (temp == "FLAME icon") {
-            ammoHighlighter.transform.localPosition = new Vector2(34.8f, highlighterYposition);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(34.8f, highlighterYposition, 1);
             preferredAmmo = "flamethrower";
         }
     }
@@ -1335,7 +1381,19 @@ public class GameManager : MonoBehaviour
         Debug.Log("Dust cloud should be disabled now");
         DustCloud.gameObject.SetActive(false);
     }
-
+    public void PlaySmallFireOnEnemy() {
+        //SmallFlameGameObject.transform.position = basicEnemy.transform.position - new Vector3(-6.83f, -2.4f, 0);
+        SmallFlameAnimation_onEnemy.gameObject.SetActive(true);
+        SmallFlameAnimation_onEnemy.Play("flame_small", -1, 0f);
+        StartCoroutine(SmallFireDisableAfterAnimation());
+        // keep the fire at the same spot on the enemy
+    }
+    IEnumerator SmallFireDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfSmallFlame);
+        SmallFlameAnimation_onEnemy.gameObject.SetActive(false);
+        // now explode the enemy
+        EnemyExplodes();
+    }
     public void EnemyAppears()
     {
 
@@ -1408,12 +1466,12 @@ public class GameManager : MonoBehaviour
     {
 
     }
-    public void EnemyFiresBomb() {
+    public void EnemyFiresBomb(bool playerIsMoving) {
         // move bomb to location of firer
         bomb.transform.position = basicEnemy.transform.position + new Vector3(0, 1.5f, 0);
         //Debug.Log("in EnemyFiresBomb(), and bomb y pos at: " + bomb.transform.position.y);
         string temp = playerVehicle.GetComponent<VehicleBounce>().whatVehicleIsThis;
-        bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(temp);
+        bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(temp, playerIsMoving);
 
         // set endpoint as location of firee
 
@@ -1438,7 +1496,7 @@ public class GameManager : MonoBehaviour
         basicEnemyHull.transform.position = basicEnemy.transform.position - new Vector3(6.5f, 0, 0);
         basicEnemyHull.SetActive(true);
         // kick off the hull-bouncing script
-        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(true);
+        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(false, false);
         
         SpawnLoot(basicEnemyHull.transform.position);
 
@@ -1678,7 +1736,7 @@ public class GameManager : MonoBehaviour
 
     //  ************************************************************************************************************************************
 
-    public void PlayerExplodes()
+    public void PlayerExplodes(bool playerIsMoving)
     {
         explodey.transform.position = playerVehicle.transform.position + new Vector3(-6.6f, -3.95f, 0);
         PlayExplosion();
@@ -1691,7 +1749,7 @@ public class GameManager : MonoBehaviour
         basicEnemyHull.transform.position = playerVehicle.transform.position - new Vector3(6.5f, 0, 0);
         basicEnemyHull.SetActive(true);
         // kick off the hull-bouncing script
-        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(false);
+        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(true, playerIsMoving);
 
         enemyInRange = false;
 
@@ -1826,7 +1884,7 @@ public class GameManager : MonoBehaviour
         {
 
             if (preferredAmmo == "bullets") {
-                ShootBullets();
+                SpendBullets();
             } else if (preferredAmmo == "rockets") {
                 SpendRocket();
             } else if (preferredAmmo == "bombs") {
@@ -1903,12 +1961,12 @@ public class GameManager : MonoBehaviour
                 //EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 2) {
+            } else if (rando == 1) {
                 EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 1) {
-                EnemyFiresBomb();
+            } else if (rando == 12) {
+                EnemyFiresBomb(true);
                 PuzzleManager.instance.SetGameOver();
             }
 
