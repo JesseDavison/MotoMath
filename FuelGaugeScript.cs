@@ -37,6 +37,11 @@ public class FuelGaugeScript : MonoBehaviour
             if (counter >= 100) {
                 counter = 0;
                 fuelAmount -= Time.deltaTime * fuelConsumptionRate;
+                if (fuelAmount <= 0) {
+                    fuelAmount = 0;
+                    fuelBeingBurned = false;
+                }
+
 
                 Vector3 temp = transform.rotation.eulerAngles;
 
@@ -50,12 +55,6 @@ public class FuelGaugeScript : MonoBehaviour
                 temp.z = ((-2f * angle) / 100f) * fuelAmount + angle;
 
                 transform.rotation = Quaternion.Euler(temp);
-
-                if (fuelAmount <= 0)
-                {
-                    fuelBeingBurned = false;
-                    // trigger running out of fuel
-                }
 
             }
 

@@ -185,9 +185,20 @@ public class GameManager : MonoBehaviour
     int numberOfBulletsShot;
     public int delayBetweenBulletDecrease;
     int bulletDelayCounter;
-    int tempInventoryAmount;
 
+    int tempInventoryAmount;    // used for bullets & flamethrower
 
+    public GameObject FlamethrowerFlame_GameObject;
+    public Animator Flamethrower_1_animator;
+    //public Animator Flamethrower_2_animator;
+    //public Animator Flamethrower_3_animator;
+    int numberOfFlamethrowerShot;
+    int numberOfFlamethrowerBeingShot;
+    bool shootingFlamethrower_atEnemy;
+    int flamethrowerDelayCounter;
+    public float durationOfFlamethrower;
+    public int delayBetweenFlamethrowerDecrease;
+    public float durationOfHugeFlame;
 
 
     string preferredAmmo = "rockets";
@@ -201,8 +212,10 @@ public class GameManager : MonoBehaviour
     public GameObject backgroundThing_4;
     public GameObject backgroundThing_5;
 
-    public Animator SmallFlameAnimation_onEnemy;
+    public Animator SmallFlameAnimation_onEnemy_1;
     public float durationOfSmallFlame;
+    public Animator SmallFlameAnimation_onEnemy_2;
+    public Animator SmallFlameAnimation_onEnemy_3;
 
 
     // Start is called before the first frame update
@@ -397,16 +410,41 @@ public class GameManager : MonoBehaviour
                     LevelUI_inventoryDisplay_bullets.text = tempInventoryAmount.ToString();
 
                 }
-
-
-
-            } else if (numberOfBulletsShot == numberOfBulletsBeingShot) 
+            } 
+            else if (numberOfBulletsShot == numberOfBulletsBeingShot) 
             {
-                numberOfBulletsBeingShot = 999;
+                numberOfBulletsBeingShot = -999;
                 // set the playerprefs int, so the amount remains correct
                 PlayerPrefs.SetInt(bulletsInInventory, tempInventoryAmount);
                 Debug.Log("bullet inventory updated");
             }
+
+
+        }
+        else if (shootingFlamethrower_atEnemy)
+        {
+            FlamethrowerFlame_GameObject.transform.position = playerVehicle.transform.position + new Vector3(0.31f, -1.39f, -2);
+
+            if (numberOfFlamethrowerShot < numberOfFlamethrowerBeingShot) 
+            {
+                flamethrowerDelayCounter += 1;
+                if (flamethrowerDelayCounter >= delayBetweenFlamethrowerDecrease) {
+                    flamethrowerDelayCounter = 0;
+                    tempInventoryAmount -= 1;
+                    numberOfFlamethrowerShot += 1;
+                    LevelUI_inventoryDisplay_flamethrower.text = tempInventoryAmount.ToString();
+                }
+            }
+            else if (numberOfFlamethrowerShot == numberOfFlamethrowerBeingShot)
+            {
+                numberOfFlamethrowerBeingShot = -999;
+                PlayerPrefs.SetInt(flamethrowerInInventory, tempInventoryAmount);
+                Debug.Log("flamethrower inventory updated, amount used: " + numberOfFlamethrowerShot);
+            }
+
+
+
+
 
 
         }
@@ -1212,6 +1250,7 @@ public class GameManager : MonoBehaviour
 
         PlayerPrefs.SetInt(bulletsInInventory, 1000);
         PlayerPrefs.SetFloat(nitrousInInventory, 100);
+        PlayerPrefs.SetInt(flamethrowerInInventory, 1000);
         ShowLevelUI_ammo_and_inventory_Display();
 
 
@@ -1232,9 +1271,27 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void ShootBullets() {
+
+
+
+
+    public void SpendBullets() {
+        int temp = PlayerPrefs.GetInt(bulletsInInventory);
+        if (temp >= 8) {
+            numberOfBulletsShot = 0;
+            tempInventoryAmount = temp;
+            numberOfBulletsBeingShot = Random.Range(8, 18);
+            ShootBullets();
+        }
+        else
+        {
+            Debug.Log("not enough bullets to shoot");
+        }
+    }
+    public void ShootBullets()
+    {
         shootingBullets_atEnemy = true;
-        
+
         Gunfire.gameObject.SetActive(true);     // turns on the animation
         Gunfire.Play("gunfire_animation", -1, 0f);
 
@@ -1245,28 +1302,14 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(GunfireDisableAfterAnimation());
     }
-    IEnumerator GunfireDisableAfterAnimation() {
+    IEnumerator GunfireDisableAfterAnimation()
+    {
         yield return new WaitForSeconds(durationOfGunfire);
         Gunfire.gameObject.SetActive(false);
         Gunfire_hitting.gameObject.SetActive(false);
         shootingBullets_atEnemy = false;
         PlaySmallFireOnEnemy();
 
-    }
-
-
-    public void SpendBullets() {
-        int temp = PlayerPrefs.GetInt(bulletsInInventory);
-        if (temp >= 8) {
-            numberOfBulletsShot = 0;
-            tempInventoryAmount = PlayerPrefs.GetInt(bulletsInInventory);
-            numberOfBulletsBeingShot = Random.Range(8, 18);
-            ShootBullets();
-        }
-        else
-        {
-            Debug.Log("not enough bullets to shoot");
-        }
     }
     public void SpendRocket()
     {
@@ -1295,6 +1338,47 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("no bombs to launch");
         }
+    }
+
+    public void SpendFlamethrower() {
+        int temp = PlayerPrefs.GetInt(flamethrowerInInventory);
+        if (temp >= 3) {
+            numberOfFlamethrowerShot = 0;
+            tempInventoryAmount = temp;
+            numberOfFlamethrowerBeingShot = Random.Range(3, 8);
+            //ShootFlamethrower();
+            MovePlayerForward_forFlamethrower();
+        } 
+        else
+        {
+            Debug.Log("not enough flamethrower fuel to shoot");
+        }
+    }
+    public void MovePlayerForward_forFlamethrower() {
+        playerVehicle.GetComponent<VehicleBounce>().DriveToMiddle_forFlamethrower();
+        basicEnemy.GetComponent<VehicleBounce>().DriveBackToGetFlamethrowered();
+    }
+    public void ShootFlamethrower() {
+        shootingFlamethrower_atEnemy = true;
+
+
+
+        Flamethrower_1_animator.gameObject.SetActive(true);
+        Flamethrower_1_animator.Play("flamethrower_2", -1, 0f);
+
+        
+
+        StartCoroutine(FlamethrowerDisableAfterAnimation());
+    }
+    IEnumerator FlamethrowerDisableAfterAnimation() {
+        yield return new WaitForSeconds(durationOfFlamethrower / 2f);
+        StartCoroutine(PlayThreeSmallFiresOnEnemy());
+
+        yield return new WaitForSeconds(durationOfFlamethrower / 2f);
+        Flamethrower_1_animator.gameObject.SetActive(false);
+        shootingFlamethrower_atEnemy = false;
+        //StartCoroutine(PlayThreeSmallFiresOnEnemy());
+        StartCoroutine(ThreeSmallFiresDisableAfterAnimation());
     }
 
     public void ShowLevelUI_ammo_and_inventory_Display()
@@ -1383,14 +1467,35 @@ public class GameManager : MonoBehaviour
     }
     public void PlaySmallFireOnEnemy() {
         //SmallFlameGameObject.transform.position = basicEnemy.transform.position - new Vector3(-6.83f, -2.4f, 0);
-        SmallFlameAnimation_onEnemy.gameObject.SetActive(true);
-        SmallFlameAnimation_onEnemy.Play("flame_small", -1, 0f);
+        SmallFlameAnimation_onEnemy_1.gameObject.SetActive(true);
+        SmallFlameAnimation_onEnemy_1.Play("flame_small", -1, 0f);
         StartCoroutine(SmallFireDisableAfterAnimation());
         // keep the fire at the same spot on the enemy
     }
+    IEnumerator PlayThreeSmallFiresOnEnemy() {
+        //if (shootingFlamethrower_atEnemy == false)
+        //{
+        //    StartCoroutine(ThreeSmallFiresDisableAfterAnimation());
+        //}
+        //else
+        //{
+            SmallFlameAnimation_onEnemy_1.gameObject.SetActive(true);
+            yield return new WaitForSeconds(0.3f);
+        SmallFlameAnimation_onEnemy_2.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.3f);
+        SmallFlameAnimation_onEnemy_3.gameObject.SetActive(true);
+        //}
+    }
+    IEnumerator ThreeSmallFiresDisableAfterAnimation() {
+        yield return new WaitForSeconds(0.75f);
+        SmallFlameAnimation_onEnemy_1.gameObject.SetActive(false);
+        SmallFlameAnimation_onEnemy_2.gameObject.SetActive(false);
+        SmallFlameAnimation_onEnemy_3.gameObject.SetActive(false);
+        EnemyExplodes();
+    }
     IEnumerator SmallFireDisableAfterAnimation() {
         yield return new WaitForSeconds(durationOfSmallFlame);
-        SmallFlameAnimation_onEnemy.gameObject.SetActive(false);
+        SmallFlameAnimation_onEnemy_1.gameObject.SetActive(false);
         // now explode the enemy
         EnemyExplodes();
     }
@@ -1891,8 +1996,8 @@ public class GameManager : MonoBehaviour
                 SpendBomb();
             } else if (preferredAmmo == "caltrops") { 
 
-            } else if (preferredAmmo == "flamethrower") { 
-
+            } else if (preferredAmmo == "flamethrower") {
+                SpendFlamethrower();
             }
 
 

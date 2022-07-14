@@ -74,6 +74,9 @@ public class VehicleBounce : MonoBehaviour
     public Transform vehicleSprite;
     bool dropBombOnStoppedPlayer = false;
 
+    bool movingForwardForFlamethrowerAttack;
+    bool movingBackToReceiveFlamethrowerAttack;
+
     public float flickMeAround;
 
     public bool rockingFromGettingShot;
@@ -236,6 +239,19 @@ public class VehicleBounce : MonoBehaviour
                 }
 
             }
+            else if (movingForwardForFlamethrowerAttack == true)
+            {
+                Debug.Log("so, movingForwardForFlamethrowerAttack is true");
+                if (transform.position.x >= 2f) {
+                    Debug.Log("just passed 2f, about to shoot flamethrower");
+                    GameManager.instance.ShootFlamethrower();
+                    movingForwardForFlamethrowerAttack = false;
+
+                }
+            }
+       
+
+
             //else if (rockingFromGettingShot == true)
             //{
 
@@ -287,6 +303,9 @@ public class VehicleBounce : MonoBehaviour
     public void driftForwardBackward(float forcedSpeed) {
         // pick a spot to go to
 
+        Debug.Log("just entered driftForwardBackward... nitrousBoosting " + nitrousBoosting + " supposedtobeoffScreen " + supposedToBeOffScreen);
+        Debug.Log("rockingFromBlownTire " + rockingFromBlownTire + " movingForwardForFlamethrowerAttack " + movingForwardForFlamethrowerAttack);
+
         if (nitrousBoosting == true) {
             goalXpos = Random.Range(8.2f, 8.5f);
             readyToMoveAgain = true;
@@ -309,15 +328,37 @@ public class VehicleBounce : MonoBehaviour
 
             // toggle the boolean
             readyToMoveAgain = true;
-        } else if (rockingFromBlownTire == true) {
-            //goalXpos = 5.5f;
-            //readyToMoveAgain = true;
+        } 
+
+        if (movingForwardForFlamethrowerAttack) {
+            goalXpos = Random.Range(3f, 3.9f);
+            readyToMoveAgain = true;
+            Debug.Log("goalXpos just set to " + goalXpos);
+        } else if (movingBackToReceiveFlamethrowerAttack) {
+            goalXpos = Random.Range(8, 9.5f);
+            readyToMoveAgain = true;
         }
 
 
     }
     public void DriveToMiddle_forNitrousBoost() {
         nitrousBoosting = true;
+        driftForwardBackward(0);
+    }
+    public void DriveToMiddle_forFlamethrower() {
+        Debug.Log("just entered DriveToMiddle_forFlamethrower");
+        nitrousBoosting = false;
+        supposedToBeOffScreen = false;
+        rockingFromBlownTire = false;
+        movingForwardForFlamethrowerAttack = true;
+        driftForwardBackward(0);
+    }
+    public void DriveBackToGetFlamethrowered() {
+        nitrousBoosting = false;
+        supposedToBeOffScreen = false;
+        rockingFromBlownTire = false;
+        movingForwardForFlamethrowerAttack = false;
+        movingBackToReceiveFlamethrowerAttack = true;
         driftForwardBackward(0);
     }
     public void DriveToForwardPosition_forDroppingCaltrops() {
