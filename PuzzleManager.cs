@@ -3133,18 +3133,20 @@ public class PuzzleManager : MonoBehaviour
             //CircleAScript.defaultScale = CircleA.GetComponent<RectTransform>().localScale;
             CircleA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
 
+            // randomly choose which background image to use for this circle
+            CircleAScript.RandomlyChooseBackgroundImage();
         }
         if (CircleBScript.partOfCurrentPuzzle == true) {
             CircleB.SetActive(true);
             //CircleBScript.defaultScale = CircleB.GetComponent<RectTransform>().localScale;
             CircleB.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
-
+            CircleBScript.RandomlyChooseBackgroundImage();
         }
         if (CircleCScript.partOfCurrentPuzzle == true) {
             CircleC.SetActive(true);
             //CircleCScript.defaultScale = CircleC.GetComponent<RectTransform>().localScale;
             CircleC.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
-
+            CircleCScript.RandomlyChooseBackgroundImage();
         }
         
         OperatorA.SetActive(true);

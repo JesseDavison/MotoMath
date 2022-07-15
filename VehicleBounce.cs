@@ -335,7 +335,7 @@ public class VehicleBounce : MonoBehaviour
             readyToMoveAgain = true;
             Debug.Log("goalXpos just set to " + goalXpos);
         } else if (movingBackToReceiveFlamethrowerAttack) {
-            goalXpos = Random.Range(8, 9.5f);
+            goalXpos = Random.Range(10.3f, 12);
             readyToMoveAgain = true;
         }
 
@@ -351,7 +351,7 @@ public class VehicleBounce : MonoBehaviour
         supposedToBeOffScreen = false;
         rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = true;
-        driftForwardBackward(0);
+        driftForwardBackward(30);
     }
     public void DriveBackToGetFlamethrowered() {
         nitrousBoosting = false;

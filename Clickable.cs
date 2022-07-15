@@ -51,6 +51,29 @@ public class Clickable : MonoBehaviour
 
     public bool partOfCurrentPuzzle = false;
 
+    public GameObject SawBlade_GameObject;
+    RectTransform SawBlade_RectTransform;
+    public float sawBladeSpeed_default;
+    public float sawBladeSpeed_whenClicked;
+    public GameObject DirtbikeTire_GameObject;
+    RectTransform DirtbikeTire_RectTransform;
+
+
+    private void Start()
+    {
+        gameObject.SetActive(true);
+
+        SawBlade_GameObject.SetActive(true);
+        DirtbikeTire_GameObject.SetActive(true);
+
+        SawBlade_RectTransform = SawBlade_GameObject.GetComponent<RectTransform>();
+        DirtbikeTire_RectTransform = DirtbikeTire_GameObject.GetComponent<RectTransform>();
+
+        SawBlade_GameObject.SetActive(false);
+        DirtbikeTire_GameObject.SetActive(false);
+
+        //gameObject.SetActive(false);
+    }
 
     public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
         curvePath = curvedPath;
@@ -193,6 +216,10 @@ public class Clickable : MonoBehaviour
         }
         if (rotating) {
             DoRotationStuff();
+        } else {
+            // default (slow) rotation speed goes here
+            SawBlade_RectTransform.Rotate(0, 0, sawBladeSpeed_default);
+            DirtbikeTire_RectTransform.Rotate(0, 0, sawBladeSpeed_default);
         }
         if (changingToWhite) {
             Color.Lerp(initialColor, Color.white, Time.time);
@@ -242,13 +269,33 @@ public class Clickable : MonoBehaviour
     private float _angle;
     private void DoRotationStuff()
     {
+        // make the sawblade spin
+        SawBlade_RectTransform.Rotate(0, 0, sawBladeSpeed_whenClicked);
+        DirtbikeTire_RectTransform.Rotate(0, 0, sawBladeSpeed_whenClicked);
 
+
+        // make the granddaddy parent object wiggle in a circular motion
         _angle += RotateSpeed * Time.deltaTime;
 
         var offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
         transform.position = defaultPosition + offset;
     }
     //  ***************************************************************************************
+    public void RandomlyChooseBackgroundImage() {
+        int rando = Random.Range(1, 3);
+        if (rando == 1) {
+            // saw blade
+            SawBlade_GameObject.SetActive(true);
+            DirtbikeTire_GameObject.SetActive(false);
+            Debug.Log("this is: " + gameObject.name + " and saw is active");
+        } else if (rando == 2) {
+            SawBlade_GameObject.SetActive(false);
+            DirtbikeTire_GameObject.SetActive(true);
+            Debug.Log("this is: " + gameObject.name + " and tire is active");
+        }
+    }
+
+
 
 }
 

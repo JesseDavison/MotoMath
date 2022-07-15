@@ -125,7 +125,7 @@ public class HullWrecking : MonoBehaviour
 
         if (thisIsEnemyHull == true) 
         {
-            if (transform.position.x < -4 && swerveSent == false)
+            if (transform.position.x < 0 && swerveSent == false)
             {
                 swerveSent = true;
                 playerVehicle.GetComponent<VehicleBounce>().BeginSwerve();
