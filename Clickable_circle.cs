@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Clickable : MonoBehaviour
+public class Clickable_circle : MonoBehaviour
 {
     // this script is used for both circles & operators, so we have the following:
     public float valueOfThisCircle_orGoal;
@@ -33,6 +33,7 @@ public class Clickable : MonoBehaviour
     public Vector2 defaultPosition;
 
     public AnimationCurve curve;
+    public float curveHeightMultiplier;
 
     public bool changingToWhite = false;
     Color initialColor;
@@ -51,14 +52,30 @@ public class Clickable : MonoBehaviour
 
     public bool partOfCurrentPuzzle = false;
 
+    public GameObject SawBlade_GameObject;
+    RectTransform SawBlade_RectTransform;
+    public float circleImageRotationSpeed_default;
+    public float circleImageRotationSpeed_whenClicked;
+    public GameObject RustyGear_GameObject;
+    Animator RustyGear_Animator;
+    //RectTransform RustyGear_RectTransform;
+    bool sawBlade_active;
+    bool rustyGear_active;
 
 
     private void Start()
     {
         Debug.Log("Start() method being run for " + gameObject.name);
-        
+
         gameObject.SetActive(true);
 
+        SawBlade_GameObject.SetActive(true);
+        RustyGear_GameObject.SetActive(true);
+
+        SawBlade_RectTransform = SawBlade_GameObject.GetComponent<RectTransform>();
+        //RustyGear_RectTransform = RustyGear_GameObject.GetComponent<RectTransform>();
+        RustyGear_Animator = RustyGear_GameObject.GetComponent<Animator>();
+        //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
 
         //SawBlade_GameObject.SetActive(false);
         //DirtbikeTire_GameObject.SetActive(false);
@@ -66,7 +83,8 @@ public class Clickable : MonoBehaviour
         //gameObject.SetActive(false);
     }
 
-    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp) {
+    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp)
+    {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
         speed = defaultSpeed;
@@ -79,22 +97,26 @@ public class Clickable : MonoBehaviour
         destinationText = targetName;
         readyToMove = true;
     }
-    public void BeginMovementToNewDefaultPosition(Vector2 target) {
+    public void BeginMovementToNewDefaultPosition(Vector2 target)
+    {
         speed = defaultSpeed;
         defaultPosition = target;
         destination = defaultPosition;
         readyToMove = true;
     }
-    public void BeginMovementOffscreenToLeft() {
+    public void BeginMovementOffscreenToLeft()
+    {
         speed = defaultSpeed;
         curvePath = false;
         destination = transform.position - new Vector3(18, 0, 0);
         readyToMove = true;
         destinationText = "left of screen for nitrous";     // have to change destinationText so it doesn't trigger puzzle solve
     }
-    public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp, bool fadingToWhite) {
+    public void BeginMovementToDefaultPosition(bool curvedPath, bool curveUp, bool fadingToWhite)
+    {
         changingToWhite = fadingToWhite;
-        if (fadingToWhite) {
+        if (fadingToWhite)
+        {
             initialColor = gameObject.GetComponent<SpriteRenderer>().color;
         }
         curvePath = curvedPath;
@@ -111,13 +133,17 @@ public class Clickable : MonoBehaviour
 
 
     }
-    public void SendCircleToToilet(int fallingSpeed) {
-        
+    public void SendCircleToToilet(int fallingSpeed)
+    {
+
         curvePath = false;
         curveUpIfTrue = true;
-        if (fallingSpeed != 0) {
+        if (fallingSpeed != 0)
+        {
             speed = fallingSpeed;
-        } else {
+        }
+        else
+        {
             speed = defaultSpeed;
         }
         startPosition = transform.position;
@@ -131,62 +157,101 @@ public class Clickable : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().color = Color.red;
         readyToMove = true;
     }
-    public void TeleportToDefaultPosition() {
+    public void TeleportToDefaultPosition()
+    {
         speed = defaultSpeed;
         //Debug.Log("about to send " + gameObject.name + "to default position of " + defaultPosition);
         //if (partOfCurrentPuzzle == true) {
-            transform.position = defaultPosition;
-            readyToMove = false;
+        transform.position = defaultPosition;
+        readyToMove = false;
         //}
-        
+
 
     }
-    public void BeginRotating() {
+    public void BeginRotating()
+    {
         rotating = true;
+        // set animation speed to fast clockwise
+        circleImageRotationSpeed_whenClicked = Random.Range(5, 10);
+        
+        if (rustyGear_active) {
+            RustyGear_Animator.Play("rustyGear_spinning", -1, 0f);
+            RustyGear_Animator.speed = circleImageRotationSpeed_whenClicked;
+        } else if (sawBlade_active) { 
+
+        }
+
     }
-    public void EndRotating() {
+    public void EndRotating()
+    {
+        Debug.Log("we are in EndRotating()");
+
+
         rotating = false;
+        // set animation speed to slow counter-clockwise
+        //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
+
+        if (rustyGear_active) {
+            RustyGear_Animator.speed = circleImageRotationSpeed_default;
+        } else if (sawBlade_active) { 
+
+        }
+
         BeginMovementToDefaultPosition(false, true, false);
     }
-    public void ShrinkAndDisappear() {
+    public void ShrinkAndDisappear()
+    {
         shrinking = true;
     }
 
 
     private void FixedUpdate()
     {
-        if (readyToMove) {
+        if (readyToMove)
+        {
             rotating = false;
-            if (curvePath == false) {
+            if (curvePath == false)
+            {
                 transform.position = Vector2.MoveTowards(transform.position, destination, Time.deltaTime * speed);
                 speed *= speedMultiplier;
                 if (speed > speedCap)
                 {
                     speed = speedCap;
                 }
-            } else {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
+            }
+            else
+            {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
 
                 time += Time.deltaTime * speedForCurve;
                 Vector2 pos = Vector2.Lerp(startPosition, destination, time);
-                if (curveUpIfTrue) {
-                    pos.y += curve.Evaluate(time);      // for curve DOWNWARDS, just subtract instead of add
-                } else {
-                    pos.y -= curve.Evaluate(time);      
+                if (curveUpIfTrue)
+                {
+                    pos.y += curve.Evaluate(time) * curveHeightMultiplier;      // for curve DOWNWARDS, just subtract instead of add
+                }
+                else
+                {
+                    pos.y -= curve.Evaluate(time) * curveHeightMultiplier;
                 }
                 transform.position = pos;
                 speedForCurve *= curveSpeedMultiplier;
             }
 
-            if (Vector2.Distance(transform.position, destination) < 0.3f) {
+            if (Vector2.Distance(transform.position, destination) < 0.3f)
+            {
                 readyToMove = false;
                 destinationReached = true;
                 speed = defaultSpeed;
-                if (destination == defaultPosition) {
+                if (destination == defaultPosition)
+                {
                     transform.position = defaultPosition;
-                } else if (destinationText == "goal") {
+                }
+                else if (destinationText == "goal")
+                {
                     gameObject.SetActive(false);
                     PuzzleManager.instance.AnimatePuzzleSolved(gameObject, true, false);
-                } else if (destinationText == "operator") {
+                }
+                else if (destinationText == "operator")
+                {
 
                     // need the 1-circle to NOT execute if it's supposed to be a 2-circle math problem
                     PuzzleManager.instance.ExecuteCompletionOf_oneCircle_Math(true);
@@ -199,20 +264,37 @@ public class Clickable : MonoBehaviour
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
                     PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math();        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
-                } else if (destinationText == "goalThenToilet") {
+                }
+                else if (destinationText == "goalThenToilet")
+                {
                     PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, false);
-                } else if (destinationText == "toilet") {
+                }
+                else if (destinationText == "toilet")
+                {
                     PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, true);
                 }
             }
         }
-        if (rotating) {
+        if (rotating)
+        {
+            //RustyGear_Animator.SetFloat("direction", 1);
             DoRotationStuff();
-        } 
-        if (changingToWhite) {
+
+        }
+        else
+        {
+            
+            // default (slow) rotation speed goes here
+            SawBlade_RectTransform.Rotate(0, 0, circleImageRotationSpeed_default);
+
+            //RustyGear_RectTransform.Rotate(0, 0, circleImageRotationSpeed_default);
+        }
+        if (changingToWhite)
+        {
             Color.Lerp(initialColor, Color.white, Time.time);
         }
-        if (shrinking) {
+        if (shrinking)
+        {
             transform.localScale = Vector3.MoveTowards(transform.localScale, minScale, Time.deltaTime * speed);
             speed *= speedMultiplier;
             if (speed > speedCap)
@@ -229,23 +311,29 @@ public class Clickable : MonoBehaviour
                 speed = defaultSpeed;
             }
         }
-        if (growing) {
+        if (growing)
+        {
             transform.localScale = Vector3.MoveTowards(transform.localScale, defaultScale, Time.deltaTime * speed);
             speed *= speedMultiplier;
-            if (transform.localScale.x >= defaultScale.x) {
+            if (transform.localScale.x >= defaultScale.x)
+            {
                 growing = false;
                 speed = defaultSpeed;
                 transform.localScale = defaultScale;
             }
         }
     }
-    public void NotifyPuzzleManagerOfDestinationReached() { 
+    public void NotifyPuzzleManagerOfDestinationReached()
+    {
 
     }
 
     private void OnMouseDown()
     {
+        Debug.Log("just clicked on " + gameObject.name);
         PuzzleManager.instance.AcceptClickedCircleOrOperator(gameObject);
+
+
 
     }
 
@@ -259,6 +347,8 @@ public class Clickable : MonoBehaviour
     private void DoRotationStuff()
     {
         // make the sawblade spin
+        SawBlade_RectTransform.Rotate(0, 0, circleImageRotationSpeed_whenClicked);
+
         //RustyGear_RectTransform.Rotate(0, 0, circleImageRotationSpeed_whenClicked);
 
 
@@ -269,12 +359,25 @@ public class Clickable : MonoBehaviour
         transform.position = defaultPosition + offset;
     }
     //  ***************************************************************************************
-    public void RandomlyChooseBackgroundImage() {
+    public void RandomlyChooseBackgroundImage()
+    {
         int rando = Random.Range(1, 3);
-        if (rando == 1) {
-
-        } else if (rando == 2) {
-
+        if (rando == 1)
+        {
+            // saw blade
+            sawBlade_active = true;
+            rustyGear_active = false;
+            SawBlade_GameObject.SetActive(true);
+            RustyGear_GameObject.SetActive(false);
+            Debug.Log("this is: " + gameObject.name + " and saw is active");
+        }
+        else if (rando == 2)
+        {
+            sawBlade_active = false;
+            rustyGear_active = true;
+            SawBlade_GameObject.SetActive(false);
+            RustyGear_GameObject.SetActive(true);
+            Debug.Log("this is: " + gameObject.name + " and tire is active");
         }
     }
 

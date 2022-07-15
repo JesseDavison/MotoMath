@@ -55,9 +55,9 @@ public class PuzzleManager : MonoBehaviour
     public GameObject CircleB;
     public GameObject CircleC;
     float circleDefaultScale = 2;
-    public Clickable CircleAScript;
-    public Clickable CircleBScript;
-    public Clickable CircleCScript;
+    public Clickable_circle CircleAScript;
+    public Clickable_circle CircleBScript;
+    public Clickable_circle CircleCScript;
     //public GameObject MathInProgress;
     public GameObject OperatorA;
     public GameObject OperatorB;
@@ -156,12 +156,21 @@ public class PuzzleManager : MonoBehaviour
         timerPuzzleThatMoves = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
         bonusTimeNotify = PuzzleTimerThatMoves.GetComponent<BonusTimeNotify>();
 
-        CircleAScript = CircleA.GetComponent<Clickable>();
-        CircleBScript = CircleB.GetComponent<Clickable>();
-        CircleCScript = CircleC.GetComponent<Clickable>();
+        CircleAScript = CircleA.GetComponent<Clickable_circle>();
+        CircleBScript = CircleB.GetComponent<Clickable_circle>();
+        CircleCScript = CircleC.GetComponent<Clickable_circle>();
         OperatorAScript = OperatorA.GetComponent<Clickable>();
         OperatorBScript = OperatorB.GetComponent<Clickable>();
         explosion = ExplosionImage.GetComponent<Explosion>();
+
+        CircleA.SetActive(true);
+        CircleB.SetActive(true);
+        CircleC.SetActive(true);
+        CircleA.SetActive(false);
+        CircleB.SetActive(false);
+        CircleC.SetActive(false);       // doing this because for some reason CircleC's Start() method is not being called when game is first loaded
+                                        //      ... and the circle's background image wasn't loading on the first puzzle, but it WAS loading in subsequent puzzles
+
 
 
 
@@ -2051,12 +2060,12 @@ public class PuzzleManager : MonoBehaviour
             //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
             circleGameObject.SetActive(false);
             Debug.Log("in SetCircle()....  circleData == null, so.... and circleData.value is nonexistent");
-            circleGameObject.GetComponent<Clickable>().partOfCurrentPuzzle = false;
+            circleGameObject.GetComponent<Clickable_circle>().partOfCurrentPuzzle = false;
             //return false;       // this circle is active = FALSE
         }
         else
         {
-            circleGameObject.GetComponent<Clickable>().partOfCurrentPuzzle = true;
+            circleGameObject.GetComponent<Clickable_circle>().partOfCurrentPuzzle = true;
             Debug.Log("in SetCircle()....  circleData is not null, circleData.value = " + circleData.value);
             float value = circleData.value;
             if (TestIfIsInteger(value))
@@ -2182,8 +2191,8 @@ public class PuzzleManager : MonoBehaviour
             //}
 
             circleGameObject.SetActive(true);
-            circleGameObject.GetComponent<Clickable>().valueOfThisCircle_orGoal = value;
-            circleGameObject.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
+            circleGameObject.GetComponent<Clickable_circle>().valueOfThisCircle_orGoal = value;
+            circleGameObject.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
 
             if (circleGameObject == CircleA)
             {
@@ -3228,14 +3237,14 @@ public class PuzzleManager : MonoBehaviour
             //highlightedCircle1.GetComponent<Clickable>().defaultPosition = new Vector2(-4, transform.position.y);
             // and the circle "wiggles" a bit
             //highlightedCircle1.GetComponent<Clickable>().wiggling = true;
-            highlightedCircle1.GetComponent<Clickable>().BeginRotating();
+            highlightedCircle1.GetComponent<Clickable_circle>().BeginRotating();
 
         }
         else if (oneORtwo == 2)
         {
             highlightedCircle2 = obby;
             highlightedCircle2.GetComponent<SpriteRenderer>().color = highlightedColor;
-            highlightedCircle2.GetComponent<Clickable>().BeginRotating();
+            highlightedCircle2.GetComponent<Clickable_circle>().BeginRotating();
         }
     }
     public void UNHighlightCircleGameObject(GameObject obby)
@@ -3244,7 +3253,7 @@ public class PuzzleManager : MonoBehaviour
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
         //highlightedCircle1.GetComponent<Clickable>().wiggling = false;
         //highlightedCircle1.GetComponent<Clickable>().BeginMovementToDefaultPosition();
-        obby.GetComponent<Clickable>().EndRotating();
+        obby.GetComponent<Clickable_circle>().EndRotating();
     }
     public void HighLightOperatorGameObject(GameObject obby)
     {
@@ -3263,6 +3272,8 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     public void AcceptClickedCircleOrOperator(GameObject gameObjectClicked)
     {
+        Debug.Log("------------------------------------------------------------------ just entered AcceptClickedCircleOrOperator()");
+        Debug.Log("circle1selected: " + circle1selected);
         if (circle1selected == false && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
         {
             // this is the stage where we select the first Circle... the player can change which one they want up until they click an operator
@@ -3271,6 +3282,7 @@ public class PuzzleManager : MonoBehaviour
                 value1 = GetValueOfClickedCircle(gameObjectClicked);
                 HighlightCircleGameObject(gameObjectClicked, 1);
                 circle1selected = true;
+                Debug.Log("circle1selected just set to true");
             }
             else if (gameObjectClicked.CompareTag("operator"))
             {
@@ -3290,10 +3302,12 @@ public class PuzzleManager : MonoBehaviour
                 }
                 else if (gameObjectClicked == highlightedCircle1)
                 {
+                    Debug.Log("just clicked the circle that is already highlighted");
                     // the highlighted circle is no longer highlighted
                     value1 = 0;
                     UNHighlightCircleGameObject(highlightedCircle1);
                     circle1selected = false;
+                    Debug.Log("circle1selected just set to false");
                     highlightedCircle1 = null;
                 }
             }
@@ -3411,7 +3425,7 @@ public class PuzzleManager : MonoBehaviour
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
             // find the circleData associated with CircleA... we can find it because we previously marked both the GameObject and the Circle so we know they're associated
-            int IDnum = CircleA.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            int IDnum = CircleA.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis;
             for (int i = 0; i < listOfAllCircles.Count; i++)
             {
                 if (listOfAllCircles[i].IDnumber == IDnum)
@@ -3427,7 +3441,7 @@ public class PuzzleManager : MonoBehaviour
             //Debug.Log("CircleB was clicked");
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
-            int IDnum = CircleB.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            int IDnum = CircleB.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis;
             for (int i = 0; i < listOfAllCircles.Count; i++)
             {
                 if (listOfAllCircles[i].IDnumber == IDnum)
@@ -3442,7 +3456,7 @@ public class PuzzleManager : MonoBehaviour
             //Debug.Log("CircleC was clicked");
             //Debug.Log("by the way, the length of listOfAllCircles is: " + listOfAllCircles.Count);
             //Debug.Log("numberOfThisTypeThatExist: " + Circle.numberOfThisTypeThatExist);
-            int IDnum = CircleC.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+            int IDnum = CircleC.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis;
             for (int i = 0; i < listOfAllCircles.Count; i++)
             {
                 if (listOfAllCircles[i].IDnumber == IDnum)
@@ -3463,7 +3477,7 @@ public class PuzzleManager : MonoBehaviour
 
     public Circle GetCircle_classObject_OfClickedCircle_gameObject(GameObject circleClicked)
     {
-        int IDnum = circleClicked.GetComponent<Clickable>().IDnumberOfCircleDataAttachedToThis;
+        int IDnum = circleClicked.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis;
         for (int i = 0; i < listOfAllCircles.Count; i++)
         {
             if (listOfAllCircles[i].IDnumber == IDnum)
@@ -3559,7 +3573,7 @@ public class PuzzleManager : MonoBehaviour
             // TODO: this stuff is not necessary for a MVP, so this will be done later if at all
 
             //highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
-            highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
+            highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
         }
 
         if (circleDoneMovingToOperator == true && executingONEcircleMath)
@@ -3579,7 +3593,7 @@ public class PuzzleManager : MonoBehaviour
             ResetColorsAndMath_Circles_Operators();
 
 
-            //highlightedCircle1.GetComponent<Clickable>().BeginMovementToDefaultPosition();
+            //highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToDefaultPosition();
             UpdateDefaultPositionsOfCircles(true);
             SendAllCirclesToDefaultPositions();
             DetermineWhetherPuzzleIsSolved();
@@ -3597,13 +3611,13 @@ public class PuzzleManager : MonoBehaviour
             // identify which circle is higher, so they curve up & down correctly
             if (highlightedCircle1.transform.position.y > highlightedCircle2.transform.position.y)
             {
-                highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
-                highlightedCircle2.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
+                highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
+                highlightedCircle2.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
             }
             else
             {
-                highlightedCircle1.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
-                highlightedCircle2.GetComponent<Clickable>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
+                highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, false);
+                highlightedCircle2.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
             }
 
 
@@ -3822,7 +3836,7 @@ public class PuzzleManager : MonoBehaviour
 
 
 
-            finalCircle.GetComponent<Clickable>().BeginMovementToTarget(Goal.transform.position, "goal", true, true);
+            finalCircle.GetComponent<Clickable_circle>().BeginMovementToTarget(Goal.transform.position, "goal", true, true);
 
         }
         else
@@ -3842,7 +3856,7 @@ public class PuzzleManager : MonoBehaviour
             Debug.Log("Abc 123");
 
             smallExplosionOfGoal.gameObject.SetActive(true);
-            //smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
+            smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
             StartCoroutine(ExplosionDisableAfterAnimation());
 
 
@@ -3889,7 +3903,7 @@ public class PuzzleManager : MonoBehaviour
 
             float newX = Goal.transform.position.x - 1.5f;
             float newY = Goal.transform.position.y;
-            finalCircle.GetComponent<Clickable>().BeginMovementToTarget(new Vector2(newX, newY), "goalThenToilet", true, true);
+            finalCircle.GetComponent<Clickable_circle>().BeginMovementToTarget(new Vector2(newX, newY), "goalThenToilet", true, true);
 
         }
         else
@@ -3915,7 +3929,7 @@ public class PuzzleManager : MonoBehaviour
             }
             else
             {
-                finalCircle.GetComponent<Clickable>().SendCircleToToilet(0);
+                finalCircle.GetComponent<Clickable_circle>().SendCircleToToilet(0);
                 Goal.GetComponent<Clickable>().shrinking = true;
             }
 
@@ -3964,9 +3978,9 @@ public class PuzzleManager : MonoBehaviour
         if (debugMessagesOn)
         {
             Debug.Log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ location: " + location);
-            Debug.Log("CircleA: " + CircleA.GetComponent<Clickable>().valueOfThisCircle_orGoal);
-            Debug.Log("CircleB: " + CircleB.GetComponent<Clickable>().valueOfThisCircle_orGoal);
-            Debug.Log("CircleC: " + CircleC.GetComponent<Clickable>().valueOfThisCircle_orGoal);
+            Debug.Log("CircleA: " + CircleA.GetComponent<Clickable_circle>().valueOfThisCircle_orGoal);
+            Debug.Log("CircleB: " + CircleB.GetComponent<Clickable_circle>().valueOfThisCircle_orGoal);
+            Debug.Log("CircleC: " + CircleC.GetComponent<Clickable_circle>().valueOfThisCircle_orGoal);
         }
     }
 

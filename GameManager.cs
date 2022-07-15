@@ -1342,16 +1342,18 @@ public class GameManager : MonoBehaviour
 
     public void SpendFlamethrower() {
         int temp = PlayerPrefs.GetInt(flamethrowerInInventory);
-        if (temp >= 3) {
+        if (temp >= 13) {
+
             numberOfFlamethrowerShot = 0;
             tempInventoryAmount = temp;
-            numberOfFlamethrowerBeingShot = Random.Range(3, 8);
+            numberOfFlamethrowerBeingShot = Random.Range(13, Mathf.Min(25, temp));
             //ShootFlamethrower();
             MovePlayerForward_forFlamethrower();
         } 
         else
         {
             Debug.Log("not enough flamethrower fuel to shoot");
+            // TO DO: make flamethrower start & fizzle out
         }
     }
     public void MovePlayerForward_forFlamethrower() {
@@ -1361,12 +1363,8 @@ public class GameManager : MonoBehaviour
     public void ShootFlamethrower() {
         shootingFlamethrower_atEnemy = true;
 
-
-
         Flamethrower_1_animator.gameObject.SetActive(true);
         Flamethrower_1_animator.Play("flamethrower_2", -1, 0f);
-
-        
 
         StartCoroutine(FlamethrowerDisableAfterAnimation());
     }
