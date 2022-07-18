@@ -1545,7 +1545,7 @@ public class GameManager : MonoBehaviour
         rocket.GetComponent<Rocket>().LaunchRocketBackward();
 
     }
-    public void EnemyFires_Caltrops(bool favorable) {
+    public void EnemyFires_Caltrops(bool playerWillDodge) {
         // if enemy is in middle of screen, should make the enemy move forward before the caltrops land
         basicEnemy.GetComponent<VehicleBounce>().DriveToForwardPosition_forDroppingCaltrops();
         // make the player vehicle move to middle of screen?
@@ -1559,10 +1559,10 @@ public class GameManager : MonoBehaviour
         caltrops_2.SetActive(true);
         caltrops_3.SetActive(true);
         caltrops_4.SetActive(true);
-        caltrops_1.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
-        caltrops_2.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
-        caltrops_3.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
-        caltrops_4.GetComponent<CaltropsBounce>().LaunchCaltrops(favorable);
+        caltrops_1.GetComponent<CaltropsBounce>().LaunchCaltrops(playerWillDodge);
+        caltrops_2.GetComponent<CaltropsBounce>().LaunchCaltrops(playerWillDodge);
+        caltrops_3.GetComponent<CaltropsBounce>().LaunchCaltrops(playerWillDodge);
+        caltrops_4.GetComponent<CaltropsBounce>().LaunchCaltrops(playerWillDodge);
 
     }
     public void EnemyFiresGuns()
@@ -1974,7 +1974,7 @@ public class GameManager : MonoBehaviour
 
             if (rando == 1)
             {
-                Debug.Log("123 123");
+                //Debug.Log("123 123");
                 PuzzleManager.instance.MakePuzzleAppearAfterOneSecond();
                 EnemyAppears();
             }

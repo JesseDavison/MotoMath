@@ -69,7 +69,26 @@ public class Clickable_circle : MonoBehaviour
 
 
 
+    private void Awake()
+    {
+        Debug.Log("Awake() method being run for " + gameObject.name);
 
+        gameObject.SetActive(true);
+
+        //SawBlade_GameObject.SetActive(true);
+        //RustyGear_GameObject.SetActive(true);
+
+        SawBlade_RectTransform = SawBlade_GameObject.GetComponent<RectTransform>();
+        //RustyGear_RectTransform = RustyGear_GameObject.GetComponent<RectTransform>();
+        RustyGear_Animator = RustyGear_GameObject.GetComponent<Animator>();
+        //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
+        RustySaw_Animator = RustySaw_GameObject.GetComponent<Animator>();
+
+        //SawBlade_GameObject.SetActive(false);
+        //DirtbikeTire_GameObject.SetActive(false);
+
+        //gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -176,6 +195,12 @@ public class Clickable_circle : MonoBehaviour
         //}
 
 
+    }
+    public void SetCircleAsPartOfCurrentPuzzle() {
+        partOfCurrentPuzzle = true;
+    }
+    public void negate_SetCircleAsPartOfCurrentPuzzle() {
+        partOfCurrentPuzzle = false;
     }
     public void BeginRotating()
     {
@@ -376,6 +401,7 @@ public class Clickable_circle : MonoBehaviour
     //  ***************************************************************************************
     public void RandomlyChooseBackgroundImage()
     {
+        //Start();
         int rando = Random.Range(1, 4);
         if (rando == 1)
         {

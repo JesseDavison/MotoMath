@@ -148,9 +148,9 @@ public class CaltropsBounce : MonoBehaviour
         return rando;
     }
 
-    public void LaunchCaltrops(bool favorable)
+    public void LaunchCaltrops(bool playerWillDodge)
     {
-        if (favorable == true) {
+        if (playerWillDodge == true) {
             vehicleIsToBeDamagedByCaltrops = false;
         } else {
             vehicleIsToBeDamagedByCaltrops = true;      // this makes the player vehicle not swerve

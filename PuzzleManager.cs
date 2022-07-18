@@ -2060,12 +2060,12 @@ public class PuzzleManager : MonoBehaviour
             //CircleA.transform.GetChild(0).GetComponent<TextMeshPro>().text = circle1.value.ToString();
             circleGameObject.SetActive(false);
             Debug.Log("in SetCircle()....  circleData == null, so.... and circleData.value is nonexistent");
-            circleGameObject.GetComponent<Clickable_circle>().partOfCurrentPuzzle = false;
+            circleGameObject.GetComponent<Clickable_circle>().negate_SetCircleAsPartOfCurrentPuzzle();
             //return false;       // this circle is active = FALSE
         }
         else
         {
-            circleGameObject.GetComponent<Clickable_circle>().partOfCurrentPuzzle = true;
+            circleGameObject.GetComponent<Clickable_circle>().SetCircleAsPartOfCurrentPuzzle();
             Debug.Log("in SetCircle()....  circleData is not null, circleData.value = " + circleData.value);
             float value = circleData.value;
             if (TestIfIsInteger(value))
