@@ -59,8 +59,16 @@ public class Clickable_circle : MonoBehaviour
     public GameObject RustyGear_GameObject;
     Animator RustyGear_Animator;
     //RectTransform RustyGear_RectTransform;
+    
     bool sawBlade_active;
     bool rustyGear_active;
+    bool rustySaw_active;
+
+    public GameObject RustySaw_GameObject;
+    Animator RustySaw_Animator;
+
+
+
 
 
     private void Start()
@@ -69,13 +77,14 @@ public class Clickable_circle : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        SawBlade_GameObject.SetActive(true);
-        RustyGear_GameObject.SetActive(true);
+        //SawBlade_GameObject.SetActive(true);
+        //RustyGear_GameObject.SetActive(true);
 
         SawBlade_RectTransform = SawBlade_GameObject.GetComponent<RectTransform>();
         //RustyGear_RectTransform = RustyGear_GameObject.GetComponent<RectTransform>();
         RustyGear_Animator = RustyGear_GameObject.GetComponent<Animator>();
         //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
+        RustySaw_Animator = RustySaw_GameObject.GetComponent<Animator>();
 
         //SawBlade_GameObject.SetActive(false);
         //DirtbikeTire_GameObject.SetActive(false);
@@ -175,10 +184,12 @@ public class Clickable_circle : MonoBehaviour
         circleImageRotationSpeed_whenClicked = Random.Range(5, 10);
         
         if (rustyGear_active) {
-            RustyGear_Animator.Play("rustyGear_spinning", -1, 0f);
-            RustyGear_Animator.speed = circleImageRotationSpeed_whenClicked;
+            RustyGear_Animator.Play("rustyGear_clockwise_fast", -1, 0f);
+            //RustyGear_Animator.speed = circleImageRotationSpeed_whenClicked;
         } else if (sawBlade_active) { 
 
+        } else if (rustySaw_active) {
+            RustySaw_Animator.Play("rustySaw_clockwise_fast", -1, 0f);
         }
 
     }
@@ -190,11 +201,15 @@ public class Clickable_circle : MonoBehaviour
         rotating = false;
         // set animation speed to slow counter-clockwise
         //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
+        circleImageRotationSpeed_default = Random.Range(-0.3f, -0.1f);
 
         if (rustyGear_active) {
-            RustyGear_Animator.speed = circleImageRotationSpeed_default;
+            //RustyGear_Animator.speed = circleImageRotationSpeed_default;
+            RustyGear_Animator.Play("rustyGear_counterClockwise_slow", -1, 0f);
         } else if (sawBlade_active) { 
 
+        } else if (rustySaw_active) {
+            RustySaw_Animator.Play("rustySaw_counterClockwise_slow", -1, 0f);
         }
 
         BeginMovementToDefaultPosition(false, true, false);
@@ -361,23 +376,44 @@ public class Clickable_circle : MonoBehaviour
     //  ***************************************************************************************
     public void RandomlyChooseBackgroundImage()
     {
-        int rando = Random.Range(1, 3);
+        int rando = Random.Range(1, 4);
         if (rando == 1)
         {
             // saw blade
             sawBlade_active = true;
             rustyGear_active = false;
+            rustySaw_active = false;
             SawBlade_GameObject.SetActive(true);
             RustyGear_GameObject.SetActive(false);
+            RustySaw_GameObject.SetActive(false);
             Debug.Log("this is: " + gameObject.name + " and saw is active");
         }
         else if (rando == 2)
         {
+            // rusty gear
             sawBlade_active = false;
             rustyGear_active = true;
+            rustySaw_active = false;
             SawBlade_GameObject.SetActive(false);
             RustyGear_GameObject.SetActive(true);
+            RustySaw_GameObject.SetActive(false);
+            // set speed
+            RustyGear_Animator.Play("rustyGear_counterClockwise_slow", -1, 0f);
             Debug.Log("this is: " + gameObject.name + " and tire is active");
+        }
+        else if (rando == 3)
+        {
+            sawBlade_active = false;
+            rustyGear_active = false;
+            rustySaw_active = true;
+            SawBlade_GameObject.SetActive(false);
+            RustyGear_GameObject.SetActive(false);
+            RustySaw_GameObject.SetActive(true);
+            RustySaw_Animator.Play("rustySaw_counterClockwise_slow", -1, 0f);
+
+
+
+
         }
     }
 

@@ -241,9 +241,9 @@ public class VehicleBounce : MonoBehaviour
             }
             else if (movingForwardForFlamethrowerAttack == true)
             {
-                Debug.Log("so, movingForwardForFlamethrowerAttack is true");
+                //Debug.Log("so, movingForwardForFlamethrowerAttack is true");
                 if (transform.position.x >= 2f) {
-                    Debug.Log("just passed 2f, about to shoot flamethrower");
+                    //Debug.Log("just passed 2f, about to shoot flamethrower");
                     GameManager.instance.ShootFlamethrower();
                     movingForwardForFlamethrowerAttack = false;
 

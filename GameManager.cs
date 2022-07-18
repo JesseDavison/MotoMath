@@ -1582,6 +1582,7 @@ public class GameManager : MonoBehaviour
 
     public void EnemyExplodes()
     {
+        PuzzleManager.instance.MakePuzzleAppear();
 
         explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
         PlayExplosion();
@@ -1973,6 +1974,8 @@ public class GameManager : MonoBehaviour
 
             if (rando == 1)
             {
+                Debug.Log("123 123");
+                PuzzleManager.instance.MakePuzzleAppearAfterOneSecond();
                 EnemyAppears();
             }
 
@@ -2058,17 +2061,17 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 2);
-            if (rando == 2) {
+            int rando = Random.Range(1, 4);
+            if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 1) {
+            } else if (rando == 2) {
                 EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 12) {
+            } else if (rando == 3) {
                 EnemyFiresBomb(true);
                 PuzzleManager.instance.SetGameOver();
             }

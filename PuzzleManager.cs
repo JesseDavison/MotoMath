@@ -3116,7 +3116,8 @@ public class PuzzleManager : MonoBehaviour
         OperatorB.SetActive(false);
         Goal.SetActive(false);
 
-        if (gameOver == false) {
+        if (gameOver == false && GameManager.instance.enemyInRange == false) {
+            Debug.Log("abc abc 123");
             StartCoroutine(WaitBeforeNext_MakePuzzleAppear());
         }
 
@@ -3129,6 +3130,9 @@ public class PuzzleManager : MonoBehaviour
     }
     public void UndoGameOver() {
         gameOver = false;
+    }
+    public void MakePuzzleAppearAfterOneSecond() {
+        StartCoroutine(WaitBeforeNext_MakePuzzleAppear());
     }
     IEnumerator WaitBeforeNext_MakePuzzleAppear() {
         yield return new WaitForSeconds(1);
@@ -3585,10 +3589,12 @@ public class PuzzleManager : MonoBehaviour
             Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
 
             Circle result = CreateResultCircle(c1, c1, oppy);
+
             Debug.Log("in ExecuteCompletionOf_oneCircle_Math(), just created Circle result, where value is " + result.value);
             SetCircle(highlightedCircle1, result);
 
             highlightedCircle1.SetActive(true);
+            highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
             //HighlightCircleGameObject(highlightedCircle1, 1);
             ResetColorsAndMath_Circles_Operators();
 
@@ -3659,6 +3665,7 @@ public class PuzzleManager : MonoBehaviour
             SetCircle(highlightedCircle1, result);
             DEBUG_outputCircleValues("right after SetCircle(), in ExecuteCompletionOf_twoCircle_Math()");
             highlightedCircle1.SetActive(true);
+            highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
 
             ResetColorsAndMath_Circles_Operators();
             UpdateDefaultPositionsOfCircles(true);
@@ -3843,6 +3850,7 @@ public class PuzzleManager : MonoBehaviour
         {
             // begin "animating" the explosion
 
+            
             //explosion.StartExplosion();
             float xDestination = -7;
             float yDestination = -3.5f;
@@ -3853,7 +3861,7 @@ public class PuzzleManager : MonoBehaviour
             //sparkleScript5.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
             //sparkleScript6.BeginSparkleMovement(Goal.transform.position, new Vector2(xDestination, yDestination));
 
-            Debug.Log("Abc 123");
+            //Debug.Log("Abc 123");
 
             smallExplosionOfGoal.gameObject.SetActive(true);
             smallExplosionOfGoal.Play("mushroomCloud", -1, 0);
