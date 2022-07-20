@@ -189,7 +189,7 @@ public class Clickable : MonoBehaviour
                 } else if (destinationText == "operator") {
 
                     // need the 1-circle to NOT execute if it's supposed to be a 2-circle math problem
-                    PuzzleManager.instance.ExecuteCompletionOf_oneCircle_Math(true);
+                    PuzzleManager.instance.ExecuteCompletionOf_oneCircle_Math(true, true);
 
                     /// the problem is that this script doesn't know whether it's resolving a 1-circle or 2-circle math problem
                     /// ... so we need a way for a message sent by this script to be effective for both types

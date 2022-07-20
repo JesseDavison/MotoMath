@@ -303,8 +303,8 @@ public class VehicleBounce : MonoBehaviour
     public void driftForwardBackward(float forcedSpeed) {
         // pick a spot to go to
 
-        Debug.Log("just entered driftForwardBackward... nitrousBoosting " + nitrousBoosting + " supposedtobeoffScreen " + supposedToBeOffScreen);
-        Debug.Log("rockingFromBlownTire " + rockingFromBlownTire + " movingForwardForFlamethrowerAttack " + movingForwardForFlamethrowerAttack);
+        //Debug.Log("just entered driftForwardBackward... nitrousBoosting " + nitrousBoosting + " supposedtobeoffScreen " + supposedToBeOffScreen);
+        //Debug.Log("rockingFromBlownTire " + rockingFromBlownTire + " movingForwardForFlamethrowerAttack " + movingForwardForFlamethrowerAttack);
 
         if (nitrousBoosting == true) {
             goalXpos = Random.Range(8.2f, 8.5f);

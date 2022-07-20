@@ -61,9 +61,18 @@ public class PuzzleManager : MonoBehaviour
     //public GameObject MathInProgress;
     public GameObject OperatorA;
     public GameObject OperatorB;
+    public float durationOfApertureOpening;
+    public float delayBeforeGrabOccurs;
+    public float durationOfGrabber;
+    public GameObject OpA_apertureCLOSED;
+    public GameObject OpA_apertureAnimation;
+    public GameObject OpA_apertureOPEN;
+    public GameObject OpA_grabber;
+
+
     float operatorDefaultScale = 2.2f;
-    public Clickable OperatorAScript;
-    public Clickable OperatorBScript;
+    public Clickable_operator OperatorAScript;
+    public Clickable_operator OperatorBScript;
     public GameObject Goal;
     float goalDefaultScale = 1.4f;
     // https://store.steampowered.com/app/868270/The_Cycle_Frontier/?snr=1_4_4__118
@@ -105,8 +114,8 @@ public class PuzzleManager : MonoBehaviour
     GameObject highlightedCircle1;
     float value1;
 
-    bool operatorSelected = false;
-    GameObject highlightedOperator;
+    public bool operatorSelected = false;
+    public GameObject highlightedOperator;
 
     bool circle2selected = false;
     GameObject highlightedCircle2;
@@ -159,8 +168,8 @@ public class PuzzleManager : MonoBehaviour
         CircleAScript = CircleA.GetComponent<Clickable_circle>();
         CircleBScript = CircleB.GetComponent<Clickable_circle>();
         CircleCScript = CircleC.GetComponent<Clickable_circle>();
-        OperatorAScript = OperatorA.GetComponent<Clickable>();
-        OperatorBScript = OperatorB.GetComponent<Clickable>();
+        OperatorAScript = OperatorA.GetComponent<Clickable_operator>();
+        OperatorBScript = OperatorB.GetComponent<Clickable_operator>();
         explosion = ExplosionImage.GetComponent<Explosion>();
 
         CircleA.SetActive(true);
@@ -2216,7 +2225,7 @@ public class PuzzleManager : MonoBehaviour
 
         if (oppy.type == "addition")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "addition";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "addition";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "+";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2227,7 +2236,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "subtraction")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "subtraction";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "subtraction";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "-";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2238,7 +2247,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "multiplication")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "multiplication";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "multiplication";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "*";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2249,7 +2258,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "division")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "division";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "division";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "/";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2260,7 +2269,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "exponent2")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "exponent2";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "exponent2";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2271,7 +2280,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "exponent3")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "exponent3";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "exponent3";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
@@ -2282,7 +2291,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "squareRoot")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "squareRoot";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "squareRoot";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(true);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(true);                   // squareRoot_X
@@ -2293,7 +2302,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (oppy.type == "cubeRoot")
         {
-            opAorB.GetComponent<Clickable>().typeOfThisOperator = "cubeRoot";
+            opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "cubeRoot";
             opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(true);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(true);                   // squareRoot_X
@@ -2302,7 +2311,7 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
         }
-        opAorB.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis = oppy.IDnumber;                  // this marks the GameObject
+        opAorB.GetComponent<Clickable_operator>().IDnumberOfOperatorDataAttachedToThis = oppy.IDnumber;                  // this marks the GameObject
         if (opAorB == OperatorA)
         {                                                                              // this marks the Operator class object
             oppy.operatorGameObject_associatedWith = "OperatorA";
@@ -3263,12 +3272,13 @@ public class PuzzleManager : MonoBehaviour
     {
         highlightedOperator = obby;
         highlightedOperator.GetComponent<SpriteRenderer>().color = highlightedColor;
-        highlightedOperator.GetComponent<Clickable>().BeginRotating();
+        highlightedOperator.GetComponent<Clickable_operator>().BeginRotating();
+        Debug.Log("the operator should be rotating now " + highlightedOperator.name);
     }
     public void UNHighlightOperatorGameObject(GameObject obby)
     {
         obby.GetComponent<SpriteRenderer>().color = whiteColor;
-        obby.GetComponent<Clickable>().EndRotating();
+        obby.GetComponent<Clickable_operator>().EndRotating();
 
     }
 
@@ -3277,7 +3287,7 @@ public class PuzzleManager : MonoBehaviour
     public void AcceptClickedCircleOrOperator(GameObject gameObjectClicked)
     {
         Debug.Log("------------------------------------------------------------------ just entered AcceptClickedCircleOrOperator()");
-        Debug.Log("circle1selected: " + circle1selected);
+        //Debug.Log("circle1selected: " + circle1selected);
         if (circle1selected == false && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
         {
             // this is the stage where we select the first Circle... the player can change which one they want up until they click an operator
@@ -3291,6 +3301,7 @@ public class PuzzleManager : MonoBehaviour
             else if (gameObjectClicked.CompareTag("operator"))
             {
                 // do nothing
+                Debug.Log("you clicked an operator, but nothing will happen");
             }
         }
         else if (circle1selected == true && operatorSelected == false && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
@@ -3306,7 +3317,7 @@ public class PuzzleManager : MonoBehaviour
                 }
                 else if (gameObjectClicked == highlightedCircle1)
                 {
-                    Debug.Log("just clicked the circle that is already highlighted");
+                    //Debug.Log("just clicked the circle that is already highlighted");
                     // the highlighted circle is no longer highlighted
                     value1 = 0;
                     UNHighlightCircleGameObject(highlightedCircle1);
@@ -3317,15 +3328,18 @@ public class PuzzleManager : MonoBehaviour
             }
             else if (gameObjectClicked.CompareTag("operator"))
             {
+                //Debug.Log("reached line 3322");
                 highlightedOperator = gameObjectClicked;
                 HighLightOperatorGameObject(gameObjectClicked);
                 operatorSelected = true;    // this prevents the player from quickly clicking the other operator while the animation plays out, and causing a glitch
+                //Debug.Log("reached line 3326, operatorSelected: " + operatorSelected);
                 DetermineWhether_oneCircle_MathIsComplete();
+                //Debug.Log("reached line 3328, operatorSelected: " + operatorSelected);
                 if (math_oneCircle_IsComplete)
                 {
                     executingONEcircleMath = true;
                     executingTWOcircleMath = false;
-                    ExecuteCompletionOf_oneCircle_Math(false);
+                    ExecuteCompletionOf_oneCircle_Math(false, false);
                     DetermineWhetherPuzzleIsSolved();
                 }
                 // adding this June 30 2022
@@ -3340,6 +3354,7 @@ public class PuzzleManager : MonoBehaviour
         }
         else if (circle1selected == true && operatorSelected == true && math_oneCircle_IsComplete == false && math_twoCircle_IsComplete == false)
         {
+            //Debug.Log("reached line 3348");
             // ready to accept circle2... CANNOT change circle1 at this point... but CAN CHANGE operator
             if (gameObjectClicked.CompareTag("circle"))
             {
@@ -3392,7 +3407,7 @@ public class PuzzleManager : MonoBehaviour
                     {
                         executingONEcircleMath = true;
                         executingTWOcircleMath = false;
-                        ExecuteCompletionOf_oneCircle_Math(false);
+                        ExecuteCompletionOf_oneCircle_Math(false, false);
                     }
                     // adding this June 30 2022
                     DetermineWhether_twoCircle_MathIsComplete();
@@ -3416,7 +3431,7 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     public string GetTypeOfClickedOperator(GameObject oppy)
     {
-        string toReturn = oppy.GetComponent<Clickable>().typeOfThisOperator;
+        string toReturn = oppy.GetComponent<Clickable_operator>().typeOfThisOperator;
         return toReturn;
     }
 
@@ -3495,7 +3510,7 @@ public class PuzzleManager : MonoBehaviour
 
     public Operator GetOperator_classObject_OfClickedOperator_gameObject(GameObject operatorClicked)
     {
-        int IDnum = operatorClicked.GetComponent<Clickable>().IDnumberOfOperatorDataAttachedToThis;
+        int IDnum = operatorClicked.GetComponent<Clickable_operator>().IDnumberOfOperatorDataAttachedToThis;
         for (int i = 0; i < listOfAllOperators.Count; i++)
         {
             if (listOfAllOperators[i].IDnumber == IDnum)
@@ -3559,11 +3574,37 @@ public class PuzzleManager : MonoBehaviour
         }
 
     }
-    public void ExecuteCompletionOf_oneCircle_Math(bool circleDoneMovingToOperator)
+    public void ExecuteCompletionOf_oneCircle_Math(bool grabberAnimationStarted, bool circleDoneMovingToOperator)
     {
 
+        // July 2022... installing aperture & grabber animations, to replace original movement of circle to operator
+
+        if (grabberAnimationStarted == false && executingONEcircleMath) {
+
+            // begin aperture opening animation
+            OpA_apertureAnimation.SetActive(true);
+            OpA_apertureCLOSED.SetActive(false);
+
+
+
+
+            // turn OFF the aperture animation gameObject
+            StartCoroutine(TurnOffApertureAnimationWhenOver());
+
+            // turn ON the open aperture image
+
+
+            // start the grabber animation
+
+
+            // when the grabber reaches the circle, the circle moves with the grabber
+
+        }
+
+
+
         // move the circle to the operator
-        if (circleDoneMovingToOperator == false && executingONEcircleMath)
+        else if (grabberAnimationStarted == true && circleDoneMovingToOperator == false && executingONEcircleMath)
         {
 
             // make the operator & circle move toward each other in the middle (-1, 0)
@@ -3577,7 +3618,7 @@ public class PuzzleManager : MonoBehaviour
             // TODO: this stuff is not necessary for a MVP, so this will be done later if at all
 
             //highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
-            highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", true, true);
+            highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", false, true);
         }
 
         if (circleDoneMovingToOperator == true && executingONEcircleMath)
@@ -3608,6 +3649,25 @@ public class PuzzleManager : MonoBehaviour
         }
 
 
+    }
+    IEnumerator TurnOffApertureAnimationWhenOver() {
+        yield return new WaitForSeconds(durationOfApertureOpening);
+        OpA_apertureAnimation.SetActive(false);
+        OpA_apertureOPEN.SetActive(true);
+        OpA_grabber.SetActive(true);
+        StartCoroutine(TurnOffGrabberAnimationWhenOver());
+    }
+    IEnumerator TurnOffGrabberAnimationWhenOver() {
+        yield return new WaitForSeconds(delayBeforeGrabOccurs);
+        ExecuteCompletionOf_oneCircle_Math(true, false);
+        
+        yield return new WaitForSeconds(durationOfGrabber);
+        // the circle moves WITH the grabber, to the operator/aperture
+
+
+        OpA_apertureCLOSED.SetActive(true);
+        OpA_apertureOPEN.SetActive(false);
+        OpA_grabber.SetActive(false);
     }
     public void ExecuteCompletionOf_twoCircle_Math()
     {
@@ -3729,8 +3789,8 @@ public class PuzzleManager : MonoBehaviour
                     if (OperatorA.activeSelf)
                     {
                         // if this is the remaining operator, then make it fall away
-                        //OperatorA.GetComponent<Clickable>().SendCircleToToilet(0);
-                        OperatorA.GetComponent<Clickable>().ShrinkAndDisappear();
+                        //OperatorA.GetComponent<Clickable_operator>().SendCircleToToilet(0);
+                        OperatorA.GetComponent<Clickable_operator>().ShrinkAndDisappear();
                         Operator tempOp = GetOperator_classObject_OfClickedOperator_gameObject(OperatorB);
                         Debug.Log("about to change stat for OperatorB, type: " + tempOp.type);
                         GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
@@ -3738,8 +3798,8 @@ public class PuzzleManager : MonoBehaviour
                     if (OperatorB.activeSelf)
                     {
                         // if this is the remaining operator, then make it fall away
-                        //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
-                        OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
+                        //OperatorB.GetComponent<Clickable_operator>().SendCircleToToilet(0);
+                        OperatorB.GetComponent<Clickable_operator>().ShrinkAndDisappear();
                         Operator tempOp = GetOperator_classObject_OfClickedOperator_gameObject(OperatorA);
                         Debug.Log("about to change stat for OperatorA, type: " + tempOp.type);
                         GameManager.instance.ChangeStat_Easy(tempOp.type, 1);
@@ -3754,14 +3814,14 @@ public class PuzzleManager : MonoBehaviour
                     if (OperatorA.activeSelf)
                     {
                         // if this is the remaining operator, then make it fall away
-                        //OperatorA.GetComponent<Clickable>().SendCircleToToilet(0);
-                        OperatorA.GetComponent<Clickable>().ShrinkAndDisappear();
+                        //OperatorA.GetComponent<Clickable_operator>().SendCircleToToilet(0);
+                        OperatorA.GetComponent<Clickable_operator>().ShrinkAndDisappear();
                     }
                     if (OperatorB.activeSelf)
                     {
                         // if this is the remaining operator, then make it fall away
-                        //OperatorB.GetComponent<Clickable>().SendCircleToToilet(0);
-                        OperatorB.GetComponent<Clickable>().ShrinkAndDisappear();
+                        //OperatorB.GetComponent<Clickable_operator>().SendCircleToToilet(0);
+                        OperatorB.GetComponent<Clickable_operator>().ShrinkAndDisappear();
                     }
                     GameManager.instance.IncreaseNumberOfFailed(1);
                     GameManager.instance.ChangeStat_Easy("failed", 1);
