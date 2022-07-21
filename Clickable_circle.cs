@@ -398,6 +398,9 @@ public class Clickable_circle : MonoBehaviour
         var offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
         transform.position = defaultPosition + offset;
     }
+    public Vector2 ReturnDefaultPosition() {
+        return defaultPosition;
+    }
     //  ***************************************************************************************
     public void RandomlyChooseBackgroundImage()
     {
