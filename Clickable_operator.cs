@@ -220,7 +220,7 @@ public class Clickable_operator : MonoBehaviour
                     ///         
 
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
-                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math();        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
+                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(false);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
                 }
                 else if (destinationText == "goalThenToilet")

@@ -197,7 +197,7 @@ public class Clickable : MonoBehaviour
                     ///         
 
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
-                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math();        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
+                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(false);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
                 } else if (destinationText == "goalThenToilet") {
                     PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, false);
