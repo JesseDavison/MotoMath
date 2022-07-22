@@ -20,6 +20,8 @@ public class Clickable_circle : MonoBehaviour
     public string destinationText = "";
     public float speed = 1;
     public float defaultSpeed = 1;
+    public float longGrabberSpeed = 4;
+    public float defaultLongGrabberSpeed = 4;
     public float speedMultiplier = 1.05f;
     public float speedForCurve = 5;
     public float speedForCurveDefault = 5;
@@ -111,11 +113,10 @@ public class Clickable_circle : MonoBehaviour
         //gameObject.SetActive(false);
     }
 
-    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp)
+    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp, bool longGrabberDistance)
     {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
-        speed = defaultSpeed;
         startPosition = transform.position;
         time = 0;
         //destination = target.transform.position;
@@ -123,6 +124,11 @@ public class Clickable_circle : MonoBehaviour
         //destinationXPosition = destination.x;
         //midwayX = destinationXPosition - transform.position.x;
         destinationText = targetName;
+        if (longGrabberDistance) {
+            speed = defaultLongGrabberSpeed;
+        } else {
+            speed = defaultSpeed;
+        }
         readyToMove = true;
     }
     public void BeginMovementToNewDefaultPosition(Vector2 target)
@@ -289,6 +295,7 @@ public class Clickable_circle : MonoBehaviour
                 {
                     gameObject.SetActive(false);
                     PuzzleManager.instance.AnimatePuzzleSolved(gameObject, true, false);
+
                 }
                 else if (destinationText == "operator")
                 {
@@ -302,7 +309,7 @@ public class Clickable_circle : MonoBehaviour
                     ///         
 
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
-                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(false);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
+                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(true);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
                 }
                 else if (destinationText == "goalThenToilet")

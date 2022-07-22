@@ -42,7 +42,7 @@ public class Clickable : MonoBehaviour
     public bool curvePath;
     public bool curveUpIfTrue;
 
-    public bool shrinking = false;
+    bool shrinking = false;
     public Vector3 minScale = new Vector3(0, 0, 0);
     public Vector3 originalScale = new Vector3(2.2f, 2.2f, 2.2f);
 
@@ -197,7 +197,7 @@ public class Clickable : MonoBehaviour
                     ///         
 
                     PuzzleManager.instance.SetCircleAsDoneMoving(gameObject);
-                    PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(false);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
+                    //PuzzleManager.instance.ExecuteCompletionOf_twoCircle_Math(false);        // this will only work if both circles, separately, sent the SetCircleAsDoneMoving()
 
                 } else if (destinationText == "goalThenToilet") {
                     PuzzleManager.instance.AnimatePuzzleFailed(gameObject, true, false);
@@ -238,6 +238,12 @@ public class Clickable : MonoBehaviour
                 transform.localScale = defaultScale;
             }
         }
+    }
+    public void ShrinkIt() {
+        shrinking = true;
+    }
+    public void CancelShrinkIt() {
+        shrinking = false;
     }
     public void NotifyPuzzleManagerOfDestinationReached() { 
 
