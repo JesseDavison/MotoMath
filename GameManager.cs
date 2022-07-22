@@ -1253,7 +1253,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt(flamethrowerInInventory, 1000);
         ShowLevelUI_ammo_and_inventory_Display();
 
-
+        Time.timeScale = 1;
 
 
 

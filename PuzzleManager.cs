@@ -63,6 +63,17 @@ public class PuzzleManager : MonoBehaviour
     public GameObject OperatorB;
 
     public float durationOfApertureOpening;
+
+    public float delay_beforeFrame7;
+    public float delay_beforeFrame15;
+    public float delay_beforeFrame18;
+    public float delay_beforeFrame20;
+    public float delay_beforeFrame22;
+    public float delay_beforeDisappear;
+
+
+
+
     public float delayBeforeGrabOccurs_shortDistance;
     public float delayBeforeGrabOccurs_longDistance;
     public float delayAfterGrabOccurs;
@@ -75,12 +86,20 @@ public class PuzzleManager : MonoBehaviour
     public GameObject OpA_apertureOPEN;
     public GameObject OpA_grabber_1;
     public GameObject OpA_grabber_2;
+    public GameObject OpA_grabber_1_circularSaw;
+    public GameObject OpA_grabber_2_circularSaw;
+    RectTransform OpA_grabber_1_circularSaw_RectTransform;
+    RectTransform OpA_grabber_2_circularSaw_RectTransform;
 
     public GameObject OpB_apertureCLOSED;
     public GameObject OpB_apertureAnimation;
     public GameObject OpB_apertureOPEN;
     public GameObject OpB_grabber_1;
     public GameObject OpB_grabber_2;
+    public GameObject OpB_grabber_1_circularSaw;
+    public GameObject OpB_grabber_2_circularSaw;
+    RectTransform OpB_grabber_1_circularSaw_RectTransform;
+    RectTransform OpB_grabber_2_circularSaw_RectTransform;
 
     float operatorDefaultScale = 2.2f;
     public Clickable_operator OperatorAScript;
@@ -162,7 +181,11 @@ public class PuzzleManager : MonoBehaviour
 
     private void Awake()
     {
-
+        // i hope this works
+        OpA_grabber_1_circularSaw_RectTransform = OpA_grabber_1_circularSaw.GetComponent<RectTransform>();
+        OpA_grabber_2_circularSaw_RectTransform = OpA_grabber_2_circularSaw.GetComponent<RectTransform>();
+        OpB_grabber_1_circularSaw_RectTransform = OpB_grabber_1_circularSaw.GetComponent<RectTransform>();
+        OpB_grabber_2_circularSaw_RectTransform = OpB_grabber_2_circularSaw.GetComponent<RectTransform>();
     }
 
 
@@ -3170,6 +3193,9 @@ public class PuzzleManager : MonoBehaviour
     }
     public void MakePuzzleAppear() {
 
+        // gonna put the RectTransform stuff here, to avoid hassle of Start() or Awake() not catching
+        // or not... not sure yet, July 22 2022
+
 
         if (CircleAScript.partOfCurrentPuzzle == true) {
             CircleA.SetActive(true);
@@ -3604,8 +3630,9 @@ public class PuzzleManager : MonoBehaviour
         bool useLongerGrabberAnimation = false;
 
         if (grabberAnimationStarted == false && executingONEcircleMath) {
-            //Time.timeScale = 0.1f;
+            //Time.timeScale = 0.01f;
             float grabberDefaultZPosition = -0.2f;
+            float angleOfGrabber = 0;   // this is used by coroutines to move the grabber's child object (sawblade) precisely with grabber animation
             // set the position & rotation of the grabber
             //      need y-value of highlighted operator & highlighted circle
             float yValueOfThisOperator = highlightedOperator.transform.position.y;
@@ -3633,38 +3660,47 @@ public class PuzzleManager : MonoBehaviour
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.03f, 1.03f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -45);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = -45;
                 } else if (verticalGap == 3) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.03f, 0.7f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -34.9f);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = -34.9f;
                 } else if (verticalGap == 1.5f) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.14f, 0.4f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -19.23f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = -19.23f;
                 } else if (verticalGap == 1) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.16f, 0.28f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -13.1f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = -13.1f;
                 } else if (verticalGap == 0) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.21f, 0, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 0);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 0;
                 } else if (verticalGap == -1) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.16f, -0.28f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 13.1f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 13.1f;
                 } else if (verticalGap == -1.5f) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.14f, -0.4f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 19.23f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 19.23f;
                 } else if (verticalGap == -3) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.03f, -0.7f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 34.9f);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = 34.9f;
                 } else if (verticalGap == -4) {
                     OpA_grabber_1.transform.localPosition = new Vector3(-1.03f, -1.03f, grabberDefaultZPosition);
                     OpA_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 45);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = 45;
                 }
 
                 // begin aperture opening animation
@@ -3674,7 +3710,7 @@ public class PuzzleManager : MonoBehaviour
                 DisableOperatorText(highlightedOperator);
 
                 // turn OFF the aperture animation gameObject
-                StartCoroutine(TurnOffApertureAnimationWhenOver_1circleMath(operatorA_notOperatorB, useLongerGrabberAnimation));
+                StartCoroutine(TurnOffApertureAnimationWhenOver_1circleMath(operatorA_notOperatorB, useLongerGrabberAnimation, angleOfGrabber));
 
                 // turn ON the open aperture image
 
@@ -3692,54 +3728,63 @@ public class PuzzleManager : MonoBehaviour
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.03f, 1.03f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -45);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = -45;
                 }
                 else if (verticalGap == 3)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.03f, 0.7f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -34.9f);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = -34.9f;
                 }
                 else if (verticalGap == 1.5f)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.14f, 0.4f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -19.23f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = -19.23f;
                 }
                 else if (verticalGap == 1)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.16f, 0.28f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, -13.1f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = -13.1f;
                 }
                 else if (verticalGap == 0)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.21f, 0, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 0);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 0;
                 }
                 else if (verticalGap == -1)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.16f, -0.28f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 13.1f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 13.1f;
                 }
                 else if (verticalGap == -1.5f)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.14f, -0.4f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 19.23f);
                     useLongerGrabberAnimation = false;
+                    angleOfGrabber = 19.23f;
                 }
                 else if (verticalGap == -3)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.03f, -0.7f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 34.9f);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = 34.9f;
                 }
                 else if (verticalGap == -4)
                 {
                     OpB_grabber_1.transform.localPosition = new Vector3(-1.03f, -1.03f, grabberDefaultZPosition);
                     OpB_grabber_1.transform.rotation = Quaternion.Euler(0, 0, 45);
                     useLongerGrabberAnimation = true;
+                    angleOfGrabber = 45;
                 }
 
                 // begin aperture opening animation
@@ -3750,7 +3795,7 @@ public class PuzzleManager : MonoBehaviour
 
 
                 // turn OFF the aperture animation gameObject
-                StartCoroutine(TurnOffApertureAnimationWhenOver_1circleMath(operatorA_notOperatorB, useLongerGrabberAnimation));
+                StartCoroutine(TurnOffApertureAnimationWhenOver_1circleMath(operatorA_notOperatorB, useLongerGrabberAnimation, angleOfGrabber));
 
                 // turn ON the open aperture image
 
@@ -3808,19 +3853,22 @@ public class PuzzleManager : MonoBehaviour
 
 
     }
-    IEnumerator TurnOffApertureAnimationWhenOver_1circleMath(bool usingOperatorA, bool useLongerGrabber) {
+    IEnumerator TurnOffApertureAnimationWhenOver_1circleMath(bool usingOperatorA, bool useLongerGrabber, float angleOfGrabber) {
         yield return new WaitForSeconds(durationOfApertureOpening);
+        Time.timeScale = 0.03f;
         if (usingOperatorA) {
             OpA_apertureAnimation.SetActive(false);
             OpA_apertureOPEN.SetActive(true);
             if (useLongerGrabber == true)
             {
+                OpA_grabber_1_circularSaw.SetActive(false);
                 OpA_grabber_1.SetActive(true);
                 OpA_grabber_1.GetComponent<Animator>().Play("grabber_longer", -1, 0);
             }
             else
             {
                 // use shorter
+                OpA_grabber_1_circularSaw.SetActive(false);
                 OpA_grabber_1.SetActive(true);
                 OpA_grabber_1.GetComponent<Animator>().Play("grabber", -1, 0);
             }
@@ -3829,23 +3877,81 @@ public class PuzzleManager : MonoBehaviour
             OpB_apertureOPEN.SetActive(true);
             if (useLongerGrabber == true)
             {
+                OpB_grabber_1_circularSaw.SetActive(false);
                 OpB_grabber_1.SetActive(true);
                 OpB_grabber_1.GetComponent<Animator>().Play("grabber_longer", -1, 0);
             }
             else
             {
                 // use shorter
+                OpB_grabber_1_circularSaw.SetActive(false);
                 OpB_grabber_1.SetActive(true);
                 OpB_grabber_1.GetComponent<Animator>().Play("grabber", -1, 0);
             }
         }
-        StartCoroutine(TurnOffGrabberAnimationWhenOver_1circleMath(usingOperatorA, useLongerGrabber));
+        StartCoroutine(TurnOffGrabberAnimationWhenOver_1circleMath(usingOperatorA, useLongerGrabber, angleOfGrabber));
     }
-    IEnumerator TurnOffGrabberAnimationWhenOver_1circleMath(bool usingOperatorA, bool usingLongerGrabber) {
-        if (usingLongerGrabber) {
-            yield return new WaitForSeconds(delayBeforeGrabOccurs_longDistance);
+    IEnumerator TurnOffGrabberAnimationWhenOver_1circleMath(bool usingOperatorA, bool usingLongerGrabber, float angleOfGrabber) {
+
+        float absOfAngle = Mathf.Abs(angleOfGrabber);
+        float[] xValues = new float[] { };
+
+        if (absOfAngle == 45) {
+            xValues = new float[] { -3.62f, -1.25f, -0.4f, 1.2f, 3.4f };
+        } else if (absOfAngle == 34.9f) {
+            xValues = new float[] { -3.46f, -1.22f, -0.4f, 1.34f, 3.12f };
+        } else if (absOfAngle == 19.23f) {
+            xValues = new float[] { -2.7f, -2, -1.16f, 0.5f, 2.6f };
+        } else if (absOfAngle == 13.1f) {
+            xValues = new float[] { -2.56f, -2, -1.15f, 0.5f, 2.4f };
+        } else if (absOfAngle == 0) {
+            xValues = new float[] { -2.5f, -2, -1.1f, 0.44f, 2.5f };
+        }
+
+        if (usingOperatorA) {
+            yield return new WaitForSeconds(delay_beforeFrame7);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[0], 0);
+            OpA_grabber_1_circularSaw.SetActive(true);
+            //highlightedCircle1.SetActive(false);
+            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(false);
+            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(false);
+
+            Debug.Log("highlightedCircle1 should now be inactive");
+            yield return new WaitForSeconds(delay_beforeFrame15);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[1], 0);
+            yield return new WaitForSeconds(delay_beforeFrame18);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[2], 0);
+            yield return new WaitForSeconds(delay_beforeFrame20);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[3], 0);
+            yield return new WaitForSeconds(delay_beforeFrame22);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[4], 0);
+            yield return new WaitForSeconds(delay_beforeDisappear);
+            OpA_grabber_1.SetActive(false);
+            OpA_grabber_1_circularSaw.SetActive(false);
+            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(true);
+            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(true);
         } else {
-            yield return new WaitForSeconds(delayBeforeGrabOccurs_shortDistance);
+            yield return new WaitForSeconds(delay_beforeFrame7);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[0], 0);
+            OpB_grabber_1_circularSaw.SetActive(true);
+            //highlightedCircle1.SetActive(false);
+            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(false);
+            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(false);
+
+            Debug.Log("highlightedCircle1 should now be inactive");
+            yield return new WaitForSeconds(delay_beforeFrame15);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[1], 0);
+            yield return new WaitForSeconds(delay_beforeFrame18);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[2], 0);
+            yield return new WaitForSeconds(delay_beforeFrame20);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[3], 0);
+            yield return new WaitForSeconds(delay_beforeFrame22);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[4], 0);
+            yield return new WaitForSeconds(delay_beforeDisappear);
+            OpA_grabber_1.SetActive(false);
+            OpA_grabber_1_circularSaw.SetActive(false);
+            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(true);
+            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(true);
         }
 
         ExecuteCompletionOf_oneCircle_Math(true, false);
@@ -3853,7 +3959,7 @@ public class PuzzleManager : MonoBehaviour
         yield return new WaitForSeconds(delayAfterGrabOccurs);
         // the circle moves WITH the grabber, to the operator/aperture
 
-        Time.timeScale = 1;
+        //Time.timeScale = 1;
 
         if (usingOperatorA) {
             OpA_apertureCLOSED.SetActive(true);
@@ -3868,7 +3974,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void ExecuteCompletionOf_twoCircle_Math(bool grabberAnimationStarted)
     {
-        //Time.timeScale = 0.2f;
+        Time.timeScale = 0.2f;
         Debug.Log("at beginning of ExecuteCompletionOf_twoCircle_Math()");
         DEBUG_outputCircleValues("about to ExecuteCompletionOf_twoCircle_Math()");
 
