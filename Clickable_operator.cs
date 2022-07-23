@@ -49,7 +49,7 @@ public class Clickable_operator : MonoBehaviour
     public bool growing = false;
     public Vector3 defaultScale;
 
-    public bool partOfCurrentPuzzle = false;
+    bool partOfCurrentPuzzle = false;
 
 
 
@@ -300,6 +300,11 @@ public class Clickable_operator : MonoBehaviour
         var offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
         transform.position = defaultPosition + offset;
     }
+
+    public void BeginGrowingOperator() {
+        growing = true;
+    }
+
     //  ***************************************************************************************
     public void RandomlyChooseBackgroundImage()
     {
@@ -313,8 +318,15 @@ public class Clickable_operator : MonoBehaviour
 
         }
     }
-
-
+    public void TakeThisOperatorOutOfThePuzzle() {
+        partOfCurrentPuzzle = false;
+    }
+    public void TakeThisOperatorOutOfThePuzzle_REVERSE() {
+        partOfCurrentPuzzle = true;
+    }
+    public bool IsThisOperatorStillPartOfThePuzzle() {
+        return partOfCurrentPuzzle;
+    }
 
 }
 

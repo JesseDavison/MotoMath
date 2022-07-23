@@ -69,7 +69,8 @@ public class PuzzleManager : MonoBehaviour
     public float delay_beforeFrame18;
     public float delay_beforeFrame20;
     public float delay_beforeFrame22;
-    public float delay_beforeDisappear;
+    public float delay_delayUntilSawIsSunk;
+    public float delayAfterFadeIn_readyToMoveAgain;
 
 
 
@@ -341,7 +342,7 @@ public class PuzzleManager : MonoBehaviour
             trueInt_falseFraction = true;
             IDnumber = numberOfThisTypeThatExist;
             numberOfThisTypeThatExist += 1;
-            position = new Vector2(0, 0);
+            position = new Vector3(0, 0, -3);
         }
         public Circle(float numerator, int denom)
         {
@@ -351,7 +352,7 @@ public class PuzzleManager : MonoBehaviour
             trueInt_falseFraction = false;
             IDnumber = numberOfThisTypeThatExist;
             numberOfThisTypeThatExist += 1;
-            position = new Vector2(0, 0);
+            position = new Vector3(0, 0, -3);
         }
     }
 
@@ -2097,7 +2098,7 @@ public class PuzzleManager : MonoBehaviour
     // ************************************************************************************************************
     // ************************************************************************************************************
 
-    public void SetCircle(GameObject circleGameObject, Circle circleData)
+    public void SetCircle(GameObject circleGameObject, Circle circleData, bool makeCircleActive)
     {
         if (circleData == null) //  || circleData.value == -999999999)
         {
@@ -2233,8 +2234,12 @@ public class PuzzleManager : MonoBehaviour
             //        circleGameObject.transform.GetChild(i).gameObject.SetActive(false);
             //    }
             //}
+            if (makeCircleActive) {
+                circleGameObject.SetActive(true);
+            } else {
+                circleGameObject.SetActive(false);
+            }
 
-            circleGameObject.SetActive(true);
             circleGameObject.GetComponent<Clickable_circle>().valueOfThisCircle_orGoal = value;
             circleGameObject.GetComponent<Clickable_circle>().IDnumberOfCircleDataAttachedToThis = circleData.IDnumber;        // this marks the GameObject 
 
@@ -2374,6 +2379,7 @@ public class PuzzleManager : MonoBehaviour
         // need to know how many circles are active, and which ones are active
         int tally = 0;
         float defaultX = -4f;
+        float defaultZ = -3f;
         if (CircleA.activeSelf)
         {
             tally += 1;
@@ -2436,9 +2442,9 @@ public class PuzzleManager : MonoBehaviour
                 }
             }
 
-            CircleAScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
-            CircleBScript.defaultPosition = new Vector2(defaultX, cirlceB_Yvalue);
-            CircleCScript.defaultPosition = new Vector2(defaultX, circleC_Yvalue);
+            CircleAScript.defaultPosition = new Vector3(defaultX, circleA_Yvalue, defaultZ);
+            CircleBScript.defaultPosition = new Vector3(defaultX, cirlceB_Yvalue, defaultZ);
+            CircleCScript.defaultPosition = new Vector3(defaultX, circleC_Yvalue, defaultZ);
         }
         else if (tally == 2)
         {
@@ -2469,36 +2475,36 @@ public class PuzzleManager : MonoBehaviour
                     {
                         if (CircleB.transform.position.y == 2.5f)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleB.transform.position.y == 0)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleB.transform.position.y == -2.5f)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
                     else if (CircleC.activeSelf)
                     {
                         if (CircleC.transform.position.y == 2.5f)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleC.transform.position.y == 0)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleC.transform.position.y == -2.5f)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
 
@@ -2510,36 +2516,36 @@ public class PuzzleManager : MonoBehaviour
                     {
                         if (CircleA.transform.position.y == 2.5f)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleA.transform.position.y == 0)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleA.transform.position.y == -2.5f)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
                     else if (CircleC.activeSelf)
                     {
                         if (CircleC.transform.position.y == 2.5f)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleC.transform.position.y == 0)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleC.transform.position.y == -2.5f)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
 
@@ -2551,36 +2557,36 @@ public class PuzzleManager : MonoBehaviour
                     {
                         if (CircleA.transform.position.y == 2.5f)
                         {
-                            CircleAScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleA.transform.position.y == 0)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleA.transform.position.y == -2.5f)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleAScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleAScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
                     else if (CircleB.activeSelf)
                     {
                         if (CircleB.transform.position.y == 2.5f)
                         {
-                            CircleBScript.defaultPosition = new Vector2(defaultX, 1.5f);        // keep it high
-                            CircleCScript.defaultPosition = new Vector2(defaultX, -1.5f);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);        // keep it high
+                            CircleCScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);
                         }
                         else if (CircleB.transform.position.y == 0)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                         else if (CircleB.transform.position.y == -2.5f)
                         {
-                            CircleCScript.defaultPosition = new Vector2(defaultX, 1.5f);
-                            CircleBScript.defaultPosition = new Vector2(defaultX, -1.5f);        // move it down
+                            CircleCScript.defaultPosition = new Vector3(defaultX, 1.5f, defaultZ);
+                            CircleBScript.defaultPosition = new Vector3(defaultX, -1.5f, defaultZ);        // move it down
                         }
                     }
                 }
@@ -2589,26 +2595,26 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (CircleA.activeSelf && CircleB.activeSelf)
                 {
-                    CircleAScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
-                    CircleBScript.defaultPosition = new Vector2(defaultX, circleB_Yvalue);
+                    CircleAScript.defaultPosition = new Vector3(defaultX, circleA_Yvalue, defaultZ);
+                    CircleBScript.defaultPosition = new Vector3(defaultX, circleB_Yvalue, defaultZ);
                 }
                 else if (CircleA.activeSelf && CircleC.activeSelf)
                 {
-                    CircleAScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
-                    CircleCScript.defaultPosition = new Vector2(defaultX, circleB_Yvalue);
+                    CircleAScript.defaultPosition = new Vector3(defaultX, circleA_Yvalue, defaultZ);
+                    CircleCScript.defaultPosition = new Vector3(defaultX, circleB_Yvalue, defaultZ);
                 }
                 else if (CircleB.activeSelf && CircleC.activeSelf)
                 {
-                    CircleBScript.defaultPosition = new Vector2(defaultX, circleA_Yvalue);
-                    CircleCScript.defaultPosition = new Vector2(defaultX, circleB_Yvalue);
+                    CircleBScript.defaultPosition = new Vector3(defaultX, circleA_Yvalue, defaultZ);
+                    CircleCScript.defaultPosition = new Vector3(defaultX, circleB_Yvalue, defaultZ);
                 }
             }
         }
         else if (tally == 1)
         {
-            if (CircleA.activeSelf) { CircleAScript.defaultPosition = new Vector2(defaultX, 0); }
-            else if (CircleB.activeSelf) { CircleBScript.defaultPosition = new Vector2(defaultX, 0); }
-            else if (CircleC.activeSelf) { CircleCScript.defaultPosition = new Vector2(defaultX, 0); }
+            if (CircleA.activeSelf) { CircleAScript.defaultPosition = new Vector3(defaultX, 0, defaultZ); }
+            else if (CircleB.activeSelf) { CircleBScript.defaultPosition = new Vector3(defaultX, 0, defaultZ); }
+            else if (CircleC.activeSelf) { CircleCScript.defaultPosition = new Vector3(defaultX, 0, defaultZ); }
         }
         else if (tally == 0)
         {
@@ -3067,12 +3073,12 @@ public class PuzzleManager : MonoBehaviour
             //bool circleC_active = false;
             // ONE OPTION HERE IS TO set the circle to null if the value is zero... but i also want to catch the bug
             Debug.Log("about to call SetCircle() for CircleA & circle1");
-            SetCircle(CircleA, circle1);
+            SetCircle(CircleA, circle1, true);
 
             Debug.Log("about to call SetCircle() for CircleB & circle2");
-            SetCircle(CircleB, circle2);
+            SetCircle(CircleB, circle2, true);
             Debug.Log("about to call SetCircle() for CircleC & circle3");
-            SetCircle(CircleC, circle3);
+            SetCircle(CircleC, circle3, true);
 
 
 
@@ -3219,6 +3225,7 @@ public class PuzzleManager : MonoBehaviour
         }
         
         OperatorA.SetActive(true);
+        OperatorAScript.TakeThisOperatorOutOfThePuzzle_REVERSE();
         //OperatorAScript.defaultScale = OperatorA.GetComponent<Transform>().localScale;
         //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
         //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
@@ -3226,6 +3233,7 @@ public class PuzzleManager : MonoBehaviour
 
 
         OperatorB.SetActive(true);
+        OperatorBScript.TakeThisOperatorOutOfThePuzzle_REVERSE();
         //OperatorBScript.defaultScale = OperatorB.GetComponent<Transform>().localScale;
         //OperatorAScript.defaultScale = OperatorA.GetComponent<RectTransform>().localScale;
         //OperatorA.GetComponent<RectTransform>().localScale = new Vector2(0.1f, 0.1f);
@@ -3243,8 +3251,8 @@ public class PuzzleManager : MonoBehaviour
         CircleAScript.growing = true;
         CircleBScript.growing = true;
         CircleCScript.growing = true;
-        OperatorAScript.growing = true;
-        OperatorBScript.growing = true;
+        OperatorAScript.BeginGrowingOperator();
+        OperatorBScript.BeginGrowingOperator();
         Goal.GetComponent<Clickable>().CancelShrinkIt();
         Goal.GetComponent<Clickable>().growing = true;
 
@@ -3629,7 +3637,7 @@ public class PuzzleManager : MonoBehaviour
 
         bool useLongerGrabberAnimation = false;
 
-        if (grabberAnimationStarted == false && executingONEcircleMath) {
+        if (grabberAnimationStarted == false && circleDoneMovingToOperator == false && executingONEcircleMath) {
             //Time.timeScale = 0.01f;
             float grabberDefaultZPosition = -0.2f;
             float angleOfGrabber = 0;   // this is used by coroutines to move the grabber's child object (sawblade) precisely with grabber animation
@@ -3809,44 +3817,37 @@ public class PuzzleManager : MonoBehaviour
         // move the circle to the operator
         else if (grabberAnimationStarted == true && circleDoneMovingToOperator == false && executingONEcircleMath)
         {
-
-            // make the operator & circle move toward each other in the middle (-1, 0)
-            //Vector2 midPoint = new Vector2(-1, 0);
-
-
-
-            //highlightedOperator.GetComponent<Clickable>().BeginMovementToTarget(midPoint, "temp", true, false);
-
-            // depending on the operator, there may be a slightly different "midPoint" for the circle to travel to
-            // TODO: this stuff is not necessary for a MVP, so this will be done later if at all
-
-            //highlightedCircle1.GetComponent<SpriteRenderer>().color = highlightedColor;
             highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToTarget(highlightedOperator.transform.position, "operator", false, true, useLongerGrabberAnimation);
+            Debug.Log("this should never appear");
+                
         }
-
-        if (circleDoneMovingToOperator == true && executingONEcircleMath)
+        // in the line below, change: don't worry about moving the circle... instead, make it conditional on the animation being complete
+        else if (grabberAnimationStarted == true && circleDoneMovingToOperator == true && executingONEcircleMath)
         {
+
+            // July 22 2022: the stuff below is being moved into the 2nd Coroutine
+
             // when the circle gets to a certain point, it disappears
-            highlightedCircle1.SetActive(false);
-            highlightedOperator.SetActive(false);
-            Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
-            Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
+            //highlightedCircle1.SetActive(false);
+            //highlightedOperator.SetActive(false);
+            //Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
+            //Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
 
-            Circle result = CreateResultCircle(c1, c1, oppy);
+            //Circle result = CreateResultCircle(c1, c1, oppy);
 
-            Debug.Log("in ExecuteCompletionOf_oneCircle_Math(), just created Circle result, where value is " + result.value);
-            SetCircle(highlightedCircle1, result);
+            //Debug.Log("in ExecuteCompletionOf_oneCircle_Math(), just created Circle result, where value is " + result.value);
+            //SetCircle(highlightedCircle1, result);
 
-            highlightedCircle1.SetActive(true);
-            highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
-            //HighlightCircleGameObject(highlightedCircle1, 1);
-            ResetColorsAndMath_Circles_Operators();
+            //highlightedCircle1.SetActive(true);
+            //highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
+            ////HighlightCircleGameObject(highlightedCircle1, 1);
+            //ResetColorsAndMath_Circles_Operators();
 
 
-            //highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToDefaultPosition();
-            UpdateDefaultPositionsOfCircles(true);
-            SendAllCirclesToDefaultPositions();
-            DetermineWhetherPuzzleIsSolved();
+            ////highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToDefaultPosition();
+            //UpdateDefaultPositionsOfCircles(true);
+            //SendAllCirclesToDefaultPositions();
+            //DetermineWhetherPuzzleIsSolved();
 
 
         }
@@ -3855,7 +3856,7 @@ public class PuzzleManager : MonoBehaviour
     }
     IEnumerator TurnOffApertureAnimationWhenOver_1circleMath(bool usingOperatorA, bool useLongerGrabber, float angleOfGrabber) {
         yield return new WaitForSeconds(durationOfApertureOpening);
-        Time.timeScale = 0.03f;
+        //Time.timeScale = 0.1f;
         if (usingOperatorA) {
             OpA_apertureAnimation.SetActive(false);
             OpA_apertureOPEN.SetActive(true);
@@ -3863,6 +3864,7 @@ public class PuzzleManager : MonoBehaviour
             {
                 OpA_grabber_1_circularSaw.SetActive(false);
                 OpA_grabber_1.SetActive(true);
+                OpA_grabber_1.GetComponent<Animator>().enabled = true;
                 OpA_grabber_1.GetComponent<Animator>().Play("grabber_longer", -1, 0);
             }
             else
@@ -3870,6 +3872,7 @@ public class PuzzleManager : MonoBehaviour
                 // use shorter
                 OpA_grabber_1_circularSaw.SetActive(false);
                 OpA_grabber_1.SetActive(true);
+                OpA_grabber_1.GetComponent<Animator>().enabled = true;
                 OpA_grabber_1.GetComponent<Animator>().Play("grabber", -1, 0);
             }
         } else {
@@ -3879,6 +3882,7 @@ public class PuzzleManager : MonoBehaviour
             {
                 OpB_grabber_1_circularSaw.SetActive(false);
                 OpB_grabber_1.SetActive(true);
+                OpB_grabber_1.GetComponent<Animator>().enabled = true;
                 OpB_grabber_1.GetComponent<Animator>().Play("grabber_longer", -1, 0);
             }
             else
@@ -3886,6 +3890,7 @@ public class PuzzleManager : MonoBehaviour
                 // use shorter
                 OpB_grabber_1_circularSaw.SetActive(false);
                 OpB_grabber_1.SetActive(true);
+                OpB_grabber_1.GetComponent<Animator>().enabled = true;
                 OpB_grabber_1.GetComponent<Animator>().Play("grabber", -1, 0);
             }
         }
@@ -3897,67 +3902,134 @@ public class PuzzleManager : MonoBehaviour
         float[] xValues = new float[] { };
 
         if (absOfAngle == 45) {
-            xValues = new float[] { -3.62f, -1.25f, -0.4f, 1.2f, 3.4f };
+            xValues = new float[] { -3.62f, -1.25f, -0.4f, 1.2f, 4.15f };   // last position is ready for fade
         } else if (absOfAngle == 34.9f) {
-            xValues = new float[] { -3.46f, -1.22f, -0.4f, 1.34f, 3.12f };
+            xValues = new float[] { -3.46f, -1.22f, -0.4f, 1.34f, 3.57f };  // last position is ready for fade
         } else if (absOfAngle == 19.23f) {
-            xValues = new float[] { -2.7f, -2, -1.16f, 0.5f, 2.6f };
+            xValues = new float[] { -2.7f, -2, -1.16f, 0.5f, 3.44f };       // last position is ready for fade
         } else if (absOfAngle == 13.1f) {
-            xValues = new float[] { -2.56f, -2, -1.15f, 0.5f, 2.4f };
+            xValues = new float[] { -2.56f, -2, -1.15f, 0.5f, 3.4f };       // last position is ready for fade
         } else if (absOfAngle == 0) {
-            xValues = new float[] { -2.5f, -2, -1.1f, 0.44f, 2.5f };
+            xValues = new float[] { -2.5f, -2, -1.1f, 0.44f, 3.45f };       // last position is ready for fade
         }
+
+        float defaultSaw_Zvalue = 0.1f;
 
         if (usingOperatorA) {
             yield return new WaitForSeconds(delay_beforeFrame7);
-            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[0], 0);
-            OpA_grabber_1_circularSaw.SetActive(true);
-            //highlightedCircle1.SetActive(false);
-            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(false);
-            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(false);
-
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[0], 0, defaultSaw_Zvalue);
+            OpA_grabber_1_circularSaw.SetActive(true);  // AND NEED to reset the alpha from before
+            OpA_grabber_1_circularSaw.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            highlightedCircle1.SetActive(false);
             Debug.Log("highlightedCircle1 should now be inactive");
             yield return new WaitForSeconds(delay_beforeFrame15);
-            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[1], 0);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[1], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame18);
-            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[2], 0);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[2], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame20);
-            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[3], 0);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[3], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame22);
-            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[4], 0);
-            yield return new WaitForSeconds(delay_beforeDisappear);
-            OpA_grabber_1.SetActive(false);
-            OpA_grabber_1_circularSaw.SetActive(false);
-            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(true);
-            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(true);
+            OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[4], 0, defaultSaw_Zvalue);
+            //OpA_grabber_1.SetActive(false);
+            OpA_grabber_1.GetComponent<Animator>().enabled = false;
         } else {
             yield return new WaitForSeconds(delay_beforeFrame7);
-            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[0], 0);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[0], 0, defaultSaw_Zvalue);
             OpB_grabber_1_circularSaw.SetActive(true);
-            //highlightedCircle1.SetActive(false);
-            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(false);
-            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(false);
-
+            OpB_grabber_1_circularSaw.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+            highlightedCircle1.SetActive(false);
             Debug.Log("highlightedCircle1 should now be inactive");
             yield return new WaitForSeconds(delay_beforeFrame15);
-            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[1], 0);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[1], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame18);
-            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[2], 0);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[2], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame20);
-            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[3], 0);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[3], 0, defaultSaw_Zvalue);
             yield return new WaitForSeconds(delay_beforeFrame22);
-            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector2(xValues[4], 0);
-            yield return new WaitForSeconds(delay_beforeDisappear);
-            OpA_grabber_1.SetActive(false);
-            OpA_grabber_1_circularSaw.SetActive(false);
-            highlightedCircle1.transform.GetChild(0).gameObject.SetActive(true);
-            highlightedCircle1.transform.GetChild(4).gameObject.SetActive(true);
+            OpB_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[4], 0, defaultSaw_Zvalue);
+            //OpB_grabber_1.SetActive(false);
+            OpB_grabber_1.GetComponent<Animator>().enabled = false;
         }
 
-        ExecuteCompletionOf_oneCircle_Math(true, false);
-        
+        // MAKE THIS CIRCLE THE RESULT CIRCLE
+        Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
+        Operator oppy = GetOperator_classObject_OfClickedOperator_gameObject(highlightedOperator);
+
+        Circle result = CreateResultCircle(c1, c1, oppy);
+
+        Debug.Log("in ExecuteCompletionOf_oneCircle_Math(), just created Circle result, where value is " + result.value);
+        SetCircle(highlightedCircle1, result, false);
+
+        //highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
+        //HighlightCircleGameObject(highlightedCircle1, 1);
+
+
+        if (usingOperatorA) {
+            // now, animate the circularSaw "sinking" into the aperture opening
+            OpA_grabber_1_circularSaw.GetComponent<FadeOpacityToZero>().BeginFadingOpacityToZero();
+            yield return new WaitForSeconds(delay_delayUntilSawIsSunk);
+            // the child object circularSaw has already turned itself off by now
+            // turn on the CircleA object in its place, as it is fading into view and spinning
+
+            //      set the opacity to zero and begin ramping it up... this will also make it grow, and spin
+            highlightedCircle1.SetActive(true);
+            highlightedCircle1.GetComponent<Clickable_circle>().SetCircularSawOpacityToZero_BeginFadingIn();
+            highlightedCircle1.transform.position = new Vector3(OperatorA.transform.position.x, OperatorA.transform.position.y, -3);
+
+
+        } else {
+            // now, animate the circularSaw "sinking" into the aperture opening
+            OpB_grabber_1_circularSaw.GetComponent<FadeOpacityToZero>().BeginFadingOpacityToZero();
+            yield return new WaitForSeconds(delay_delayUntilSawIsSunk);
+            // the child object circularSaw has already turned itself off by now
+            // turn on the CircleA object in its place, as it is fading into view and spinning
+
+            //      set the opacity to zero and begin ramping it up... this will also make it grow, and spin
+            highlightedCircle1.SetActive(true);
+            highlightedCircle1.GetComponent<Clickable_circle>().SetCircularSawOpacityToZero_BeginFadingIn();
+            highlightedCircle1.transform.position = new Vector3(OperatorB.transform.position.x, OperatorB.transform.position.y, -3);
+        }
+
+        yield return new WaitForSeconds(delayAfterFadeIn_readyToMoveAgain);
+
+
+
+        highlightedOperator.GetComponent<Clickable_operator>().ShrinkAndDisappear(); // this will make it end up inactive
+        highlightedOperator.GetComponent<Clickable_operator>().TakeThisOperatorOutOfThePuzzle();    // important for DetermineWhetherPuzzleIsSolved()
+
+
+
+
+
+
+
+
+
+
+
+        ResetColorsAndMath_Circles_Operators();
+        //highlightedCircle1.GetComponent<Clickable_circle>().BeginMovementToDefaultPosition();
+        UpdateDefaultPositionsOfCircles(true);
+        SendAllCirclesToDefaultPositions();
+        DetermineWhetherPuzzleIsSolved();
+
+
+
+
+
+
+
+        //ExecuteCompletionOf_oneCircle_Math(true, false);    // this begins movement of the circle object, which we do not want to do (july 22 2022)
+
+
+
+
+
+
         yield return new WaitForSeconds(delayAfterGrabOccurs);
         // the circle moves WITH the grabber, to the operator/aperture
+
+        Debug.Log("just passed delayAfterGrabOccurs");
 
         //Time.timeScale = 1;
 
@@ -3974,7 +4046,7 @@ public class PuzzleManager : MonoBehaviour
     }
     public void ExecuteCompletionOf_twoCircle_Math(bool grabberAnimationStarted)
     {
-        Time.timeScale = 0.2f;
+        //Time.timeScale = 0.2f;
         Debug.Log("at beginning of ExecuteCompletionOf_twoCircle_Math()");
         DEBUG_outputCircleValues("about to ExecuteCompletionOf_twoCircle_Math()");
 
@@ -4316,6 +4388,7 @@ public class PuzzleManager : MonoBehaviour
 
             highlightedCircle1.SetActive(false);
             highlightedOperator.SetActive(false);
+            highlightedOperator.GetComponent<Clickable_operator>().TakeThisOperatorOutOfThePuzzle();    // important for DetermineWhetherPuzzleIsSolved()
             highlightedCircle2.SetActive(false);
             Circle c1 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle1);
             Circle c2 = GetCircle_classObject_OfClickedCircle_gameObject(highlightedCircle2);
@@ -4326,7 +4399,7 @@ public class PuzzleManager : MonoBehaviour
             Circle result = CreateResultCircle(c1, c2, oppy);
             DEBUG_outputCircleValues("right after CreateResultCircle(), in ExecuteCompletionOf_twoCircle_Math()");
             Debug.Log("result.value:::: " + result.value);
-            SetCircle(highlightedCircle1, result);
+            SetCircle(highlightedCircle1, result, true);
             DEBUG_outputCircleValues("right after SetCircle(), in ExecuteCompletionOf_twoCircle_Math()");
             highlightedCircle1.SetActive(true);
             highlightedCircle1.GetComponent<Clickable_circle>().EndRotating();
@@ -4513,14 +4586,16 @@ public class PuzzleManager : MonoBehaviour
         }
 
         int operatorTally = 0;
-        if (OperatorA.activeSelf)
+        if (OperatorAScript.IsThisOperatorStillPartOfThePuzzle() == true)
         {
             operatorTally += 1;
         }
-        if (OperatorB.activeSelf)
+        if (OperatorBScript.IsThisOperatorStillPartOfThePuzzle() == true)
         {
             operatorTally += 1;
         }
+
+        Debug.Log("circleTally: " + circleTally + ", operatorTally: " + operatorTally);
 
         if (gameType == "kiddy")
         {
@@ -4589,7 +4664,9 @@ public class PuzzleManager : MonoBehaviour
             {
                 // if the 1 circle value is the same as the goal
                 float circleValue = GetValueOfClickedCircle(temp);
+                Debug.Log("circleValue: " + circleValue);
                 float goalValue = GetValueOfGoal();
+                Debug.Log("goalValue: " + goalValue);
                 if (CheckIfNumbersAreCloseEnough(circleValue, goalValue))
                 {
                     //Debug.Log("there is 1 circle and 0 operators, and the goal has been reached");
@@ -4719,7 +4796,7 @@ public class PuzzleManager : MonoBehaviour
 
             float newX = Goal.transform.position.x - 1.5f;
             float newY = Goal.transform.position.y;
-            finalCircle.GetComponent<Clickable_circle>().BeginMovementToTarget(new Vector2(newX, newY), "goalThenToilet", true, true, false);
+            finalCircle.GetComponent<Clickable_circle>().BeginMovementToTarget(new Vector3(newX, newY, -3), "goalThenToilet", true, true, false);
 
         }
         else

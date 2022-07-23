@@ -16,7 +16,7 @@ public class Clickable_circle : MonoBehaviour
 
     // moving circles
     public bool readyToMove = false;
-    public Vector2 destination;
+    public Vector3 destination;
     public string destinationText = "";
     public float speed = 1;
     public float defaultSpeed = 1;
@@ -28,11 +28,11 @@ public class Clickable_circle : MonoBehaviour
     public float curveSpeedMultiplier = 1;
     public float speedCap = 25;
     public bool destinationReached = false;
-    public Vector2 startPosition;
+    public Vector3 startPosition;
     float time;
     //float destinationXPosition;
     float midwayX;
-    public Vector2 defaultPosition;
+    public Vector3 defaultPosition;
 
     public AnimationCurve curve;
     public float curveHeightMultiplier;
@@ -56,6 +56,9 @@ public class Clickable_circle : MonoBehaviour
 
     public GameObject SawBlade_GameObject;
     RectTransform SawBlade_RectTransform;
+    bool opacityIncreasingToOne = false;
+    public float opacityIncreaseAmount;
+    SpriteRenderer SawBlade_SpriteRenderer;
     public float circleImageRotationSpeed_default;
     public float circleImageRotationSpeed_whenClicked;
     public GameObject RustyGear_GameObject;
@@ -81,6 +84,7 @@ public class Clickable_circle : MonoBehaviour
         //RustyGear_GameObject.SetActive(true);
 
         SawBlade_RectTransform = SawBlade_GameObject.GetComponent<RectTransform>();
+        SawBlade_SpriteRenderer = SawBlade_GameObject.GetComponent<SpriteRenderer>();
         //RustyGear_RectTransform = RustyGear_GameObject.GetComponent<RectTransform>();
         RustyGear_Animator = RustyGear_GameObject.GetComponent<Animator>();
         //circleImageRotationSpeed_default = Random.Range(0.1f, 0.3f);
@@ -113,7 +117,7 @@ public class Clickable_circle : MonoBehaviour
         //gameObject.SetActive(false);
     }
 
-    public void BeginMovementToTarget(Vector2 targetDestination, string targetName, bool curvedPath, bool curveUp, bool longGrabberDistance)
+    public void BeginMovementToTarget(Vector3 targetDestination, string targetName, bool curvedPath, bool curveUp, bool longGrabberDistance)
     {
         curvePath = curvedPath;
         curveUpIfTrue = curveUp;
@@ -131,7 +135,7 @@ public class Clickable_circle : MonoBehaviour
         }
         readyToMove = true;
     }
-    public void BeginMovementToNewDefaultPosition(Vector2 target)
+    public void BeginMovementToNewDefaultPosition(Vector3 target)
     {
         speed = defaultSpeed;
         defaultPosition = target;
@@ -183,7 +187,7 @@ public class Clickable_circle : MonoBehaviour
         startPosition = transform.position;
         time = 0;
         //destination = target.transform.position;
-        destination = new Vector2(startPosition.x, startPosition.y - 10);
+        destination = new Vector3(startPosition.x, startPosition.y - 10, -3);
         //destinationXPosition = destination.x;
         //midwayX = destinationXPosition - transform.position.x;
         destinationText = "toilet";
@@ -245,6 +249,10 @@ public class Clickable_circle : MonoBehaviour
 
         BeginMovementToDefaultPosition(false, true, false);
     }
+    public void PrepareToFadeIntoView_insideAperture() {
+        rotating = false;
+        circleImageRotationSpeed_default = Random.Range(-0.3f, 0.3f);
+    }
     public void ShrinkAndDisappear()
     {
         shrinking = true;
@@ -258,7 +266,7 @@ public class Clickable_circle : MonoBehaviour
             rotating = false;
             if (curvePath == false)
             {
-                transform.position = Vector2.MoveTowards(transform.position, destination, Time.deltaTime * speed);
+                transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * speed);
                 speed *= speedMultiplier;
                 if (speed > speedCap)
                 {
@@ -269,7 +277,7 @@ public class Clickable_circle : MonoBehaviour
             {            //  https://answers.unity.com/questions/1515853/move-from-a-to-b-using-parabola-with-or-without-it.html
 
                 time += Time.deltaTime * speedForCurve;
-                Vector2 pos = Vector2.Lerp(startPosition, destination, time);
+                Vector3 pos = Vector3.Lerp(startPosition, destination, time);
                 if (curveUpIfTrue)
                 {
                     pos.y += curve.Evaluate(time) * curveHeightMultiplier;      // for curve DOWNWARDS, just subtract instead of add
@@ -282,11 +290,12 @@ public class Clickable_circle : MonoBehaviour
                 speedForCurve *= curveSpeedMultiplier;
             }
 
-            if (Vector2.Distance(transform.position, destination) < 0.3f)
+            if (Vector3.Distance(transform.position, destination) < 0.3f)
             {
                 readyToMove = false;
                 destinationReached = true;
                 speed = defaultSpeed;
+                circleImageRotationSpeed_default = 0.2f;
                 if (destination == defaultPosition)
                 {
                     transform.position = defaultPosition;
@@ -369,6 +378,17 @@ public class Clickable_circle : MonoBehaviour
                 transform.localScale = defaultScale;
             }
         }
+        if (opacityIncreasingToOne) {
+            Color temp = SawBlade_SpriteRenderer.color;
+            temp.a += opacityIncreaseAmount;
+            SawBlade_SpriteRenderer.color = temp;
+
+            if (temp.a >= 1) {
+                opacityIncreasingToOne = false;
+                SawBlade_SpriteRenderer.color = new Color(1, 1, 1, 1);
+            }
+
+        }
     }
     public void NotifyPuzzleManagerOfDestinationReached()
     {
@@ -402,10 +422,10 @@ public class Clickable_circle : MonoBehaviour
         // make the granddaddy parent object wiggle in a circular motion
         _angle += RotateSpeed * Time.deltaTime;
 
-        var offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
+        var offset = new Vector3(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
         transform.position = defaultPosition + offset;
     }
-    public Vector2 ReturnDefaultPosition() {
+    public Vector3 ReturnDefaultPosition() {
         return defaultPosition;
     }
     //  ***************************************************************************************
@@ -453,7 +473,18 @@ public class Clickable_circle : MonoBehaviour
         }
     }
 
+    public void SetCircularSawOpacityToZero_BeginFadingIn() {
+        SawBlade_SpriteRenderer.color = new Color(1, 1, 1, 0);
+        transform.localScale = new Vector3(1, 1, 1);
 
+        rotating = false;
+        circleImageRotationSpeed_default = -17.5f;
+
+        growing = true;
+        opacityIncreasingToOne = true;
+
+
+    }
 
 }
 
