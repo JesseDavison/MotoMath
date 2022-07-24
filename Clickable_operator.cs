@@ -51,7 +51,18 @@ public class Clickable_operator : MonoBehaviour
 
     bool partOfCurrentPuzzle = false;
 
+    public GameObject apertureClosed_image;
+    SpriteRenderer apertureClosed_image_SpriteRenderer;
+    bool highlighted = false;
+    float variableForHighlightColorChange = 0;
+    public float incrementAmount;
 
+
+
+    private void Awake()
+    {
+        apertureClosed_image_SpriteRenderer = apertureClosed_image.GetComponent<SpriteRenderer>();
+    }
 
     private void Start()
     {
@@ -270,6 +281,17 @@ public class Clickable_operator : MonoBehaviour
                 transform.localScale = defaultScale;
             }
         }
+        if (highlighted) {
+            // we want to fluctuate the color of the closed aperture between 0.5 and 1
+            //      probably want to do this along a sine curve
+
+            float tempThing = Mathf.Sin(variableForHighlightColorChange) / 4f;      // change range from -1/1, to -.25/.25
+            tempThing += 0.75f; // change range to 0.5 / 1
+            //Debug.Log("tempThing: " + tempThing + "   variableForHighlightColorChange: " + variableForHighlightColorChange);
+            apertureClosed_image_SpriteRenderer.color = new Color(tempThing, tempThing, tempThing, 1);
+
+            variableForHighlightColorChange += incrementAmount;
+        }
     }
     public void NotifyPuzzleManagerOfDestinationReached()
     {
@@ -320,12 +342,24 @@ public class Clickable_operator : MonoBehaviour
     }
     public void TakeThisOperatorOutOfThePuzzle() {
         partOfCurrentPuzzle = false;
+        Un_HighlightThisOperator();
     }
     public void TakeThisOperatorOutOfThePuzzle_REVERSE() {
         partOfCurrentPuzzle = true;
+        Un_HighlightThisOperator();
     }
     public bool IsThisOperatorStillPartOfThePuzzle() {
         return partOfCurrentPuzzle;
+    }
+    //  ***************************************************************************************
+
+    public void HighlightThisOperator() {
+        variableForHighlightColorChange = 1.571f;    // half-pi, to start it at color (1, 1, 1, 1)
+        highlighted = true;
+    }
+    public void Un_HighlightThisOperator() {
+        highlighted = false;
+        apertureClosed_image_SpriteRenderer.color = new Color(1, 1, 1, 1);
     }
 
 }
