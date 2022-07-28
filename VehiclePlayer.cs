@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class VehicleBounce : MonoBehaviour
+public class VehiclePlayer : MonoBehaviour
 {
 
     public string whatVehicleIsThis;
-    
+
     Vector3 originalPos;
     public float currentYpos;
     public float minTimeBetweenBounce = 0.2f;
@@ -84,15 +84,23 @@ public class VehicleBounce : MonoBehaviour
     public float gettingShotRockingSpeed;
 
 
-    //public GameObject whiteCar_GameObject;
-    //Animator whiteCar_Animator;
+    public GameObject whiteCar_GameObject;
+    Animator whiteCar_Animator;
+    public GameObject fourFlames_GameObject;
+    Animator fourFlames_Animator;
+    public float fourFlames_timeBeforeRampDown = 3;
+    public float fourFlames_timeBeforeOFF = 1;
+    public bool fourFlames_readyToRampDown = false;
+
 
 
 
 
     private void Awake()
     {
-        //whiteCar_Animator = whiteCar_GameObject.GetComponent<Animator>();
+        whiteCar_Animator = whiteCar_GameObject.GetComponent<Animator>();
+        fourFlames_Animator = fourFlames_GameObject.GetComponent<Animator>();
+        fourFlames_GameObject.SetActive(false);
     }
 
 
@@ -121,7 +129,8 @@ public class VehicleBounce : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (supposedToBeStill == false) {
+        if (supposedToBeStill == false)
+        {
             if (midBounce)
             {
 
@@ -255,14 +264,15 @@ public class VehicleBounce : MonoBehaviour
             else if (movingForwardForFlamethrowerAttack == true)
             {
                 //Debug.Log("so, movingForwardForFlamethrowerAttack is true");
-                if (transform.position.x >= 2f) {
+                if (transform.position.x >= 2f)
+                {
                     //Debug.Log("just passed 2f, about to shoot flamethrower");
                     GameManager.instance.ShootFlamethrower();
                     movingForwardForFlamethrowerAttack = false;
 
                 }
             }
-       
+
 
 
             //else if (rockingFromGettingShot == true)
@@ -284,12 +294,14 @@ public class VehicleBounce : MonoBehaviour
 
 
 
-    IEnumerator Wait_thenRestoreDefaultXPosition() {
+    IEnumerator Wait_thenRestoreDefaultXPosition()
+    {
         yield return new WaitForSeconds(2);
         ResetXpositionsToDefaultAfterCaltrops();
     }
 
-    IEnumerator waitToMoveAgain() {
+    IEnumerator waitToMoveAgain()
+    {
         float delay = Random.Range(minTimeBetweenMOVE, maxTimeBetweenMOVE);
         yield return new WaitForSeconds(delay);
         //Debug.Log("waiting for " + delay + " seconds");
@@ -297,36 +309,45 @@ public class VehicleBounce : MonoBehaviour
     }
 
 
-    IEnumerator bounceLoop() {
+    IEnumerator bounceLoop()
+    {
 
         float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
         yield return new WaitForSeconds(delay);
         //Debug.Log("bouncing");
-        bounce();
+        if (nitrousBoosting == false) {
+            bounce();
+        }
+
     }
 
 
-    void bounce() {
+    void bounce()
+    {
         transform.position = new Vector3(transform.position.x, transform.position.y + bounceHeight, transform.position.z);
         midBounce = true;
 
         // start animation change
-        //whiteCar_Animator.Play("car_white_smallBump", -1, 0);
+        whiteCar_Animator.Play("car_white_smallBump", -1, 0);
 
 
         //float currentTime = 
     }
 
-    public void driftForwardBackward(float forcedSpeed) {
+    public void driftForwardBackward(float forcedSpeed)
+    {
         // pick a spot to go to
 
         //Debug.Log("just entered driftForwardBackward... nitrousBoosting " + nitrousBoosting + " supposedtobeoffScreen " + supposedToBeOffScreen);
         //Debug.Log("rockingFromBlownTire " + rockingFromBlownTire + " movingForwardForFlamethrowerAttack " + movingForwardForFlamethrowerAttack);
 
-        if (nitrousBoosting == true) {
+        if (nitrousBoosting == true)
+        {
             goalXpos = Random.Range(8.2f, 8.5f);
             readyToMoveAgain = true;
-        } else if (supposedToBeOffScreen == false) {
+        }
+        else if (supposedToBeOffScreen == false)
+        {
             goalXpos = Random.Range(minXpos, maxXpos);
 
 
@@ -345,24 +366,46 @@ public class VehicleBounce : MonoBehaviour
 
             // toggle the boolean
             readyToMoveAgain = true;
-        } 
+        }
 
-        if (movingForwardForFlamethrowerAttack) {
+        if (movingForwardForFlamethrowerAttack)
+        {
             goalXpos = Random.Range(3f, 3.9f);
             readyToMoveAgain = true;
             Debug.Log("goalXpos just set to " + goalXpos);
-        } else if (movingBackToReceiveFlamethrowerAttack) {
+        }
+        else if (movingBackToReceiveFlamethrowerAttack)
+        {
             goalXpos = Random.Range(10.3f, 12);
             readyToMoveAgain = true;
         }
 
 
     }
-    public void DriveToMiddle_forNitrousBoost() {
+    public void DriveToMiddle_forNitrousBoost()
+    {
         nitrousBoosting = true;
         driftForwardBackward(0);
+
+        // start animation
+        whiteCar_Animator.Play("car_white_beginNOS", -1, 0);
+        fourFlames_GameObject.SetActive(true);
+        fourFlames_Animator.SetBool("isNitrousBoosting", true);
+        fourFlames_Animator.Play("fourFlames_rampUp", -1, 0);
+        StartCoroutine(TurnOffNitrousBoostAfterDelay());
+
     }
-    public void DriveToMiddle_forFlamethrower() {
+    IEnumerator TurnOffNitrousBoostAfterDelay() {
+        yield return new WaitForSeconds(fourFlames_timeBeforeRampDown);
+        fourFlames_Animator.SetBool("isNitrousBoosting", false);
+
+
+        yield return new WaitForSeconds(fourFlames_timeBeforeOFF);
+        fourFlames_GameObject.SetActive(false);
+
+    }
+    public void DriveToMiddle_forFlamethrower()
+    {
         Debug.Log("just entered DriveToMiddle_forFlamethrower");
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
@@ -370,7 +413,8 @@ public class VehicleBounce : MonoBehaviour
         movingForwardForFlamethrowerAttack = true;
         driftForwardBackward(30);
     }
-    public void DriveBackToGetFlamethrowered() {
+    public void DriveBackToGetFlamethrowered()
+    {
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
         rockingFromBlownTire = false;
@@ -378,43 +422,56 @@ public class VehicleBounce : MonoBehaviour
         movingBackToReceiveFlamethrowerAttack = true;
         driftForwardBackward(0);
     }
-    public void DriveToForwardPosition_forDroppingCaltrops() {
+    public void DriveToForwardPosition_forDroppingCaltrops()
+    {
         // change min & max X positions
         minXpos = 11;
         maxXpos = 14;
         driftForwardBackward(0);
         StartCoroutine(Wait_thenRestoreDefaultXPosition());
     }
-    public void ResetXpositionsToDefaultAfterCaltrops() {
+    public void ResetXpositionsToDefaultAfterCaltrops()
+    {
         minXpos = minXpos_default;
         maxXpos = maxXpos_default;
     }
-    public void EndNitrousBoost() {
+    public void EndNitrousBoost()
+    {
         nitrousBoosting = false;
         driftForwardBackward(0);
+
+
+
+        // resume normal animation
+        whiteCar_Animator.Play("car_white_normal", -1, 0);
     }
-    public void DriveAwayForward() {
+    public void DriveAwayForward()
+    {
         goalXpos = 21;
         readyToMoveAgain = true;
         supposedToBeOffScreen = true;
     }
-    public void DriveAwayForward_andDropBombOnStoppedPlayer() {
+    public void DriveAwayForward_andDropBombOnStoppedPlayer()
+    {
         goalXpos = 40;
         readyToMoveAgain = true;
         supposedToBeOffScreen = true;
         dropBombOnStoppedPlayer = true;
         //asdfasdfasdf
     }
-    public void DriveAwayBackward() {
+    public void DriveAwayBackward()
+    {
         goalXpos = -10;
         readyToMoveAgain = true;
         supposedToBeOffScreen = true;
     }
-    public void BringVehicleBackOnScreen() {
+    public void BringVehicleBackOnScreen()
+    {
         supposedToBeOffScreen = false;
         driftForwardBackward(0);
     }
-    public void AddSparkleArrived() {
+    public void AddSparkleArrived()
+    {
         //sparklesArrived += 1;
     }
 
@@ -427,7 +484,8 @@ public class VehicleBounce : MonoBehaviour
     //public void BeginRandomSwerve() {
     //    BeginSwerve();
     //}
-    public void BeginSwerve() {
+    public void BeginSwerve()
+    {
         // if it swerves "left" then z-value should be 1
 
         // if it swerves "right" then z should be -1, and then get changed back to 1
@@ -440,7 +498,7 @@ public class VehicleBounce : MonoBehaviour
         //if (swerveLeftToAvoidHull == true) {
         //    temp1 = 0.7f;   // go far "left" because the enemy hull will appear in FRONT OF the player vehicle
         //    temp2 = 1.05f;
-        
+
         int rando = Random.Range(1, 3);
         if (rando == 1)
         {
@@ -459,7 +517,7 @@ public class VehicleBounce : MonoBehaviour
             swerve2_Zvalue = -1;
         }
 
-        
+
 
 
 
@@ -477,13 +535,15 @@ public class VehicleBounce : MonoBehaviour
         swerving = true;
     }
     // *******************************************************************************************************
-    public void AnimateGettingShot() {
-        
-        
+    public void AnimateGettingShot()
+    {
+
+
         rockingFromGettingShot = true;
 
     }
-    public void ResetGettingShotStuff() {
+    public void ResetGettingShotStuff()
+    {
 
 
         rockingFromGettingShot = false;
@@ -492,7 +552,8 @@ public class VehicleBounce : MonoBehaviour
     }
 
     // *******************************************************************************************************
-    public void AnimateBlownTire() {
+    public void AnimateBlownTire()
+    {
         // increased bumpiness:
         minTimeBetweenBounce = 0.01f;
         maxTimeBetweenBounce = 0.3f;
@@ -504,7 +565,8 @@ public class VehicleBounce : MonoBehaviour
         // these need to be restored to defaults at some point
 
     }
-    public void ResetBlownTireStuff() {
+    public void ResetBlownTireStuff()
+    {
         minTimeBetweenBounce = 0.05f;
         maxTimeBetweenBounce = 0.7f;
         bounceHeight = 0.07f;
@@ -512,7 +574,8 @@ public class VehicleBounce : MonoBehaviour
         //vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
         vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
-    public void SetSpeedToZeroAfterBlownTire() {
+    public void SetSpeedToZeroAfterBlownTire()
+    {
         supposedToBeStill = true;
 
         ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
@@ -524,23 +587,27 @@ public class VehicleBounce : MonoBehaviour
         //rockingFromBlownTire = false;
         //bounceHeight = 0;
         // stop animation
-        if (whatVehicleIsThis == "bike") {
+        if (whatVehicleIsThis == "bike")
+        {
             transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
         }
     }
     // *******************************************************************************************************
-    public void SetSpeedToZero() {
+    public void SetSpeedToZero()
+    {
         supposedToBeStill = true;
         if (whatVehicleIsThis == "bike")
         {
             transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
         }
     }
-    public void RestoreSpeed() {
+    public void RestoreSpeed()
+    {
         supposedToBeStill = false;
         transform.position = new Vector2(-5, 0);
 
-        if (whatVehicleIsThis == "bike") {
+        if (whatVehicleIsThis == "bike")
+        {
             transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = true;
             transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true); // turn off normal version
             transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(false); // turn on destroyed version

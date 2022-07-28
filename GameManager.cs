@@ -93,7 +93,9 @@ public class GameManager : MonoBehaviour
     public Animator explodey;
     public float durationOfExplosion;
     public GameObject playerVehicle;
+    VehiclePlayer playerVehicle_Script;
     public GameObject basicEnemy;
+    VehicleEnemy basicEnemy_Script;
     public Animator basicEnemyDriving;
     public Animator basicEnemyExploding;
     public GameObject basicEnemyHull;
@@ -218,6 +220,12 @@ public class GameManager : MonoBehaviour
     public Animator SmallFlameAnimation_onEnemy_3;
 
 
+    private void Awake()
+    {
+        playerVehicle_Script = playerVehicle.GetComponent<VehiclePlayer>();
+        basicEnemy_Script = basicEnemy.GetComponent<VehicleEnemy>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -284,8 +292,8 @@ public class GameManager : MonoBehaviour
                     fullSpeedAchieved = false;
                     Debug.Log("back to normal speed");
                     fuelGaugeScript.StartFuelConsumption();
-                    playerVehicle.GetComponent<VehicleBounce>().EndNitrousBoost();
-                    basicEnemy.GetComponent<VehicleBounce>().BringVehicleBackOnScreen();
+                    playerVehicle_Script.EndNitrousBoost();
+                    basicEnemy_Script.BringVehicleBackOnScreen();
                     LoadNewPuzzleAfterSKIP();
                     Debug.Log("LoadNewPuzzleAfterSKIP");
 
@@ -322,7 +330,7 @@ public class GameManager : MonoBehaviour
                 // be ready for background to be set to default speed
 
                 // set playerVehicle speed to 0
-                playerVehicle.GetComponent<VehicleBounce>().SetSpeedToZeroAfterBlownTire();
+                playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
 
 
                 // restore timescale to 1
@@ -332,11 +340,11 @@ public class GameManager : MonoBehaviour
 
 
                 // now, have enemy drive by
-                basicEnemy.GetComponent<VehicleBounce>().BringVehicleBackOnScreen();
+                basicEnemy_Script.BringVehicleBackOnScreen();
                 //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
                 basicEnemy.SetActive(true);
                 basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
-                basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward_andDropBombOnStoppedPlayer();
+                basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
 
                 Debug.Log("enemy should be active");
 
@@ -373,7 +381,7 @@ public class GameManager : MonoBehaviour
                 // be ready for background to be set to default speed
 
                 // set playerVehicle speed to 0
-                playerVehicle.GetComponent<VehicleBounce>().SetSpeedToZeroAfterBlownTire();
+                playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
 
 
                 // restore timescale to 1
@@ -383,11 +391,11 @@ public class GameManager : MonoBehaviour
 
 
                 // now, have enemy drive by
-                basicEnemy.GetComponent<VehicleBounce>().BringVehicleBackOnScreen();
+                basicEnemy_Script.BringVehicleBackOnScreen();
                 //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
                 basicEnemy.SetActive(true);
                 basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
-                basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward_andDropBombOnStoppedPlayer();
+                basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
 
                 Debug.Log("enemy should be active");
 
@@ -454,8 +462,8 @@ public class GameManager : MonoBehaviour
             slowingDownFromBlownTire = true;
             playerSlowingDown = true;
             // have enemy drive off, THEN everything slows down
-            playerVehicle.GetComponent<VehicleBounce>().AnimateBlownTire();
-            basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward();
+            playerVehicle_Script.AnimateBlownTire();
+            basicEnemy_Script.DriveAwayForward();
             // shrink the circles, operators, & goal
             //PuzzleManager.instance.ShrinkAndDisappear_allCirclesOperatorsGoal();
 
@@ -468,9 +476,9 @@ public class GameManager : MonoBehaviour
             slowingDownFromPlayerExploding = true;
             playerSlowingDown = true;
             // have enemy drive off, THEN everything slows down
-            //playerVehicle.GetComponent<VehicleBounce>().AnimateExplodingPlayer();
+            //playerVehicle_Script.AnimateExplodingPlayer();
             PlayerExplodes(false);
-            basicEnemy.GetComponent<VehicleBounce>().DriveAwayForward();
+            basicEnemy_Script.DriveAwayForward();
             // shrink the circles, operators, & goal
             //PuzzleManager.instance.ShrinkAndDisappear_allCirclesOperatorsGoal();
 
@@ -763,7 +771,7 @@ public class GameManager : MonoBehaviour
         enemyInRange = false;
 
         playerVehicle.gameObject.SetActive(true);
-        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        playerVehicle_Script.RestoreSpeed();
         backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
@@ -795,7 +803,7 @@ public class GameManager : MonoBehaviour
         enemyInRange = false;
 
         playerVehicle.gameObject.SetActive(true);
-        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        playerVehicle_Script.RestoreSpeed();
         backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
@@ -828,7 +836,7 @@ public class GameManager : MonoBehaviour
         enemyInRange = false;
 
         playerVehicle.gameObject.SetActive(true);
-        playerVehicle.GetComponent<VehicleBounce>().RestoreSpeed();
+        playerVehicle_Script.RestoreSpeed();
         backgroundThing_1.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_2.GetComponent<backgroundScroll>().RestoreSpeed();
         backgroundThing_3.GetComponent<backgroundScroll>().RestoreSpeed();
@@ -861,14 +869,14 @@ public class GameManager : MonoBehaviour
 
             // make the player speed up
             usingNitrous = true;
-            playerVehicle.GetComponent<VehicleBounce>().DriveToMiddle_forNitrousBoost();
+            playerVehicle_Script.DriveToMiddle_forNitrousBoost();
             // if an enemy is there, it should fall back and go away
 
 
             // make circles, operators, & goal disappear left-ward
             PuzzleManager.instance.MakeCirclesOperatorsGoal_moveLeftForNitrous();
             // IF ENEMY IS ON SCREEN:
-            basicEnemy.GetComponent<VehicleBounce>().DriveAwayBackward();
+            basicEnemy_Script.DriveAwayBackward();
 
         }
 
@@ -1298,7 +1306,7 @@ public class GameManager : MonoBehaviour
         Gunfire_hitting.gameObject.SetActive(true);
         Gunfire_hitting.Play("gunfire_hitting_animation", -1, 0f);
 
-        basicEnemy.GetComponent<VehicleBounce>().AnimateGettingShot();
+        basicEnemy_Script.AnimateGettingShot();
 
         StartCoroutine(GunfireDisableAfterAnimation());
     }
@@ -1357,8 +1365,8 @@ public class GameManager : MonoBehaviour
         }
     }
     public void MovePlayerForward_forFlamethrower() {
-        playerVehicle.GetComponent<VehicleBounce>().DriveToMiddle_forFlamethrower();
-        basicEnemy.GetComponent<VehicleBounce>().DriveBackToGetFlamethrowered();
+        playerVehicle_Script.DriveToMiddle_forFlamethrower();
+        basicEnemy_Script.DriveBackToGetFlamethrowered();
     }
     public void ShootFlamethrower() {
         shootingFlamethrower_atEnemy = true;
@@ -1501,15 +1509,15 @@ public class GameManager : MonoBehaviour
     {
 
 
-        //basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(21, 50, 0);
+        //basicEnemy_Script.SetGoalPosForRocket(21, 50, 0);
         basicEnemy.transform.position = new Vector3(21, 0, 1);
 
         basicEnemy.SetActive(true);
         basicEnemyDriving.gameObject.SetActive(true);
         basicEnemyExploding.gameObject.SetActive(false);
         puzzleSolvesSinceLastEnemy = 0;
-        basicEnemy.GetComponent<VehicleBounce>().driftForwardBackward(enemyAppearSpeed);
-        basicEnemy.GetComponent<VehicleBounce>().midBounce = true;
+        basicEnemy_Script.driftForwardBackward(enemyAppearSpeed);
+        basicEnemy_Script.midBounce = true;
 
         enemyInRange = true;
 
@@ -1547,9 +1555,9 @@ public class GameManager : MonoBehaviour
     }
     public void EnemyFires_Caltrops(bool playerWillDodge) {
         // if enemy is in middle of screen, should make the enemy move forward before the caltrops land
-        basicEnemy.GetComponent<VehicleBounce>().DriveToForwardPosition_forDroppingCaltrops();
+        basicEnemy_Script.DriveToForwardPosition_forDroppingCaltrops();
         // make the player vehicle move to middle of screen?
-        //playerVehicle.GetComponent<VehicleBounce>().
+        //playerVehicle_Script.
 
         caltrops_1.transform.position = basicEnemy.transform.position;
         caltrops_2.transform.position = basicEnemy.transform.position;
@@ -1573,7 +1581,7 @@ public class GameManager : MonoBehaviour
         // move bomb to location of firer
         bomb.transform.position = basicEnemy.transform.position + new Vector3(0, 1.5f, 0);
         //Debug.Log("in EnemyFiresBomb(), and bomb y pos at: " + bomb.transform.position.y);
-        string temp = playerVehicle.GetComponent<VehicleBounce>().whatVehicleIsThis;
+        string temp = playerVehicle_Script.whatVehicleIsThis;
         bomb.GetComponent<Bomb>().LaunchBomb_EnemyToPlayer(temp, playerIsMoving);
 
         // set endpoint as location of firee
@@ -1591,7 +1599,7 @@ public class GameManager : MonoBehaviour
         //basicEnemyExploding.
         //basicEnemyDriving.gameObject.SetActive(false);
         //basicEnemyExploding.gameObject.SetActive(true);
-        //basicEnemy.GetComponent<VehicleBounce>().SetGoalPosForRocket(-55, 33, 0);
+        //basicEnemy_Script.SetGoalPosForRocket(-55, 33, 0);
 
 
         // turn off the normal enemy
