@@ -94,6 +94,8 @@ public class GameManager : MonoBehaviour
     public float durationOfExplosion;
     public GameObject playerVehicle;
     VehiclePlayer playerVehicle_Script;
+    public GameObject playerVehicle_sprite;
+    public GameObject playerVehicle_hullSprite;
     public GameObject basicEnemy;
     VehicleEnemy basicEnemy_Script;
     public Animator basicEnemyDriving;
@@ -470,6 +472,7 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
     public void StartExplodingPlayerSlowdown() {
         if (slowingDownFromPlayerExploding == false)
         {
@@ -752,6 +755,7 @@ public class GameManager : MonoBehaviour
     public void StartTimedGame()
     {
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
+        ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "timed";
@@ -782,6 +786,7 @@ public class GameManager : MonoBehaviour
     public void StartEndlessGame()
     {
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
+        ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "endless";
@@ -815,6 +820,7 @@ public class GameManager : MonoBehaviour
     public void StartKiddyGame()
     {
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
+        ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
         fuelGaugeScript.StartFuelConsumption();
         PuzzleManager.instance.gameType = "kiddy";
@@ -1516,7 +1522,8 @@ public class GameManager : MonoBehaviour
         basicEnemyDriving.gameObject.SetActive(true);
         basicEnemyExploding.gameObject.SetActive(false);
         puzzleSolvesSinceLastEnemy = 0;
-        basicEnemy_Script.driftForwardBackward(enemyAppearSpeed);
+        basicEnemy_Script.BringVehicleBackOnScreen();
+        //basicEnemy_Script.driftForwardBackward(enemyAppearSpeed);
         basicEnemy_Script.midBounce = true;
 
         enemyInRange = true;
@@ -1854,17 +1861,23 @@ public class GameManager : MonoBehaviour
         PlayExplosion();
         //playerVehicle.SetActive(false);
 
-        
-        // turn off the normal 
-        playerVehicle.SetActive(false);
-        // turn on the hull
-        basicEnemyHull.transform.position = playerVehicle.transform.position - new Vector3(6.5f, 0, 0);
-        basicEnemyHull.SetActive(true);
+
+        playerVehicle_sprite.SetActive(false);
+        playerVehicle_hullSprite.transform.position = new Vector3(-6.6f, -2.7f, 0);
+        playerVehicle_hullSprite.SetActive(true);
+
         // kick off the hull-bouncing script
-        basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(true, playerIsMoving);
+        playerVehicle_hullSprite.GetComponent<HullWrecking>().BeginBouncing(true, playerIsMoving);
 
         enemyInRange = false;
 
+
+    }
+    public void ResetAfter_PlayerExplodes() {
+        playerVehicle_sprite.SetActive(true);
+
+        playerVehicle_hullSprite.transform.GetChild(0).gameObject.SetActive(false);     // turn off the flame
+        playerVehicle_hullSprite.SetActive(false);
 
     }
     public void BombExplodes() {

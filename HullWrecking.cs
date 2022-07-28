@@ -171,12 +171,14 @@ public class HullWrecking : MonoBehaviour
         if (playerIsTarget) {
             thisIsEnemyHull = false;
             playerIsStandingStill_soBounceOnlyOnce = !playerIsMoving;
+            startPosition = new Vector3(-6.6f, -2.7f, 0);
         } else {
             thisIsEnemyHull = true;
             playerIsStandingStill_soBounceOnlyOnce = false;
+            startPosition = transform.position;
         }
 
-        startPosition = transform.position;
+
         hullSprite.transform.Rotate(new Vector3(0, 0, 0));
         gameObject.SetActive(true);
         //endPosition = new Vector2(transform.position.x - bounceDistanceX, transform.position.y);

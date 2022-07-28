@@ -92,6 +92,7 @@ public class VehiclePlayer : MonoBehaviour
     public float fourFlames_timeBeforeOFF = 1;
     public bool fourFlames_readyToRampDown = false;
 
+    public GameObject tireSmoke_GameObject;
 
 
 
@@ -101,6 +102,7 @@ public class VehiclePlayer : MonoBehaviour
         whiteCar_Animator = whiteCar_GameObject.GetComponent<Animator>();
         fourFlames_Animator = fourFlames_GameObject.GetComponent<Animator>();
         fourFlames_GameObject.SetActive(false);
+        tireSmoke_GameObject.SetActive(false);
     }
 
 
@@ -247,20 +249,20 @@ public class VehiclePlayer : MonoBehaviour
                     }
                 }
             }
-            else if (rockingFromBlownTire == true)
-            {
+            //else if (rockingFromBlownTire == true)
+            //{
 
-                // go from -3 to 3, on the CHILD sprite object
+            //    // go from -3 to 3, on the CHILD sprite object
 
-                //transform.Rotate(0, 0, rockingSpeed);
-                vehicleSprite.Rotate(0, 0, rockingSpeed);
+            //    //transform.Rotate(0, 0, rockingSpeed);
+            //    vehicleSprite.Rotate(0, 0, rockingSpeed);
 
-                if (vehicleSprite.rotation.z > flickMeAround || vehicleSprite.rotation.z < -flickMeAround)
-                {
-                    rockingSpeed *= -1;
-                }
+            //    if (vehicleSprite.rotation.z > flickMeAround || vehicleSprite.rotation.z < -flickMeAround)
+            //    {
+            //        rockingSpeed *= -1;
+            //    }
 
-            }
+            //}
             else if (movingForwardForFlamethrowerAttack == true)
             {
                 //Debug.Log("so, movingForwardForFlamethrowerAttack is true");
@@ -315,7 +317,7 @@ public class VehiclePlayer : MonoBehaviour
         float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
         yield return new WaitForSeconds(delay);
         //Debug.Log("bouncing");
-        if (nitrousBoosting == false) {
+        if (nitrousBoosting == false && rockingFromBlownTire == false) {
             bounce();
         }
 
@@ -397,11 +399,13 @@ public class VehiclePlayer : MonoBehaviour
     }
     IEnumerator TurnOffNitrousBoostAfterDelay() {
         yield return new WaitForSeconds(fourFlames_timeBeforeRampDown);
-        fourFlames_Animator.SetBool("isNitrousBoosting", false);
+        fourFlames_Animator.SetBool("isNitrousBoosting", false);        // this triggers the fourFlames animator to repeat the full animation until...
 
 
-        yield return new WaitForSeconds(fourFlames_timeBeforeOFF);
+        yield return new WaitForSeconds(fourFlames_timeBeforeOFF);      // ... until this
         fourFlames_GameObject.SetActive(false);
+        // resume normal whiteCar animation
+        whiteCar_Animator.Play("car_white_normal", -1, 0);
 
     }
     public void DriveToMiddle_forFlamethrower()
@@ -409,7 +413,7 @@ public class VehiclePlayer : MonoBehaviour
         Debug.Log("just entered DriveToMiddle_forFlamethrower");
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
-        rockingFromBlownTire = false;
+        //rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = true;
         driftForwardBackward(30);
     }
@@ -417,7 +421,7 @@ public class VehiclePlayer : MonoBehaviour
     {
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
-        rockingFromBlownTire = false;
+        //rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = false;
         movingBackToReceiveFlamethrowerAttack = true;
         driftForwardBackward(0);
@@ -440,10 +444,6 @@ public class VehiclePlayer : MonoBehaviour
         nitrousBoosting = false;
         driftForwardBackward(0);
 
-
-
-        // resume normal animation
-        whiteCar_Animator.Play("car_white_normal", -1, 0);
     }
     public void DriveAwayForward()
     {
@@ -554,31 +554,43 @@ public class VehiclePlayer : MonoBehaviour
     // *******************************************************************************************************
     public void AnimateBlownTire()
     {
-        // increased bumpiness:
-        minTimeBetweenBounce = 0.01f;
-        maxTimeBetweenBounce = 0.3f;
-        bounceHeight = flatTireBounceHeight;
+        //// increased bumpiness:
+        //minTimeBetweenBounce = 0.01f;
+        //maxTimeBetweenBounce = 0.3f;
+        //bounceHeight = flatTireBounceHeight;
 
-        // vehicle rocks (rotates) back & forth slightly
+        //// vehicle rocks (rotates) back & forth slightly
         rockingFromBlownTire = true;
 
-        // these need to be restored to defaults at some point
+        //// these need to be restored to defaults at some point
+        ///
+
+        // start the animation
+        whiteCar_Animator.Play("car_white_flatTire", -1, 0);
+
+        StartCoroutine(StartBlownTire_Smoke());
+    }
+    IEnumerator StartBlownTire_Smoke()
+    {
+        yield return new WaitForSeconds(0.8f);
+        tireSmoke_GameObject.SetActive(true);
 
     }
     public void ResetBlownTireStuff()
     {
-        minTimeBetweenBounce = 0.05f;
-        maxTimeBetweenBounce = 0.7f;
-        bounceHeight = 0.07f;
-        rockingFromBlownTire = false;
-        //vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
-        vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
+        //minTimeBetweenBounce = 0.05f;
+        //maxTimeBetweenBounce = 0.7f;
+        //bounceHeight = 0.07f;
+        //rockingFromBlownTire = false;
+        ////vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
+        //vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
     public void SetSpeedToZeroAfterBlownTire()
     {
         supposedToBeStill = true;
 
-        ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
+        whiteCar_Animator.speed = 0;
+        //ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
         //actualHorizontalSpeed = 0;
         //midBounce = false;
         //postBounceFallSpeed = 0;
@@ -587,10 +599,16 @@ public class VehiclePlayer : MonoBehaviour
         //rockingFromBlownTire = false;
         //bounceHeight = 0;
         // stop animation
-        if (whatVehicleIsThis == "bike")
-        {
-            transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
-        }
+        
+        //if (whatVehicleIsThis == "bike")
+        //{
+        //    transform.GetChild(1).transform.GetChild(0).GetComponent<Animator>().enabled = false;
+        //}
+
+
+
+
+
     }
     // *******************************************************************************************************
     public void SetSpeedToZero()
@@ -603,8 +621,10 @@ public class VehiclePlayer : MonoBehaviour
     }
     public void RestoreSpeed()
     {
+        tireSmoke_GameObject.SetActive(false);
         supposedToBeStill = false;
         transform.position = new Vector2(-5, 0);
+        whiteCar_Animator.speed = 1;
 
         if (whatVehicleIsThis == "bike")
         {

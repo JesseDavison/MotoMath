@@ -61,21 +61,6 @@ public class Bomb : MonoBehaviour
                     }
 
 
-
-                    //GameManager.instance.BombExplodes();
-
-                    //// turn player into destroyed version
-                    //if (playerVehicle == "bike") {
-                    //    player.SetActive(false);
-
-                    //    asdf
-
-                    //    player.transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(false); // turn off normal version
-                    //    player.transform.GetChild(1).transform.GetChild(1).gameObject.SetActive(true); // turn on destroyed version
-                    //}
-
-
-
                     // activate end of game summary screen
                     GameManager.instance.DisplayGameOver(false, true);
 
