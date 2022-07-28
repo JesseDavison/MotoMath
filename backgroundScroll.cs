@@ -6,6 +6,8 @@ public class backgroundScroll : MonoBehaviour
 {
     // gonna try https://www.youtube.com/watch?v=P3hcopOkpa8
 
+    // also used https://forum.unity.com/threads/changing-boxcollider2d-size-to-match-sprite-bounds-at-runtime.267964/
+
     BoxCollider2D boxCollider;
     Rigidbody2D rb;
 
@@ -30,21 +32,36 @@ public class backgroundScroll : MonoBehaviour
     float defaultZposition;
     //float defaultYposition;
 
+    bool readyToAdjust = false;
+    public GameObject companionImage;
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
         defaultZposition = transform.position.z;
         //defaultYposition = transform.position.y;
         defaultPosition = new Vector3(startSpot, transform.position.y, transform.position.z);
+
+        Vector2 sizeOfSprite = GetComponent<SpriteRenderer>().sprite.bounds.size;
+
         boxCollider = GetComponent<BoxCollider2D>();
+
+        boxCollider.size = sizeOfSprite;
+
+
         rb = GetComponent<Rigidbody2D>();
 
         if (!foregroundObject) {
             width = boxCollider.size.x * zoomMultiplier;
-        } 
-
+            //Debug.Log("the width is " + width);
+        }
 
         rb.velocity = new Vector2(speed, 0);
+
+        //width -= 0.06024f / 2f;      // put this in because i'm seeing a tiny gap between images
 
         vector = new Vector2(width * 2f, 0);
     }
@@ -52,11 +69,33 @@ public class backgroundScroll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.x < -width) {
+        if (transform.position.x <= -width) {
             Reposition();
+            readyToAdjust = true;
         }
 
         rb.velocity = new Vector2(speed, 0);
+
+        if (readyToAdjust) {
+            float gap = Vector2.Distance(transform.position, companionImage.transform.position);
+            if (gap > width) {
+                Vector3 adjustmentVector = new Vector3(gap - width, 0, 0);
+                transform.position = transform.position - adjustmentVector;
+                Debug.Log("adjustment made. Gap: " + gap + " width: " + width + ", difference: " + (gap - width));
+            }
+
+            readyToAdjust = false;
+        }
+
+        // occasionally make sure the distance between the images is the same as at the beginning
+
+
+
+
+
+
+
+
 
         //actualXpos = transform.position.x;
 
@@ -73,14 +112,18 @@ public class backgroundScroll : MonoBehaviour
 
     void Reposition() {
         //Debug.Log("reposition called");
-        if (randomized) {
+        if (randomized)
+        {
             randomizedMultiplier = Random.Range(0.5f, 4f);
-        } else {
+        }
+        else
+        {
             randomizedMultiplier = 1;
         }
-
+        //Debug.Log("position before Reposition: " + transform.position.x);
         transform.position = (Vector2)transform.position + vector * randomizedMultiplier;
         transform.position = new Vector3(transform.position.x, transform.position.y, defaultZposition);
+        //Debug.Log("position after Reposition: " + transform.position.x);
     }
 
     public void SetSpeedToZero() {
