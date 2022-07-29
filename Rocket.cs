@@ -21,6 +21,8 @@ public class Rocket : MonoBehaviour
     public float horizontalHoverDistance;
     public bool hoverIsFinished = false;
 
+    public float min_verticalHoverDistance;
+    public float max_verticalHoverDistance;
     public float verticalHoverDistance;
     public float originalYPosition;
     public float verticalHoverYPosition;
@@ -30,6 +32,10 @@ public class Rocket : MonoBehaviour
 
     public int whichEdgeOfScreen;   // either 21 or -6
     public bool shootingAtEnemy = true;
+
+    public float enemyIsTarget_xPosAdjustForDetonate;
+    public float playerIsTarget_xPosAdjustForDetonate;
+
 
 
     // Start is called before the first frame update
@@ -67,7 +73,7 @@ public class Rocket : MonoBehaviour
             if (shootingAtEnemy == true) {
                 targetXPOS = target.transform.position.x;       // this allows the enemy to move around and still have the missile "hit" at the right spot/time
 
-                if (transform.position.x > targetXPOS)
+                if (transform.position.x > (targetXPOS - enemyIsTarget_xPosAdjustForDetonate))
                 {
                     GameManager.instance.EnemyExplodes();
                     gameObject.SetActive(false);
@@ -76,7 +82,7 @@ public class Rocket : MonoBehaviour
 
             } else {
                 targetXPOS = player.transform.position.x;
-                if (transform.position.x < targetXPOS) {
+                if (transform.position.x < (targetXPOS - playerIsTarget_xPosAdjustForDetonate)) {
                     GameManager.instance.PlayerExplodes(true);
                     gameObject.SetActive(false);
                 }
@@ -95,6 +101,7 @@ public class Rocket : MonoBehaviour
 
 
     public void LaunchRocket() {
+        //Time.timeScale = 0.1f;
         speed = defaultSpeed;
         //hovering_positionToHoverTo = new Vector2(transform.position.x - hoverDistance, transform.position.y);
         hovering_XpositionToHoverTo = transform.position.x - horizontalHoverDistance;
@@ -102,7 +109,7 @@ public class Rocket : MonoBehaviour
 
         hoverIsComplete = false;
         int rando = Random.Range(1, 3);
-        verticalHoverDistance = Random.Range(0.2f, 1f);
+        verticalHoverDistance = Random.Range(min_verticalHoverDistance, max_verticalHoverDistance);
         if (rando == 1) {
             verticalHoverYPosition = originalYPosition - verticalHoverDistance;
         } else {
@@ -119,13 +126,14 @@ public class Rocket : MonoBehaviour
     }
 
     public void LaunchRocketBackward() {
+        //Time.timeScale = 0.1f;
         speed = defaultSpeed;
         hovering_XpositionToHoverTo = transform.position.x + horizontalHoverDistance;
         originalYPosition = transform.position.y;
 
         hoverIsComplete = false;
         int rando = Random.Range(1, 3);
-        verticalHoverDistance = Random.Range(0.2f, 1f);
+        verticalHoverDistance = Random.Range(min_verticalHoverDistance, max_verticalHoverDistance);
         if (rando == 1) {
             verticalHoverYPosition = originalYPosition - verticalHoverDistance;
         } else {

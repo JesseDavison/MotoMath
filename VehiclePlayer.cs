@@ -65,7 +65,7 @@ public class VehiclePlayer : MonoBehaviour
     public bool supposedToBeOffScreen = false;
     bool supposedToBeStill = false;
 
-    bool nitrousBoosting = false;
+    public bool nitrousBoosting = false;
     //public bool isThisARocket = false;
     //public float rocketExplosionXPos;
 
@@ -93,6 +93,9 @@ public class VehiclePlayer : MonoBehaviour
     public bool fourFlames_readyToRampDown = false;
 
     public GameObject tireSmoke_GameObject;
+    public GameObject blownTireExplosion_GameObject;
+    public float blownTireExplosion_duration;
+    public float timeBeforeStarting_tireSmoke;
 
 
 
@@ -103,6 +106,7 @@ public class VehiclePlayer : MonoBehaviour
         fourFlames_Animator = fourFlames_GameObject.GetComponent<Animator>();
         fourFlames_GameObject.SetActive(false);
         tireSmoke_GameObject.SetActive(false);
+        blownTireExplosion_GameObject.SetActive(false);
     }
 
 
@@ -443,6 +447,7 @@ public class VehiclePlayer : MonoBehaviour
     {
         nitrousBoosting = false;
         driftForwardBackward(0);
+        StartCoroutine(bounceLoop());
 
     }
     public void DriveAwayForward()
@@ -567,12 +572,17 @@ public class VehiclePlayer : MonoBehaviour
 
         // start the animation
         whiteCar_Animator.Play("car_white_flatTire", -1, 0);
-
+        blownTireExplosion_GameObject.SetActive(true);
         StartCoroutine(StartBlownTire_Smoke());
     }
     IEnumerator StartBlownTire_Smoke()
     {
-        yield return new WaitForSeconds(0.8f);
+        //Time.timeScale = 0.1f;
+        //yield return new WaitForSeconds(blownTireExplosion_duration);
+        //blownTireExplosion_GameObject.SetActive(false);
+
+
+        yield return new WaitForSeconds(timeBeforeStarting_tireSmoke);
         tireSmoke_GameObject.SetActive(true);
 
     }
@@ -584,13 +594,15 @@ public class VehiclePlayer : MonoBehaviour
         //rockingFromBlownTire = false;
         ////vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
         //vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
+        rockingFromBlownTire = false;
+        StartCoroutine(bounceLoop());
     }
     public void SetSpeedToZeroAfterBlownTire()
     {
         supposedToBeStill = true;
 
         whiteCar_Animator.speed = 0;
-        //ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
+        ResetBlownTireStuff();      // resetting it now because it's not moving so it doesn't matter 
         //actualHorizontalSpeed = 0;
         //midBounce = false;
         //postBounceFallSpeed = 0;

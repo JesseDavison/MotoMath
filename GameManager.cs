@@ -2084,12 +2084,12 @@ public class GameManager : MonoBehaviour
         else
         {
             int rando = Random.Range(1, 2);
-            if (rando == 1) {
+            if (rando == 3) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 2) {
+            } else if (rando == 1) {
                 EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
