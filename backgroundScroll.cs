@@ -35,7 +35,7 @@ public class backgroundScroll : MonoBehaviour
     bool readyToAdjust = false;
     public GameObject companionImage;
 
-
+    public float tweakThis;
 
 
     // Start is called before the first frame update
@@ -63,7 +63,7 @@ public class backgroundScroll : MonoBehaviour
 
         //width -= 0.06024f / 2f;      // put this in because i'm seeing a tiny gap between images
 
-        vector = new Vector2(width * 2f, 0);
+        vector = new Vector2(width * 2f - tweakThis, 0);
     }
 
     // Update is called once per frame
@@ -79,10 +79,13 @@ public class backgroundScroll : MonoBehaviour
         if (readyToAdjust) {
             float gap = Vector2.Distance(transform.position, companionImage.transform.position);
             if (gap > width) {
+                //Debug.Log("before change, gap: " + gap + ", name: " + gameObject.name);
                 Vector3 adjustmentVector = new Vector3(gap - width, 0, 0);
                 transform.position = transform.position - adjustmentVector;
-                Debug.Log("adjustment made. Gap: " + gap + " width: " + width + ", difference: " + (gap - width));
+                //Debug.Log("adjustment made. Gap: " + gap + " width: " + width + ", difference: " + (gap - width));
             }
+            //gap = Vector2.Distance(transform.position, companionImage.transform.position);
+            //Debug.Log("after change, gap: " + gap + ", name: " + gameObject.name);
 
             readyToAdjust = false;
         }
@@ -121,7 +124,7 @@ public class backgroundScroll : MonoBehaviour
             randomizedMultiplier = 1;
         }
         //Debug.Log("position before Reposition: " + transform.position.x);
-        transform.position = (Vector2)transform.position + vector * randomizedMultiplier;
+        transform.position = (Vector2)transform.position + (vector) * randomizedMultiplier;
         transform.position = new Vector3(transform.position.x, transform.position.y, defaultZposition);
         //Debug.Log("position after Reposition: " + transform.position.x);
     }

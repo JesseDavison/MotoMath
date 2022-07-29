@@ -2276,46 +2276,62 @@ public class PuzzleManager : MonoBehaviour
         if (oppy.type == "addition")
         {
             opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "addition";
-            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "+";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
             opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(true);                    // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "subtraction")
         {
             opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "subtraction";
-            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "-";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
             opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(true);                    // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "multiplication")
         {
             opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "multiplication";
-            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "*";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
             opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(true);                    // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "division")
         {
             opAorB.GetComponent<Clickable_operator>().typeOfThisOperator = "division";
-            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "/";
+            opAorB.transform.GetChild(0).GetComponent<TextMeshPro>().text = "";
             opAorB.transform.GetChild(1).gameObject.SetActive(false);                   // squareRootImage
             opAorB.transform.GetChild(2).gameObject.SetActive(false);                   // squareRoot_X
             opAorB.transform.GetChild(3).gameObject.SetActive(false);                   // cubeRoot3
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(true);                   // DIVISION
         }
         else if (oppy.type == "exponent2")
         {
@@ -2327,6 +2343,10 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(4).gameObject.SetActive(true);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(true);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "exponent3")
         {
@@ -2338,6 +2358,10 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(true);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(true);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "squareRoot")
         {
@@ -2349,6 +2373,10 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         else if (oppy.type == "cubeRoot")
         {
@@ -2360,6 +2388,10 @@ public class PuzzleManager : MonoBehaviour
             opAorB.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
             opAorB.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
             opAorB.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+            opAorB.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+            opAorB.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+            opAorB.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+            opAorB.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
         }
         opAorB.GetComponent<Clickable_operator>().IDnumberOfOperatorDataAttachedToThis = oppy.IDnumber;                  // this marks the GameObject
         if (opAorB == OperatorA)
@@ -2379,6 +2411,10 @@ public class PuzzleManager : MonoBehaviour
         oppy.transform.GetChild(4).gameObject.SetActive(false);                   // exponent2
         oppy.transform.GetChild(5).gameObject.SetActive(false);                   // exponent3
         oppy.transform.GetChild(6).gameObject.SetActive(false);                   // exponent_X
+        oppy.transform.GetChild(7).gameObject.SetActive(false);                   // ADDITION
+        oppy.transform.GetChild(8).gameObject.SetActive(false);                   // SUBTRACTION
+        oppy.transform.GetChild(9).gameObject.SetActive(false);                   // MULTIPLICATION
+        oppy.transform.GetChild(10).gameObject.SetActive(false);                  // DIVISION
     }
     public void RandomizeDefaultPositionsOfCircles()
     {

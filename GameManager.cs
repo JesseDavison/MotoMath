@@ -1430,7 +1430,8 @@ public class GameManager : MonoBehaviour
         string temp = whichAmmoType.name;
         Debug.Log("clicked!>>>>>>  " + temp);
 
-        float highlighterYposition = -36.07f;
+        //float highlighterYposition = -36.07f;
+        float highlighterYposition = -30f;
 
         if (temp == "BULLET icon") {
             ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-187.5f, highlighterYposition, 1);
@@ -1447,7 +1448,7 @@ public class GameManager : MonoBehaviour
             ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-23.1f, highlighterYposition, 1);
             preferredAmmo = "caltrops";
         } else if (temp == "FLAME icon") {
-            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(34.8f, highlighterYposition, 1);
+            ammoHighlighter.GetComponent<RectTransform>().anchoredPosition = new Vector3(-27.9f, highlighterYposition, 1);
             preferredAmmo = "flamethrower";
         }
     }
@@ -2082,7 +2083,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 4);
+            int rando = Random.Range(1, 2);
             if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
