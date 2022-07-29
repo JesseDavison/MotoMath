@@ -88,14 +88,7 @@ public class Rocket : MonoBehaviour
                 }
             }
 
-
-
-
         }
-
-
-
-
 
     }
 
@@ -148,15 +141,6 @@ public class Rocket : MonoBehaviour
     }
 
 
-
-    //IEnumerator HoverBeforeMoving()
-    //{
-    //    yield return new WaitForSeconds(hoverDelay);
-    //    //Debug.Log("waiting for " + delay + " seconds");
-    //    hoverIsComplete = true;
-    //    //Debug.Log("launching NOW");
-
-    //}
 
 
 

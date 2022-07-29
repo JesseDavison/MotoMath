@@ -496,7 +496,7 @@ public class GameManager : MonoBehaviour
         if (PlayerPrefs.HasKey("HighScore_Timed"))
         {
             int highScore = PlayerPrefs.GetInt("HighScore_Timed");
-            MainMenu_BestScore_Timed.text = "High Score: " + highScore;
+            MainMenu_BestScore_Timed.text = "High Score:   " + highScore;
         }
         else
         {
@@ -506,7 +506,7 @@ public class GameManager : MonoBehaviour
         if (PlayerPrefs.HasKey(stat_endless_solved))
         {
             int tally = PlayerPrefs.GetInt(stat_endless_solved);
-            MainMenu_BestScore_Endless.text = "Total Completed: " + tally;
+            MainMenu_BestScore_Endless.text = "Total Completed:   " + tally;
         }
         else
         {
@@ -516,7 +516,7 @@ public class GameManager : MonoBehaviour
         if (PlayerPrefs.HasKey(stat_easy_solved))
         {
             int tally = PlayerPrefs.GetInt(stat_easy_solved);
-            MainMenu_BestScore_Kiddy.text = "Total Completed: " + tally;
+            MainMenu_BestScore_Kiddy.text = "Total Completed:   " + tally;
         }
         else
         {

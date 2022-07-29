@@ -2,11 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlownTireSmoke : MonoBehaviour
+public class TurnOffAnimOnLastFrame : MonoBehaviour
 {
-
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -19,9 +16,7 @@ public class BlownTireSmoke : MonoBehaviour
         
     }
 
-
-    public void TurnOffBlownTireSmoke() {
+    public void TurnOffAnimation() {
         gameObject.SetActive(false);
     }
-
 }

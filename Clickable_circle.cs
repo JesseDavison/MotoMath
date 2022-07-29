@@ -216,7 +216,7 @@ public class Clickable_circle : MonoBehaviour
     {
         rotating = true;
         // set animation speed to fast clockwise
-        circleImageRotationSpeed_whenClicked = Random.Range(5, 10);
+        circleImageRotationSpeed_whenClicked = Random.Range(17, 21);
         
         if (rustyGear_active) {
             RustyGear_Animator.Play("rustyGear_clockwise_fast", -1, 0f);
