@@ -401,6 +401,7 @@ public class VehiclePlayer : MonoBehaviour
         StartCoroutine(TurnOffNitrousBoostAfterDelay());
 
     }
+    
     IEnumerator TurnOffNitrousBoostAfterDelay() {
         yield return new WaitForSeconds(fourFlames_timeBeforeRampDown);
         fourFlames_Animator.SetBool("isNitrousBoosting", false);        // this triggers the fourFlames animator to repeat the full animation until...
@@ -509,7 +510,7 @@ public class VehiclePlayer : MonoBehaviour
         {
             // swerving "right" first, so z should be -1
             temp1 = Random.Range(1.1f, 1.3f);
-            temp2 = Random.Range(0.7f, 0.9f);
+            temp2 = Random.Range(0.8f, 0.9f);
             swerve1_Zvalue = -1;
             swerve2_Zvalue = 1;
         }
@@ -517,7 +518,7 @@ public class VehiclePlayer : MonoBehaviour
         {
             // swerving "left" first, so z should be 1
             temp2 = Random.Range(1.1f, 1.3f);
-            temp1 = Random.Range(0.7f, 0.9f);
+            temp1 = Random.Range(0.8f, 0.9f);
             swerve1_Zvalue = 1;
             swerve2_Zvalue = -1;
         }
@@ -525,8 +526,8 @@ public class VehiclePlayer : MonoBehaviour
 
 
 
-
-        swerveSpeed_1 = Random.Range(5, 10f);
+        swerveSpeed_1 = 5;
+        //swerveSpeed_1 = Random.Range(5, 10f);
         swerveSpeed_2 = Random.Range(5, 10f);
 
 
@@ -574,6 +575,9 @@ public class VehiclePlayer : MonoBehaviour
         whiteCar_Animator.Play("car_white_flatTire", -1, 0);
         blownTireExplosion_GameObject.SetActive(true);
         StartCoroutine(StartBlownTire_Smoke());
+    }
+    public bool ReportWhetherBlownTire() {
+        return rockingFromBlownTire;
     }
     IEnumerator StartBlownTire_Smoke()
     {

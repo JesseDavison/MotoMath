@@ -79,6 +79,9 @@ public class Clickable : MonoBehaviour
         destinationText = targetName;
         readyToMove = true;
     }
+    public void CancelGoalMovement() {
+        readyToMove = false;
+    }
     public void BeginMovementToNewDefaultPosition(Vector2 target) {
         speed = defaultSpeed;
         defaultPosition = target;
@@ -244,6 +247,7 @@ public class Clickable : MonoBehaviour
     }
     public void CancelShrinkIt() {
         shrinking = false;
+        readyToMove = false;
     }
     public void NotifyPuzzleManagerOfDestinationReached() { 
 

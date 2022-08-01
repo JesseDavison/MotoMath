@@ -23,6 +23,15 @@ public class Bomb : MonoBehaviour
 
     public float zAxisRotationSpeed;
 
+    public GameObject bombImage_GameObject;
+    public float defaultMidairRotationSpeed = 5;
+    float midairRotationSpeed = 5;
+
+
+    private void Awake()
+    {
+
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -36,13 +45,16 @@ public class Bomb : MonoBehaviour
         if (launched) {
             time += Time.deltaTime * speed;
 
-            Vector2 pos = Vector2.MoveTowards(transform.position, endPosition, Time.deltaTime * horizontalSpeed);
+            Vector3 pos = Vector3.MoveTowards(transform.position, endPosition, Time.deltaTime * horizontalSpeed);
 
             float extraYbump = curve.Evaluate(time) * curveMagnifier;
             pos.y = endPosition.y + extraYbump + verticalOffset;
 
             transform.position = pos;
             //Debug.Log("bomb at: " + transform.position.x + ", " + transform.position.y);
+
+            // rotate slowly in mid-air
+            bombImage_GameObject.transform.Rotate(0, 0, midairRotationSpeed);
 
             if (target == "player") {
 
@@ -64,11 +76,13 @@ public class Bomb : MonoBehaviour
                     // activate end of game summary screen
                     GameManager.instance.DisplayGameOver(false, true);
 
+
                 }
                 else if (transform.position.y <= 0.51f)
                 {
                     // start rolling 
-                    transform.GetChild(0).transform.Rotate(0, 0, 50);
+                    bombImage_GameObject.transform.Rotate(0, 0, 55);
+                    //transform.GetChild(0).transform.Rotate(0, 0, 50);
                 }
             }
             else if (target == "enemy") 
@@ -78,6 +92,7 @@ public class Bomb : MonoBehaviour
                     gameObject.SetActive(false);
                     launched = false;
                     GameManager.instance.EnemyExplodes();
+
                 }
                 else if (transform.position.y <= 0.51f) {
                     // begin rolling forward
@@ -100,20 +115,23 @@ public class Bomb : MonoBehaviour
     public void LaunchBomb_EnemyToPlayer(string playerVehicleType, bool playerIsMoving) {
         isThePlayerMoving = playerIsMoving;
         transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, 0);
+        midairRotationSpeed = -defaultMidairRotationSpeed;
         target = "player";
         gameObject.SetActive(true);
         //Debug.Log("bomb launnnnnn, and y pos is " + transform.position.y);
         launched = true;
-        endPosition = new Vector2(-2, 0.5f);
+        endPosition = new Vector3(-2, 0.5f, 2);
         playerVehicle = playerVehicleType;
         time = 0;
 
     }
     public void LaunchBomb_PlayerToEnemy(Vector3 enemyPosition) {
-        transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, 0);
+        bombImage_GameObject.transform.rotation = Quaternion.Euler(0, 0, -40);
+        midairRotationSpeed = -defaultMidairRotationSpeed;
+        //transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, -40);
         target = "enemy";
         launched = true;
-        endPosition = new Vector3(enemyPosition.x, 0.5f, 0);
+        endPosition = new Vector3(enemyPosition.x, 0.5f, 2);
         time = 0;
     }
 }

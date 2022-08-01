@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour
     public Animator basicEnemyDriving;
     public Animator basicEnemyExploding;
     public GameObject basicEnemyHull;
+    public GameObject enemyRiderDead;
     public int puzzleSolvesSinceLastEnemy = 0;
     public GameObject rocket;
     public GameObject caltrops_1;
@@ -114,6 +115,7 @@ public class GameManager : MonoBehaviour
     public bool enemyInRange = false;
     public float enemyAppearSpeed;
 
+    public GameObject armThrowingBomb;
     public GameObject bomb;
 
 
@@ -221,6 +223,7 @@ public class GameManager : MonoBehaviour
     public Animator SmallFlameAnimation_onEnemy_2;
     public Animator SmallFlameAnimation_onEnemy_3;
 
+    bool ableToUseNOS = false;
 
     private void Awake()
     {
@@ -754,6 +757,7 @@ public class GameManager : MonoBehaviour
 
     public void StartTimedGame()
     {
+        EnableUseOfNOS();
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
@@ -785,6 +789,7 @@ public class GameManager : MonoBehaviour
     }
     public void StartEndlessGame()
     {
+        EnableUseOfNOS();
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
@@ -819,6 +824,7 @@ public class GameManager : MonoBehaviour
     }
     public void StartKiddyGame()
     {
+        EnableUseOfNOS();
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
@@ -859,6 +865,12 @@ public class GameManager : MonoBehaviour
         timerGlobal.ResetTimeRemaining();
 
     }
+    public void EnableUseOfNOS() {
+        ableToUseNOS = true;
+    }
+    public void DisableUseOfNOS() {
+        ableToUseNOS = false;
+    }
     public void SkipPuzzle()
     {
         // reduces the amount of time remaining in such a way that the player will always have zero speed points
@@ -868,7 +880,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("SkipPuzzle() invoked... nitrous level is: " + PlayerPrefs.GetFloat(nitrousInInventory));
 
-        if (PlayerPrefs.GetFloat(nitrousInInventory) >= 100) {
+        if (PlayerPrefs.GetFloat(nitrousInInventory) >= 100 && ableToUseNOS == true) {
 
             PlayerPrefs.SetFloat(nitrousInInventory, 0);
             ShowLevelUI_ammo_and_inventory_Display();
@@ -1550,7 +1562,12 @@ public class GameManager : MonoBehaviour
 
     }
     public void LaunchBomb() {
-        bomb.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
+        // make arm animation appear and throw the dynamite
+        armThrowingBomb.SetActive(true);
+        
+
+
+        bomb.transform.position = playerVehicle.transform.position + new Vector3(0.8f, 1.7f, 1);
         bomb.SetActive(true);
         bomb.GetComponent<Bomb>().LaunchBomb_PlayerToEnemy(basicEnemy.transform.position);
     }
@@ -1599,7 +1616,7 @@ public class GameManager : MonoBehaviour
     public void EnemyExplodes()
     {
         PuzzleManager.instance.MakePuzzleAppear();
-
+        armThrowingBomb.SetActive(false);
         explodey.transform.position = basicEnemy.transform.position + new Vector3(-6.6f, -3.95f, 0);
         PlayExplosion();
         //basicEnemy.SetActive(false);
@@ -1617,7 +1634,12 @@ public class GameManager : MonoBehaviour
         basicEnemyHull.SetActive(true);
         // kick off the hull-bouncing script
         basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(false, false);
-        
+
+        enemyRiderDead.transform.position = new Vector3(basicEnemy.transform.position.x, 1, -2);
+        enemyRiderDead.GetComponent<enemyRiderDead>().LaunchRider();
+
+
+
         SpawnLoot(basicEnemyHull.transform.position);
 
         enemyInRange = false;

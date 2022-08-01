@@ -5013,6 +5013,10 @@ public class PuzzleManager : MonoBehaviour
     }
     public void AnimatePuzzleFailed(GameObject finalCircle, bool circleHasReachedGoal, bool fallingIntoToiletComplete)
     {
+        // turn off ability to use NOS
+        GameManager.instance.DisableUseOfNOS();
+
+
         if (circleHasReachedGoal == false)
         {
             if (gameType == "timed")
