@@ -204,6 +204,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject GatlingGun_GameObject;
     Animator GatlingGun_Animator;
+    public GameObject GatlingShells_GameObject;
+    Animator GatlingShells_Animator;
 
 
     int tempInventoryAmount;    // used for bullets & flamethrower
@@ -245,6 +247,7 @@ public class GameManager : MonoBehaviour
         basicEnemy_Script = basicEnemy.GetComponent<VehicleEnemy>();
         GatlingGun_Animator = GatlingGun_GameObject.GetComponent<Animator>();
         BloodSpraying_Animator = BloodSpraying_GameObject.GetComponent<Animator>();
+        GatlingShells_Animator = GatlingShells_GameObject.GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -1351,6 +1354,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(delayBeforeGatlingStarts);
         shootingBullets_atEnemy = true;
+        GatlingShells_Animator.Play("shells - FIRST SHELLS", -1, 0f);
         Gunfire_hitting.gameObject.SetActive(true);
         Gunfire_hitting.Play("sparks", -1, 0f);
         BloodSpraying_GameObject.SetActive(true);
