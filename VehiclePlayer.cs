@@ -97,6 +97,9 @@ public class VehiclePlayer : MonoBehaviour
     public float blownTireExplosion_duration;
     public float timeBeforeStarting_tireSmoke;
 
+    //public GameObject GatlingGun_GameObject;
+    //Animator GatlingGun_Animator;
+    bool movingForwardForGatlingGun = false;
 
 
 
@@ -107,6 +110,7 @@ public class VehiclePlayer : MonoBehaviour
         fourFlames_GameObject.SetActive(false);
         tireSmoke_GameObject.SetActive(false);
         blownTireExplosion_GameObject.SetActive(false);
+        //GatlingGun_Animator = GatlingGun_GameObject.GetComponent<Animator>();
     }
 
 
@@ -337,9 +341,12 @@ public class VehiclePlayer : MonoBehaviour
         whiteCar_Animator.Play("car_white_smallBump", -1, 0);
 
 
-        //float currentTime = 
+        // also change the gatlingGun stuff so it bounces too
+        GameManager.instance.MakeGatlingGunBounceAfterSmallBump();
     }
+    //IEnumerator SendGatlingBump() {
 
+    //}
     public void driftForwardBackward(float forcedSpeed)
     {
         // pick a spot to go to
@@ -384,6 +391,12 @@ public class VehiclePlayer : MonoBehaviour
         {
             goalXpos = Random.Range(10.3f, 12);
             readyToMoveAgain = true;
+        }
+        else if (movingForwardForGatlingGun)
+        {
+            goalXpos = Random.Range(3f, 4f);
+            readyToMoveAgain = true;
+            movingForwardForGatlingGun = false;
         }
 
 
@@ -430,6 +443,12 @@ public class VehiclePlayer : MonoBehaviour
         movingForwardForFlamethrowerAttack = false;
         movingBackToReceiveFlamethrowerAttack = true;
         driftForwardBackward(0);
+    }
+    public void DriveForward_forGatlingGun() {
+        nitrousBoosting = false;
+        supposedToBeOffScreen = false;
+        movingForwardForGatlingGun = true;
+        driftForwardBackward(30);
     }
     public void DriveToForwardPosition_forDroppingCaltrops()
     {

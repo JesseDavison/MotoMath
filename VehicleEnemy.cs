@@ -83,6 +83,7 @@ public class VehicleEnemy : MonoBehaviour
     public float flickMeAroundGettingShot;
     public float gettingShotRockingSpeed;
 
+    bool movingToReceiveGatlingGunAttack = false;
 
     //public GameObject whiteCar_GameObject;
     //Animator whiteCar_Animator;
@@ -367,6 +368,12 @@ public class VehicleEnemy : MonoBehaviour
         {
             goalXpos = Random.Range(10.3f, 12);
             readyToMoveAgain = true;
+        } 
+        else if (movingToReceiveGatlingGunAttack)
+        {
+            goalXpos = Random.Range(12, 13.5f);
+            readyToMoveAgain = true;
+            movingToReceiveGatlingGunAttack = false;
         }
 
 
@@ -392,6 +399,15 @@ public class VehicleEnemy : MonoBehaviour
         rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = false;
         movingBackToReceiveFlamethrowerAttack = true;
+        driftForwardBackward(0);
+    }
+    public void DriveForward_toReceiveGatlingGunAttack() {
+        nitrousBoosting = false;
+        supposedToBeOffScreen = false;
+        rockingFromBlownTire = false;
+        movingForwardForFlamethrowerAttack = false;
+        movingBackToReceiveFlamethrowerAttack = false;
+        movingToReceiveGatlingGunAttack = true;
         driftForwardBackward(0);
     }
     public void DriveToForwardPosition_forDroppingCaltrops()

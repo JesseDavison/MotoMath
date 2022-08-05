@@ -102,6 +102,13 @@ public class GameManager : MonoBehaviour
     public Animator basicEnemyExploding;
     public GameObject basicEnemyHull;
     public GameObject enemyRiderDead;
+    public GameObject enemyRider_HEAD;
+    public GameObject enemyRider_TORSO;
+    public GameObject enemyRider_ARM1;
+    public GameObject enemyRider_ARM2;
+    public GameObject enemyRider_UPPERLEG;
+    public GameObject enemyRider_LOWERLEG1;
+    public GameObject enemyRider_LOWERLEG2;
     public int puzzleSolvesSinceLastEnemy = 0;
     public GameObject rocket;
     public GameObject caltrops_1;
@@ -183,14 +190,21 @@ public class GameManager : MonoBehaviour
 
     public GameObject GunfireGameObject;
     public Animator Gunfire;
-    public float durationOfGunfire;
+    public float delayBeforeGatlingStarts;
+    public float durationOfGatlingGun;
     bool shootingBullets_atEnemy;
     public GameObject Gunfire_hitting_GameObject;
     public Animator Gunfire_hitting;
+    public GameObject BloodSpraying_GameObject;
+    Animator BloodSpraying_Animator;
     int numberOfBulletsBeingShot;
     int numberOfBulletsShot;
     public int delayBetweenBulletDecrease;
     int bulletDelayCounter;
+
+    public GameObject GatlingGun_GameObject;
+    Animator GatlingGun_Animator;
+
 
     int tempInventoryAmount;    // used for bullets & flamethrower
 
@@ -229,6 +243,8 @@ public class GameManager : MonoBehaviour
     {
         playerVehicle_Script = playerVehicle.GetComponent<VehiclePlayer>();
         basicEnemy_Script = basicEnemy.GetComponent<VehicleEnemy>();
+        GatlingGun_Animator = GatlingGun_GameObject.GetComponent<Animator>();
+        BloodSpraying_Animator = BloodSpraying_GameObject.GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -410,7 +426,7 @@ public class GameManager : MonoBehaviour
         else if (shootingBullets_atEnemy)
         {
 
-            GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
+            //GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
             Gunfire_hitting_GameObject.transform.position = basicEnemy.transform.position + new Vector3(-1.98f, 0.54f, -2);
 
             if (numberOfBulletsShot < numberOfBulletsBeingShot) 
@@ -1095,11 +1111,11 @@ public class GameManager : MonoBehaviour
         {
             GameOverText.text = "GAME OVER";
 
-            TimeRemainingExplanation.text = "Puzzles Completed: " + numberCompleted;
+            TimeRemainingExplanation.text = "Puzzles Completed:   " + numberCompleted;
 
-            GameOverScore.text = "Puzzles Skipped: " + numberSkipped;
+            GameOverScore.text = "Puzzles Skipped:   " + numberSkipped;
 
-            GameOverScreen_BestScore.text = "Puzzles Failed: " + numberFailed;
+            GameOverScreen_BestScore.text = "Puzzles Failed:   " + numberFailed;
 
         }
 
@@ -1316,27 +1332,42 @@ public class GameManager : MonoBehaviour
     }
     public void ShootBullets()
     {
-        shootingBullets_atEnemy = true;
+        //Gunfire.gameObject.SetActive(true);     // turns on the animation
+        //Gunfire.Play("gunfire_animation", -1, 0f);
 
-        Gunfire.gameObject.SetActive(true);     // turns on the animation
-        Gunfire.Play("gunfire_animation", -1, 0f);
+        playerVehicle_Script.DriveForward_forGatlingGun();
+        basicEnemy_Script.DriveForward_toReceiveGatlingGunAttack();
+        StartCoroutine(DelayGatlingGun_untilCarMovesUp());
 
-        Gunfire_hitting.gameObject.SetActive(true);
-        Gunfire_hitting.Play("gunfire_hitting_animation", -1, 0f);
+    }
+    IEnumerator DelayGatlingGun_untilCarMovesUp() {
+        yield return new WaitForSeconds(0.5f);
+        GatlingGun_Animator.Play("lever arm TURNING", -1, 0);
+        //Time.timeScale = 0.1f;
+
 
         basicEnemy_Script.AnimateGettingShot();
 
-        StartCoroutine(GunfireDisableAfterAnimation());
-    }
-    IEnumerator GunfireDisableAfterAnimation()
-    {
-        yield return new WaitForSeconds(durationOfGunfire);
-        Gunfire.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(delayBeforeGatlingStarts);
+        shootingBullets_atEnemy = true;
+        Gunfire_hitting.gameObject.SetActive(true);
+        Gunfire_hitting.Play("sparks", -1, 0f);
+        BloodSpraying_GameObject.SetActive(true);
+        
+        //Gunfire.gameObject.SetActive(false);
+        yield return new WaitForSeconds(durationOfGatlingGun);
+
         Gunfire_hitting.gameObject.SetActive(false);
+        BloodSpraying_GameObject.SetActive(false);
         shootingBullets_atEnemy = false;
         PlaySmallFireOnEnemy();
-
     }
+    public void MakeGatlingGunBounceAfterSmallBump()
+    {
+        GatlingGun_GameObject.GetComponent<SlowBounce>().MakeItBump();
+    }
+    
     public void SpendRocket()
     {
         int tempy = PlayerPrefs.GetInt(rocketsInInventory);
@@ -1355,15 +1386,21 @@ public class GameManager : MonoBehaviour
     }
     public void SpendBomb() {
         int temp = PlayerPrefs.GetInt(bombsInInventory);
-        if (temp >= 1) {
-            PlayerPrefs.SetInt(bombsInInventory, temp - 1);
-            LaunchBomb();
-            ShowLevelUI_ammo_and_inventory_Display();
+        if (temp >= 1) 
+        {
+            // delay the throwing of the bomb for just a moment so it doesn't clash visually with the explosion of the Goal
+            StartCoroutine(DelayBeforeBomb(temp));
         }
         else
         {
             Debug.Log("no bombs to launch");
         }
+    }
+    IEnumerator DelayBeforeBomb(int numBombs) {
+        yield return new WaitForSeconds(1);
+        PlayerPrefs.SetInt(bombsInInventory, numBombs - 1);
+        LaunchBomb();
+        ShowLevelUI_ammo_and_inventory_Display();
     }
 
     public void SpendFlamethrower() {
@@ -1635,12 +1672,40 @@ public class GameManager : MonoBehaviour
         // kick off the hull-bouncing script
         basicEnemyHull.GetComponent<HullWrecking>().BeginBouncing(false, false);
 
-        enemyRiderDead.transform.position = new Vector3(basicEnemy.transform.position.x, 1, -2);
-        enemyRiderDead.GetComponent<enemyRiderDead>().LaunchRider();
+
+
+        // launch body parts into the air
+        //enemyRiderDead.transform.position = new Vector3(basicEnemy.transform.position.x, 1, -2);
+        //enemyRiderDead.GetComponent<enemyRiderDead>().LaunchRider();
+
+
+        Vector3 bodyPartSpawnPos = new Vector3(basicEnemy.transform.position.x - 6.7f, -1.7f, 0);
+
+        enemyRider_HEAD.transform.position = bodyPartSpawnPos;
+        enemyRider_HEAD.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_TORSO.transform.position = bodyPartSpawnPos;
+        enemyRider_TORSO.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_ARM1.transform.position = bodyPartSpawnPos;
+        enemyRider_ARM1.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_ARM2.transform.position = bodyPartSpawnPos;
+        enemyRider_ARM2.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_UPPERLEG.transform.position = bodyPartSpawnPos;
+        enemyRider_UPPERLEG.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_LOWERLEG1.transform.position = bodyPartSpawnPos;
+        enemyRider_LOWERLEG1.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
+
+        enemyRider_LOWERLEG2.transform.position = bodyPartSpawnPos;
+        enemyRider_LOWERLEG2.GetComponent<EnemyRiderBodyParts>().LaunchBodyPart();
 
 
 
-        SpawnLoot(basicEnemyHull.transform.position);
+
+    SpawnLoot(basicEnemyHull.transform.position);
 
         enemyInRange = false;
 
@@ -2105,13 +2170,13 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 2);
-            if (rando == 3) {
+            int rando = Random.Range(1, 4);
+            if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
-            } else if (rando == 1) {
+            } else if (rando == 2) {
                 EnemyFires_Caltrops(false);
                 // don't load another puzzle cuz yer ded
                 PuzzleManager.instance.SetGameOver();
