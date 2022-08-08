@@ -3283,7 +3283,7 @@ public class PuzzleManager : MonoBehaviour
         OperatorBScript.BeginGrowingOperator();
         Goal.GetComponent<Clickable>().CancelShrinkIt();
         Goal.GetComponent<Clickable>().growing = true;
-
+        GameManager.instance.EnableUseOfNOS();
     }
     public void MakeCirclesOperatorsGoal_moveLeftForNitrous() {
         CircleAScript.BeginMovementOffscreenToLeft();

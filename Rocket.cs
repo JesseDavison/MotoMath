@@ -50,7 +50,7 @@ public class Rocket : MonoBehaviour
         if (hoverIsComplete == false) 
         {
             // move the hover up/down
-            transform.position = Vector2.Lerp(transform.position, new Vector2(transform.position.x, verticalHoverYPosition), verticalHoverSpeed);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, verticalHoverYPosition, -1), verticalHoverSpeed);
 
             if (Mathf.Abs(transform.position.y - verticalHoverYPosition) < 0.05f)
             {
@@ -58,14 +58,14 @@ public class Rocket : MonoBehaviour
 
             }
             // hover backwards
-            transform.position = Vector2.Lerp(transform.position, new Vector2(hovering_XpositionToHoverTo, transform.position.y), Time.deltaTime * speed);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(hovering_XpositionToHoverTo, transform.position.y, -1), Time.deltaTime * speed);
 
 
         } 
         else 
         {
 
-            transform.position = Vector2.Lerp((Vector2)transform.position, new Vector2(whichEdgeOfScreen, originalYPosition), Time.deltaTime * speed);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(whichEdgeOfScreen, originalYPosition, -1), Time.deltaTime * speed);
             //transform.position = Vector2.Lerp((Vector2)transform.position, new Vector2(30, transform.position.y), Time.deltaTime * speed);
             speed *= speedMultiplier;
 

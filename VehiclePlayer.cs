@@ -69,6 +69,8 @@ public class VehiclePlayer : MonoBehaviour
     //public bool isThisARocket = false;
     //public float rocketExplosionXPos;
 
+    public bool firingMissile = false;
+
     public bool rockingFromBlownTire;
     public float rockingSpeed;
     public Transform vehicleSprite;
@@ -100,6 +102,7 @@ public class VehiclePlayer : MonoBehaviour
     //public GameObject GatlingGun_GameObject;
     //Animator GatlingGun_Animator;
     bool movingForwardForGatlingGun = false;
+    bool movingForwardForMissile = false;
 
 
 
@@ -318,6 +321,31 @@ public class VehiclePlayer : MonoBehaviour
         driftForwardBackward(0);
     }
 
+    public void DeclareAsFiringMissile() {
+        GameManager.instance.DisableUseOfNOS();
+        firingMissile = true;
+        if (transform.position.x < -0.5f) {
+            DriveForward_forMissileLaunch();
+        }
+
+    }
+    public void EndFiringMissile() {
+        firingMissile = false;
+        StartCoroutine(bounceLoop());
+        GameManager.instance.EnableUseOfNOS();
+    }
+    public void EndFiringGatlingGun() { 
+
+    }
+    public void EndFiringBomb() { 
+
+    }
+    public void EndFiringFlamethrower() { 
+
+    }
+    public void EnableUseOfNOS() {
+        GameManager.instance.EnableUseOfNOS();
+    }
 
     IEnumerator bounceLoop()
     {
@@ -325,7 +353,7 @@ public class VehiclePlayer : MonoBehaviour
         float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
         yield return new WaitForSeconds(delay);
         //Debug.Log("bouncing");
-        if (nitrousBoosting == false && rockingFromBlownTire == false) {
+        if (nitrousBoosting == false && rockingFromBlownTire == false && firingMissile == false) {
             bounce();
         }
 
@@ -398,6 +426,12 @@ public class VehiclePlayer : MonoBehaviour
             readyToMoveAgain = true;
             movingForwardForGatlingGun = false;
         }
+        else if (movingForwardForMissile)
+        {
+            goalXpos = Random.Range(0, 4f);
+            readyToMoveAgain = true;
+            movingForwardForMissile = false;
+        }
 
 
     }
@@ -429,10 +463,12 @@ public class VehiclePlayer : MonoBehaviour
     public void DriveToMiddle_forFlamethrower()
     {
         Debug.Log("just entered DriveToMiddle_forFlamethrower");
+        GameManager.instance.DisableUseOfNOS();
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
         //rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = true;
+        movingForwardForMissile = false;
         driftForwardBackward(30);
     }
     public void DriveBackToGetFlamethrowered()
@@ -442,14 +478,27 @@ public class VehiclePlayer : MonoBehaviour
         //rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = false;
         movingBackToReceiveFlamethrowerAttack = true;
+        movingForwardForMissile = false;
         driftForwardBackward(0);
     }
     public void DriveForward_forGatlingGun() {
+        GameManager.instance.DisableUseOfNOS();
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
         movingForwardForGatlingGun = true;
+        movingForwardForMissile = false;
         driftForwardBackward(30);
     }
+    public void DriveForward_forMissileLaunch() {
+        GameManager.instance.DisableUseOfNOS();
+        nitrousBoosting = false;
+        supposedToBeOffScreen = false;
+        movingForwardForGatlingGun = false;
+        movingForwardForMissile = true;
+        driftForwardBackward(30);
+    }
+
+
     public void DriveToForwardPosition_forDroppingCaltrops()
     {
         // change min & max X positions
@@ -468,6 +517,7 @@ public class VehiclePlayer : MonoBehaviour
         nitrousBoosting = false;
         driftForwardBackward(0);
         StartCoroutine(bounceLoop());
+        GameManager.instance.EnableUseOfNOS();
 
     }
     public void DriveAwayForward()

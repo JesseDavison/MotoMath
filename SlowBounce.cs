@@ -122,6 +122,10 @@ public class SlowBounce : MonoBehaviour
         //movingToOriginalPosition = true;
     }
 
+    public void EnableUseOfNOS() {
+        GameManager.instance.EnableUseOfNOS();
+    }
+
 }
 
 

@@ -207,6 +207,9 @@ public class GameManager : MonoBehaviour
     public GameObject GatlingShells_GameObject;
     Animator GatlingShells_Animator;
 
+    public GameObject MissileDoor_GameObject;
+    Animator MissileDoor_Animator;
+
 
     int tempInventoryAmount;    // used for bullets & flamethrower
 
@@ -248,6 +251,7 @@ public class GameManager : MonoBehaviour
         GatlingGun_Animator = GatlingGun_GameObject.GetComponent<Animator>();
         BloodSpraying_Animator = BloodSpraying_GameObject.GetComponent<Animator>();
         GatlingShells_Animator = GatlingShells_GameObject.GetComponent<Animator>();
+        MissileDoor_Animator = MissileDoor_GameObject.GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -1378,7 +1382,7 @@ public class GameManager : MonoBehaviour
         if (tempy >= 1)
         {
             PlayerPrefs.SetInt(rocketsInInventory, tempy - 1);
-            FireRocket();
+            OpenMissileDoor();
             //DisplayInventory();
             // update the levelUI inventory thingy
             ShowLevelUI_ammo_and_inventory_Display();
@@ -1589,14 +1593,19 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void FireRocket()
+    public void OpenMissileDoor()
     {
-        rocket.transform.position = playerVehicle.transform.position + new Vector3(0, 0.5f, 0);
+        playerVehicle_Script.DeclareAsFiringMissile();
+        MissileDoor_GameObject.SetActive(true);
+        MissileDoor_Animator.Play("missile door - OPENING", -1, 0f);
+
+    }
+    public void FireMissile() {
+        rocket.transform.position = new Vector3(playerVehicle.transform.position.x -3.51f, playerVehicle.transform.position.y + 2, -1);
         // begin rocket slowly launching, & hitting enemy
         rocket.SetActive(true);
         //rocket.GetComponent<Rocket>().SetGoalPosForRocket(30, rocketSpeed, targetXPos);
         rocket.GetComponent<Rocket>().LaunchRocket();
-
     }
     public void FireGuns()
     {
