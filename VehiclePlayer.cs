@@ -96,6 +96,7 @@ public class VehiclePlayer : MonoBehaviour
 
     public GameObject tireSmoke_GameObject;
     public GameObject blownTireExplosion_GameObject;
+    Animator blownTireExplosion_Animator;
     public float blownTireExplosion_duration;
     public float timeBeforeStarting_tireSmoke;
 
@@ -110,9 +111,10 @@ public class VehiclePlayer : MonoBehaviour
     {
         whiteCar_Animator = whiteCar_GameObject.GetComponent<Animator>();
         fourFlames_Animator = fourFlames_GameObject.GetComponent<Animator>();
+        blownTireExplosion_Animator = blownTireExplosion_GameObject.GetComponent<Animator>();
         fourFlames_GameObject.SetActive(false);
         tireSmoke_GameObject.SetActive(false);
-        blownTireExplosion_GameObject.SetActive(false);
+        //blownTireExplosion_GameObject.SetActive(false);
         //GatlingGun_Animator = GatlingGun_GameObject.GetComponent<Animator>();
     }
 
@@ -469,7 +471,14 @@ public class VehiclePlayer : MonoBehaviour
         //rockingFromBlownTire = false;
         movingForwardForFlamethrowerAttack = true;
         movingForwardForMissile = false;
-        driftForwardBackward(30);
+
+
+        if (transform.position.x < 2 || transform.position.x > 4) {
+
+            driftForwardBackward(30);
+        }
+
+
     }
     public void DriveBackToGetFlamethrowered()
     {
@@ -485,9 +494,12 @@ public class VehiclePlayer : MonoBehaviour
         GameManager.instance.DisableUseOfNOS();
         nitrousBoosting = false;
         supposedToBeOffScreen = false;
-        movingForwardForGatlingGun = true;
         movingForwardForMissile = false;
-        driftForwardBackward(30);
+        if (transform.position.x <= 1) {
+            movingForwardForGatlingGun = true;
+            driftForwardBackward(30);
+        }
+
     }
     public void DriveForward_forMissileLaunch() {
         GameManager.instance.DisableUseOfNOS();
@@ -642,7 +654,8 @@ public class VehiclePlayer : MonoBehaviour
 
         // start the animation
         whiteCar_Animator.Play("car_white_flatTire", -1, 0);
-        blownTireExplosion_GameObject.SetActive(true);
+        //blownTireExplosion_GameObject.SetActive(true);
+        blownTireExplosion_Animator.Play("blownTireWhiteExplosion", -1, 0f);
         StartCoroutine(StartBlownTire_Smoke());
     }
     public bool ReportWhetherBlownTire() {
@@ -652,10 +665,11 @@ public class VehiclePlayer : MonoBehaviour
     {
         //Time.timeScale = 0.1f;
         //yield return new WaitForSeconds(blownTireExplosion_duration);
-        //blownTireExplosion_GameObject.SetActive(false);
+
 
 
         yield return new WaitForSeconds(timeBeforeStarting_tireSmoke);
+        //blownTireExplosion_GameObject.SetActive(false);
         tireSmoke_GameObject.SetActive(true);
 
     }

@@ -213,8 +213,11 @@ public class GameManager : MonoBehaviour
 
     int tempInventoryAmount;    // used for bullets & flamethrower
 
+    public GameObject FlamethrowerNozzle_GameObject;
+    Animator FlamethrowerNozzle_Animator;
+
     public GameObject FlamethrowerFlame_GameObject;
-    public Animator Flamethrower_1_animator;
+    Animator FlamethrowerFlame_Animator;
     //public Animator Flamethrower_2_animator;
     //public Animator Flamethrower_3_animator;
     int numberOfFlamethrowerShot;
@@ -252,6 +255,8 @@ public class GameManager : MonoBehaviour
         BloodSpraying_Animator = BloodSpraying_GameObject.GetComponent<Animator>();
         GatlingShells_Animator = GatlingShells_GameObject.GetComponent<Animator>();
         MissileDoor_Animator = MissileDoor_GameObject.GetComponent<Animator>();
+        FlamethrowerNozzle_Animator = FlamethrowerNozzle_GameObject.GetComponent<Animator>();
+        FlamethrowerFlame_Animator = FlamethrowerFlame_GameObject.GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -459,7 +464,7 @@ public class GameManager : MonoBehaviour
         }
         else if (shootingFlamethrower_atEnemy)
         {
-            FlamethrowerFlame_GameObject.transform.position = playerVehicle.transform.position + new Vector3(0.31f, -1.39f, -2);
+            //FlamethrowerFlame_GameObject.transform.position = playerVehicle.transform.position + new Vector3(0.31f, -1.39f, -2);
 
             if (numberOfFlamethrowerShot < numberOfFlamethrowerBeingShot) 
             {
@@ -477,11 +482,6 @@ public class GameManager : MonoBehaviour
                 PlayerPrefs.SetInt(flamethrowerInInventory, tempInventoryAmount);
                 Debug.Log("flamethrower inventory updated, amount used: " + numberOfFlamethrowerShot);
             }
-
-
-
-
-
 
         }
     }
@@ -1428,23 +1428,35 @@ public class GameManager : MonoBehaviour
         }
     }
     public void MovePlayerForward_forFlamethrower() {
+        //Time.timeScale = 0.1f;
+        FlamethrowerNozzle_Animator.Play("flamethrower nozzle - MOVING", -1, 0f);
         playerVehicle_Script.DriveToMiddle_forFlamethrower();
         basicEnemy_Script.DriveBackToGetFlamethrowered();
     }
     public void ShootFlamethrower() {
+
+
         shootingFlamethrower_atEnemy = true;
 
-        Flamethrower_1_animator.gameObject.SetActive(true);
-        Flamethrower_1_animator.Play("flamethrower_2", -1, 0f);
+
+        //Flamethrower_1_animator.gameObject.SetActive(true);
+        //Flamethrower_1_animator.Play("flamethrower_2", -1, 0f);
 
         StartCoroutine(FlamethrowerDisableAfterAnimation());
     }
+
+    public void StartFlamethrower() {
+        //FlamethrowerFlame_GameObject.SetActive(true);
+        FlamethrowerFlame_Animator.Play("flamethrower flame", -1, 0f);
+    }
+
     IEnumerator FlamethrowerDisableAfterAnimation() {
         yield return new WaitForSeconds(durationOfFlamethrower / 2f);
         StartCoroutine(PlayThreeSmallFiresOnEnemy());
 
         yield return new WaitForSeconds(durationOfFlamethrower / 2f);
-        Flamethrower_1_animator.gameObject.SetActive(false);
+        //Flamethrower_1_animator.gameObject.SetActive(false);
+        //FlamethrowerFlame_GameObject.SetActive(false);
         shootingFlamethrower_atEnemy = false;
         //StartCoroutine(PlayThreeSmallFiresOnEnemy());
         StartCoroutine(ThreeSmallFiresDisableAfterAnimation());
@@ -1740,7 +1752,7 @@ public class GameManager : MonoBehaviour
         //      nitrous, electronics
         //      ammo, 5 types
         //              .... therefore need to choose which 2 we will use, there are 7 things to choose from, so:
-        List<int> options = new List<int> {1, 2, 3, 4, 5, 6, 7};
+        List<int> options = new List<int> {1, 2, 3, 4, 5, 6};
         //Debug.Log("just created List<int> options: " + options[0] + " " + options[1] + " " + options[2]);
         // create a random INDEX
         int randomIndex1 = Random.Range(0, options.Count);
@@ -1830,20 +1842,21 @@ public class GameManager : MonoBehaviour
         }
         if (results.Contains(6))
         {
-            LOOT_caltrops_quantity = Random.Range(1, 4);
-            LOOT_caltrops_icon.SetActive(true);
-            LOOT_caltrops_icon.transform.position = startPosition + new Vector2(0, 0.5f);
-            LOOT_caltrops_script.StartMovement(LOOT_caltrops_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
-        if (results.Contains(7))
-        {
             LOOT_flamethrower_quantity = Random.Range(1, 4);
             LOOT_flamethrower_icon.SetActive(true);
             LOOT_flamethrower_icon.transform.position = startPosition + new Vector2(0, 0.5f);
             LOOT_flamethrower_script.StartMovement(LOOT_flamethrower_quantity, remainingSpots[0]);
             remainingSpots.Remove(remainingSpots[0]);
         }
+        //if (results.Contains(6))
+        //{
+        //    LOOT_caltrops_quantity = Random.Range(1, 4);
+        //    LOOT_caltrops_icon.SetActive(true);
+        //    LOOT_caltrops_icon.transform.position = startPosition + new Vector2(0, 0.5f);
+        //    LOOT_caltrops_script.StartMovement(LOOT_caltrops_quantity, remainingSpots[0]);
+        //    remainingSpots.Remove(remainingSpots[0]);
+        //}
+
 
 
 
@@ -2183,7 +2196,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(1, 4);
+            int rando = Random.Range(2, 3);
             if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);

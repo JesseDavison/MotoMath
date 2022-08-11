@@ -3956,6 +3956,7 @@ public class PuzzleManager : MonoBehaviour
         float defaultSaw_Zvalue = 0.1f;
 
         if (usingOperatorA) {
+            Time.timeScale = 0.1f;
             yield return new WaitForSeconds(delay_beforeFrame7);
             OpA_grabber_1_circularSaw_RectTransform.localPosition = new Vector3(xValues[0], 0, defaultSaw_Zvalue);
             OpA_grabber_1_circularSaw.SetActive(true);  // AND NEED to reset the alpha from before
