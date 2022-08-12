@@ -1447,7 +1447,7 @@ public class GameManager : MonoBehaviour
 
     public void StartFlamethrower() {
         //FlamethrowerFlame_GameObject.SetActive(true);
-        FlamethrowerFlame_Animator.Play("flamethrower flame", -1, 0f);
+        FlamethrowerFlame_Animator.Play("flamethrower 1-50", -1, 0f);
     }
 
     IEnumerator FlamethrowerDisableAfterAnimation() {
@@ -2196,7 +2196,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(2, 3);
+            int rando = Random.Range(2, 4);
             if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);
