@@ -356,7 +356,10 @@ public class VehiclePlayer : MonoBehaviour
         yield return new WaitForSeconds(delay);
         //Debug.Log("bouncing");
         if (nitrousBoosting == false && rockingFromBlownTire == false && firingMissile == false) {
-            bounce();
+            if (vehicleSprite.gameObject.activeSelf) {
+                bounce();
+            }
+
         }
 
     }
@@ -370,7 +373,7 @@ public class VehiclePlayer : MonoBehaviour
         // start animation change
         whiteCar_Animator.Play("car_white_smallBump", -1, 0);
 
-
+        
         // also change the gatlingGun stuff so it bounces too
         GameManager.instance.MakeGatlingGunBounceAfterSmallBump();
     }

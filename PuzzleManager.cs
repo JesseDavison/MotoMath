@@ -183,6 +183,9 @@ public class PuzzleManager : MonoBehaviour
     bool circle1DoneMoving = false;
     bool circle2DoneMoving = false;
 
+    public GameObject FuelGauge;
+    FuelGaugeScript fuelGaugeScript;
+
 
     private void Awake()
     {
@@ -196,6 +199,8 @@ public class PuzzleManager : MonoBehaviour
         OpA_grabber_2_SpriteRenderer = OpA_grabber_2.GetComponent<SpriteRenderer>();
         OpB_grabber_1_SpriteRenderer = OpB_grabber_1.GetComponent<SpriteRenderer>();
         OpB_grabber_2_SpriteRenderer = OpB_grabber_2.GetComponent<SpriteRenderer>();
+
+        fuelGaugeScript = FuelGauge.GetComponent<FuelGaugeScript>();
 
     }
 
@@ -3224,11 +3229,20 @@ public class PuzzleManager : MonoBehaviour
     IEnumerator WaitBeforeNext_MakePuzzleAppear() {
         yield return new WaitForSeconds(1);
         MakePuzzleAppear();
+        // resume fuel consumption
+
     }
+
+    public void ResumeFuelConsumption() {
+        fuelGaugeScript.StartFuelConsumption();
+    }
+
     public void MakePuzzleAppear() {
 
         // gonna put the RectTransform stuff here, to avoid hassle of Start() or Awake() not catching
         // or not... not sure yet, July 22 2022
+
+        fuelGaugeScript.StartFuelConsumption();
 
 
         if (CircleAScript.partOfCurrentPuzzle == true) {
@@ -3427,6 +3441,7 @@ public class PuzzleManager : MonoBehaviour
                 //Debug.Log("reached line 3328, operatorSelected: " + operatorSelected);
                 if (math_oneCircle_IsComplete)
                 {
+                    fuelGaugeScript.StopFuelConsumption();
                     executingONEcircleMath = true;
                     executingTWOcircleMath = false;
                     ExecuteCompletionOf_oneCircle_Math(false, false);
@@ -3469,6 +3484,7 @@ public class PuzzleManager : MonoBehaviour
                     DetermineWhether_twoCircle_MathIsComplete();
                     if (math_twoCircle_IsComplete)
                     {
+                        fuelGaugeScript.StopFuelConsumption();
                         executingONEcircleMath = false;
                         executingTWOcircleMath = true;
                         ExecuteCompletionOf_twoCircle_Math(false);

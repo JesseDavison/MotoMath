@@ -89,8 +89,10 @@ public class SlowBounce : MonoBehaviour
     }
     public void MakeItBump()
     {
-        
+
         StartCoroutine(StartBump());
+
+
     }
 
     IEnumerator StartBump() {

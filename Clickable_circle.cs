@@ -299,6 +299,7 @@ public class Clickable_circle : MonoBehaviour
                 if (destination == defaultPosition)
                 {
                     transform.position = defaultPosition;
+                    PuzzleManager.instance.ResumeFuelConsumption();
                 }
                 else if (destinationText == "goal")
                 {

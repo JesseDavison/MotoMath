@@ -92,11 +92,11 @@ public class LootAnimationScript : MonoBehaviour
                 // Scrap metal, electronics
                 // bullets, rockets, bombs, caltrops, flamethrower
                 
-                if (whatIsThisThing == "money") {
-                    GameManager.instance.LootMoney();
-                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
-                }
-                else if (whatIsThisThing == "fuel") {
+                //if (whatIsThisThing == "money") {
+                //    GameManager.instance.LootMoney();
+                //    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                //}
+                if (whatIsThisThing == "fuel") {
                     GameManager.instance.LootFuel();
                     inventoryTextGreenThenBlackScript.TurnGreenThenFade();
                 }
@@ -104,14 +104,14 @@ public class LootAnimationScript : MonoBehaviour
                     GameManager.instance.LootNitrous();
                     inventoryTextGreenThenBlackScript.TurnGreenThenFade();
                 }
-                else if (whatIsThisThing == "scrapMetal") {
-                    GameManager.instance.LootScrapMetal();
-                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
-                }
-                else if (whatIsThisThing == "electronics") {
-                    GameManager.instance.LootElectronics();
-                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
-                }
+                //else if (whatIsThisThing == "scrapMetal") {
+                //    GameManager.instance.LootScrapMetal();
+                //    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                //}
+                //else if (whatIsThisThing == "electronics") {
+                //    GameManager.instance.LootElectronics();
+                //    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                //}
                 else if (whatIsThisThing == "bullets") {
                     GameManager.instance.LootBullets();
                     inventoryTextGreenThenBlackScript.TurnGreenThenFade();
@@ -124,10 +124,10 @@ public class LootAnimationScript : MonoBehaviour
                     GameManager.instance.LootBombs();
                     inventoryTextGreenThenBlackScript.TurnGreenThenFade();
                 }
-                else if (whatIsThisThing == "caltrops") {
-                    GameManager.instance.LootCaltrops();
-                    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
-                }
+                //else if (whatIsThisThing == "caltrops") {
+                //    GameManager.instance.LootCaltrops();
+                //    inventoryTextGreenThenBlackScript.TurnGreenThenFade();
+                //}
                 else if (whatIsThisThing == "flamethrower") {
                     GameManager.instance.LootFlamethrower();
                     inventoryTextGreenThenBlackScript.TurnGreenThenFade();
