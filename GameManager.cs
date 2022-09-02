@@ -887,11 +887,16 @@ public class GameManager : MonoBehaviour
     {
         // reset player inventory
         PlayerPrefs.SetFloat(nitrousInInventory, 0);
-        PlayerPrefs.SetInt(bulletsInInventory, 3);
-        PlayerPrefs.SetInt(rocketsInInventory, 0);
-        PlayerPrefs.SetInt(bombsInInventory, 0);
-        PlayerPrefs.SetInt(flamethrowerInInventory, 0);
+        //PlayerPrefs.SetInt(bulletsInInventory, 3);
+        //PlayerPrefs.SetInt(rocketsInInventory, 0);
+        //PlayerPrefs.SetInt(bombsInInventory, 0);
+        //PlayerPrefs.SetInt(flamethrowerInInventory, 0);
         fuelGaugeScript.ResetFuelToFullForNewGame();
+
+        //PuzzleManager.instance.TurnMultDivideOFF();
+        //PuzzleManager.instance.TurnNegativeNumbersOFF();
+        //PuzzleManager.instance.TurnFractionsOFF();
+        //PuzzleManager.instance.TurnExponentsOFF();
 
         CirclesParent.SetActive(true);
         //MathInProgress.SetActive(false);
@@ -1106,6 +1111,27 @@ public class GameManager : MonoBehaviour
             {
                 PlayerPrefs.SetInt(stat_highestNumberCompleted, numberCompleted);
             }
+
+            if (numberCompleted == 2)
+            {
+                PuzzleManager.instance.TurnMultDivideON();
+                // notify the player here
+            }
+            else if (numberCompleted == 4)
+            {
+                PuzzleManager.instance.TurnExponentsON();
+            }
+            else if (numberCompleted == 6)
+            {
+                PuzzleManager.instance.TurnNegativeNumbersON();
+            }
+            else if (numberCompleted == 8)
+            {
+                PuzzleManager.instance.TurnFractionsON();
+            }
+
+
+
 
 
         }
@@ -1725,7 +1751,8 @@ public class GameManager : MonoBehaviour
     {
 
     }
-    public void LaunchBomb() {
+    IEnumerator LaunchBomb() {
+        yield return new WaitForSeconds(1);
         // make arm animation appear and throw the dynamite
         armThrowingBomb.SetActive(true);
         
@@ -1885,21 +1912,22 @@ public class GameManager : MonoBehaviour
         //LOOT_money_script.StartMovement(LOOT_money_quantity, spot1);
 
         // always fuel
-        LOOT_fuel_quantity = Random.Range(10, 15);
+        LOOT_fuel_quantity = Random.Range(8, 15);
         LOOT_fuel_icon.SetActive(true);
         LOOT_fuel_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
         LOOT_fuel_script.StartMovement(LOOT_fuel_quantity, spot1);
 
 
         // 1: nitrous, 2: electronics, 3: bullets, 4: rockets, 5: bombs, 6: caltrops, 7: flamethrower
-        if (results.Contains(1))
-        {
+        //if (results.Contains(1))
+        //{
             LOOT_nitrous_quantity = 25;
             LOOT_nitrous_icon.SetActive(true);
             LOOT_nitrous_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
-            LOOT_nitrous_script.StartMovement(LOOT_nitrous_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
+            LOOT_nitrous_script.StartMovement(LOOT_nitrous_quantity, spot2);
+        //LOOT_nitrous_script.StartMovement(LOOT_nitrous_quantity, remainingSpots[0]);
+        //remainingSpots.Remove(remainingSpots[0]);
+        //}
 
         // always scrapMetal
         //LOOT_scrapMetal_quantity = Random.Range(5, 20);
@@ -1919,38 +1947,38 @@ public class GameManager : MonoBehaviour
 
         // ammo
         // 1: nitrous, 2: electronics, 3: bullets, 4: rockets, 5: bombs, 6: caltrops, 7: flamethrower
-        if (results.Contains(2))
-        {
-            LOOT_bullets_quantity = Random.Range(1, 4);
-            LOOT_bullets_icon.SetActive(true);
-            LOOT_bullets_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
-            LOOT_bullets_script.StartMovement(LOOT_bullets_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
-        if (results.Contains(3))
-        {
-            LOOT_rocket_quantity = Random.Range(1, 4);
-            LOOT_rocket_icon.SetActive(true);
-            LOOT_rocket_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
-            LOOT_rocket_script.StartMovement(LOOT_rocket_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
-        if (results.Contains(4))
-        {
-            LOOT_bombs_quantity = Random.Range(1, 4);
-            LOOT_bombs_icon.SetActive(true);
-            LOOT_bombs_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
-            LOOT_bombs_script.StartMovement(LOOT_bombs_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
-        if (results.Contains(5))
-        {
-            LOOT_flamethrower_quantity = Random.Range(1, 4);
-            LOOT_flamethrower_icon.SetActive(true);
-            LOOT_flamethrower_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
-            LOOT_flamethrower_script.StartMovement(LOOT_flamethrower_quantity, remainingSpots[0]);
-            remainingSpots.Remove(remainingSpots[0]);
-        }
+        //if (results.Contains(2))
+        //{
+        //    LOOT_bullets_quantity = Random.Range(1, 4);
+        //    LOOT_bullets_icon.SetActive(true);
+        //    LOOT_bullets_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
+        //    LOOT_bullets_script.StartMovement(LOOT_bullets_quantity, remainingSpots[0]);
+        //    remainingSpots.Remove(remainingSpots[0]);
+        //}
+        //if (results.Contains(3))
+        //{
+        //    LOOT_rocket_quantity = Random.Range(1, 4);
+        //    LOOT_rocket_icon.SetActive(true);
+        //    LOOT_rocket_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
+        //    LOOT_rocket_script.StartMovement(LOOT_rocket_quantity, remainingSpots[0]);
+        //    remainingSpots.Remove(remainingSpots[0]);
+        //}
+        //if (results.Contains(4))
+        //{
+        //    LOOT_bombs_quantity = Random.Range(1, 4);
+        //    LOOT_bombs_icon.SetActive(true);
+        //    LOOT_bombs_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
+        //    LOOT_bombs_script.StartMovement(LOOT_bombs_quantity, remainingSpots[0]);
+        //    remainingSpots.Remove(remainingSpots[0]);
+        //}
+        //if (results.Contains(5))
+        //{
+        //    LOOT_flamethrower_quantity = Random.Range(1, 4);
+        //    LOOT_flamethrower_icon.SetActive(true);
+        //    LOOT_flamethrower_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
+        //    LOOT_flamethrower_script.StartMovement(LOOT_flamethrower_quantity, remainingSpots[0]);
+        //    remainingSpots.Remove(remainingSpots[0]);
+        //}
         //if (results.Contains(6))
         //{
         //    LOOT_caltrops_quantity = Random.Range(1, 4);
@@ -2233,17 +2261,29 @@ public class GameManager : MonoBehaviour
         else
         {
 
-            if (preferredAmmo == "bullets") {
-                SpendBullets();
-            } else if (preferredAmmo == "rockets") {
-                SpendRocket();
-            } else if (preferredAmmo == "bombs") {
-                SpendBomb();
-            } else if (preferredAmmo == "caltrops") { 
-
-            } else if (preferredAmmo == "flamethrower") {
-                SpendFlamethrower();
+            int randomish = Random.Range(1, 5);
+            if (randomish == 1) {
+                ShootBullets();
+            } else if (randomish == 2) {
+                OpenMissileDoor();
+            } else if (randomish == 3) {
+                StartCoroutine(LaunchBomb());
+            } else if (randomish == 4) {
+                MovePlayerForward_forFlamethrower();
             }
+
+
+            //if (preferredAmmo == "bullets") {
+            //    SpendBullets();
+            //} else if (preferredAmmo == "rockets") {
+            //    SpendRocket();
+            //} else if (preferredAmmo == "bombs") {
+            //    SpendBomb();
+            //} else if (preferredAmmo == "caltrops") { 
+
+            //} else if (preferredAmmo == "flamethrower") {
+            //    SpendFlamethrower();
+            //}
 
 
            // int rando = Random.Range(1, 4);
@@ -2305,7 +2345,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            int rando = Random.Range(2, 4);
+            int rando = Random.Range(1, 4);
             if (rando == 1) {
                 EnemyFires_Rocket();
                 //EnemyFires_Caltrops(false);

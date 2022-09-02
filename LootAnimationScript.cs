@@ -72,10 +72,13 @@ public class LootAnimationScript : MonoBehaviour
             if (Vector2.Distance(transform.position, secondSpot) < 0.01f)
             {
                 movingToSecondSpot = false;
-                fadingAway = true;
+                //fadingAway = true;
             }
+            fadingAway = true;
 
-        } else if (fadingAway) {
+        } 
+        
+        if (fadingAway) {
             Color currentColor = spriteRenderer.color;
             float fadeAmount = currentColor.a - (fadeSpeed * Time.deltaTime);
             spriteRenderer.color = new Color(currentColor.r, currentColor.g, currentColor.b, fadeAmount);
@@ -151,12 +154,16 @@ public class LootAnimationScript : MonoBehaviour
     public void StartMovement(int quan, Vector2 spot) {
         //quantityText.text = "";       // for some reason uncommenting this produces an error
 
+
+
         firstSpot = spot;
 
         firstSpeed = firstSpeedDefault;
         secondSpeed = secondSpeedDefault;
 
         quantity = quan;
+        fadingAway = false;
+        movingToSecondSpot = false;
         movingToFirstSpot = true;
         quantityTextSet = false;
         //Debug.Log("####################################################################################in " + gameObject.name);
