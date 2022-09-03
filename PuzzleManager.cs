@@ -662,17 +662,19 @@ public class PuzzleManager : MonoBehaviour
         {
             //toReturn.Add(-0.7500f);   // -3/4
             //toReturn.Add(-0.6666f);   // -2/3
-            toReturn.Add(-0.5f);    // -1/2     because (-0.5)^2 = 0.25
-            toReturn.Add(-0.3333f);   // -1/3, because 1/3 squared is 1/9
+            toReturn.Add(-0.5f);    // -1/2     because its square is 1/4
+            toReturn.Add(-1f / 3f);   // -1/3, because its square is 1/9
                                       //toReturn.Add(-0.25f);   // -1/4
+            toReturn.Add(-2f / 3f);  // -2/3        because its square is 4/9
         }
         if (fractionsAllowed)
         {
             //toReturn.Add(0.25f);
-            toReturn.Add(0.3333f);
+            toReturn.Add(1f / 3f);
             toReturn.Add(0.5f);
             //toReturn.Add(0.6666f);
             //toReturn.Add(0.75f);
+            toReturn.Add(2f / 3f);
         }
         if (oneAllowed)
         {
@@ -1046,6 +1048,10 @@ public class PuzzleManager : MonoBehaviour
         if (opera.type == "addition")
         {
             result = circle1.value + circle2.value;
+            if (TestIfIsInteger(result))
+            {
+                result = Mathf.RoundToInt(result);
+            }
         }
         else if (opera.type == "subtraction")
         {
@@ -1053,14 +1059,26 @@ public class PuzzleManager : MonoBehaviour
             result = circle1.value - circle2.value;
             Debug.Log("result: " + result);
             //DEBUG_outputCircleValues("in subtraction section, after assigning result, of CreateResultCircle()");
+            if (TestIfIsInteger(result))
+            {
+                result = Mathf.RoundToInt(result);
+            }
         }
         else if (opera.type == "multiplication")
         {
             result = circle1.value * circle2.value;
+            if (TestIfIsInteger(result))
+            {
+                result = Mathf.RoundToInt(result);
+            }
         }
         else if (opera.type == "division")
         {
             result = circle1.value / circle2.value;
+            if (TestIfIsInteger(result))
+            {
+                result = Mathf.RoundToInt(result);
+            }
         }
         else if (opera.type == "exponent2")
         {
@@ -1247,8 +1265,8 @@ public class PuzzleManager : MonoBehaviour
         {
             float value = circle1.value;
             // see if *value* is on the list of usable circle1s for exponent2
-            //List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, true, negativeNumbersAllowed, false);
-            List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, true, negativeNumbersAllowed, fractionsAllowed);
+            List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, true, negativeNumbersAllowed, false);
+            //List<float> usableCircle1ValuesForExponent2 = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, true, negativeNumbersAllowed, fractionsAllowed);
             if (usableCircle1ValuesForExponent2.Contains(value))
             {
                 //Debug.Log("the result from partA was: " + value + ", and we just added exponent2 as a potential operator for partB");
@@ -1259,7 +1277,7 @@ public class PuzzleManager : MonoBehaviour
         {
             float value = circle1.value;
             // see if *value* is on the list of usable circle1s for exponent3
-            List<float> usableCircle1ValuesForExponent3 = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, true, negativeNumbersAllowed, fractionsAllowed);
+            List<float> usableCircle1ValuesForExponent3 = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, true, negativeNumbersAllowed, false);  // now that we have 1/9&etc: need to specify no fractions
             if (usableCircle1ValuesForExponent3.Contains(value))
             {
                 operatorList.Add("exponent3");
@@ -1269,7 +1287,7 @@ public class PuzzleManager : MonoBehaviour
         {
             float value = circle1.value;
 
-            List<float> usableCircle1ValuesForSquareRoot = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, true, false, fractionsAllowed);
+            List<float> usableCircle1ValuesForSquareRoot = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, true, false, false); // now that we have 1/9&etc: need to specify no fractions
             if (usableCircle1ValuesForSquareRoot.Contains(value))
             {
                 operatorList.Add("squareRoot");
@@ -1278,7 +1296,7 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderCubeRoot(Circle circle1)
         {
             float value = circle1.value;
-            List<float> usableCircle1ValuesForCubeRoot = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, true, negativeNumbersAllowed, fractionsAllowed);
+            List<float> usableCircle1ValuesForCubeRoot = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, true, negativeNumbersAllowed, false); // now that we have 1/9&etc: need to specify no fractions
             if (usableCircle1ValuesForCubeRoot.Contains(value))
             {
                 operatorList.Add("cubeRoot");
@@ -1448,7 +1466,7 @@ public class PuzzleManager : MonoBehaviour
 
 
             // if the resultValue is a fraction, then the ONLY POSSIBLE circle1 value is also a fraction, and we don't need to waste time looking at integers
-            // conversely, if resultValue is an integer, the we don't need to look at fractions
+            // conversely, if resultValue is an integer, then we don't need to look at fractions
 
             List<float> circle1ValuesToConsider = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
 
@@ -1688,11 +1706,11 @@ public class PuzzleManager : MonoBehaviour
             List<float> usableResults = new List<float>();
             if (fractionsAllowed)
             {
-                usableResults = new List<float> { 0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
+                usableResults = new List<float> { 0.25f, 1f/9f, 4f/9f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144 };
             }
             else
             {
-                usableResults = new List<float> { 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
+                usableResults = new List<float> { 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144 };
             }
 
             //List<float> usableResults = new List<float> { 0.25f, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121 };
@@ -1709,11 +1727,13 @@ public class PuzzleManager : MonoBehaviour
                 {
                     if (ABC == 'A')
                     {
-                        exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
+                        //exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
+                        exponent2_circle1ValueToUse_1 = Mathf.Pow(resultValue, 0.5f);
                     }
                     else if (ABC == 'B')
                     {
-                        exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
+                        //exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 0.5f));
+                        exponent2_circle1ValueToUse_2 = Mathf.Pow(resultValue, 0.5f);
                     }
                     else if (ABC == 'C')
                     {
@@ -1724,11 +1744,13 @@ public class PuzzleManager : MonoBehaviour
                 {
                     if (ABC == 'A')
                     {
-                        exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
+                        //exponent2_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
+                        exponent2_circle1ValueToUse_1 = -Mathf.Pow(resultValue, 0.5f);
                     }
                     else if (ABC == 'B')
                     {
-                        exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
+                        //exponent2_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(resultValue, 0.5f));
+                        exponent2_circle1ValueToUse_2 = -Mathf.Pow(resultValue, 0.5f);
                     }
                     else if (ABC == 'C')
                     {
@@ -1757,13 +1779,27 @@ public class PuzzleManager : MonoBehaviour
         void ConsiderExponent3(float resultValue, char ABC)
         {
             List<float> usableResults = new List<float>();
-            if (negativeNumbersAllowed)
+            if (!fractionsAllowed) 
             {
-                usableResults = new List<float> { -125, -64, -27, -8, 8, 27, 64, 125 };
+                if (negativeNumbersAllowed)
+                {
+                    usableResults = new List<float> { -216, -125, -64, -27, -8, 8, 27, 64, 125, 216 };
+                }
+                else
+                {
+                    usableResults = new List<float> { 8, 27, 64, 125, 216 };
+                }
             }
             else
             {
-                usableResults = new List<float> { 8, 27, 64, 125 };
+                if (negativeNumbersAllowed)
+                {
+                    usableResults = new List<float> { -216, -125, -64, -27, -8, -1f / 8f, 1f / 8f, 8, 27, 64, 125, 216 };
+                }
+                else
+                {
+                    usableResults = new List<float> { 1f / 8f, 8, 27, 64, 125, 216 };
+                }
             }
 
             //List<float> usableResults = new List<float> { -125, -64, -27, -8, 8, 27, 64, 125 };
@@ -1774,11 +1810,13 @@ public class PuzzleManager : MonoBehaviour
                 {
                     if (ABC == 'A')
                     {
-                        exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
+                        //exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
+                        exponent3_circle1ValueToUse_1 = -Mathf.Pow(-resultValue, 1f / 3f);
                     }
                     else if (ABC == 'B')
                     {
-                        exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
+                        //exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(-Mathf.Pow(-resultValue, 1f / 3f));
+                        exponent3_circle1ValueToUse_2 = -Mathf.Pow(-resultValue, 1f / 3f);
                     }
                     else if (ABC == 'C')
                     {
@@ -1789,11 +1827,13 @@ public class PuzzleManager : MonoBehaviour
                 {
                     if (ABC == 'A')
                     {
-                        exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
+                        //exponent3_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
+                        exponent3_circle1ValueToUse_1 = Mathf.Pow(resultValue, 1f / 3f);
                     }
                     else if (ABC == 'B')
                     {
-                        exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
+                        //exponent3_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 1f / 3f));
+                        exponent3_circle1ValueToUse_2 = Mathf.Pow(resultValue, 1f / 3f);
                     }
                     else if (ABC == 'C')
                     {
@@ -1822,19 +1862,31 @@ public class PuzzleManager : MonoBehaviour
 
         void ConsiderSquareRoot(float resultValue, char ABC)
         {
-            List<float> usableResults = new List<float> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+            List<float> usableResults = new List<float>();
+            if (!fractionsAllowed)
+            {
+                usableResults = new List<float> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            }
+            else
+            {
+                usableResults = new List<float> { 1f/2f, 1f/3f, 2f/3f, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            }
+
+
 
             if (usableResults.Contains(resultValue))
             {
                 if (ABC == 'A')
                 {
-                    squareRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
+                    //squareRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
+                    squareRoot_circle1ValueToUse_1 = Mathf.Pow(resultValue, 2);
                     //Debug.Log("squareRoot is viable: " + squareRoot_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
                     operatorList_1.Add("squareRoot");
                 }
                 else if (ABC == 'B')
                 {
-                    squareRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
+                    //squareRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 2));
+                    squareRoot_circle1ValueToUse_2 = Mathf.Pow(resultValue, 2);
                     //Debug.Log("squareRoot is viable: " + squareRoot_circle1ValueToUse_2 + " as circle1 gives us result of " + resultValue);
                     operatorList_2.Add("squareRoot");
                 }
@@ -1883,11 +1935,25 @@ public class PuzzleManager : MonoBehaviour
             List<float> usableResults = new List<float>();
             if (negativeNumbersAllowed)
             {
-                usableResults = new List<float> { -5, -4, -3, -2, 2, 3, 4, 5 };
+                if (fractionsAllowed)
+                {
+                    usableResults = new List<float> { -6, -5, -4, -3, -2, -1f/2f, 1f/2f, 2, 3, 4, 5, 6 };
+                }
+                else
+                {
+                    usableResults = new List<float> { -6, -5, -4, -3, -2, 2, 3, 4, 5, 6 };
+                }
             }
             else
             {
-                usableResults = new List<float> { 2, 3, 4, 5 };
+                if (fractionsAllowed)
+                {
+                    usableResults = new List<float> { 1f / 2f, 2, 3, 4, 5, 6 };
+                }
+                else
+                {
+                    usableResults = new List<float> { 2, 3, 4, 5, 6 };
+                }
             }
 
             //List<float> usableResults = new List<float> { -5, -4, -3, -2, 2, 3, 4, 5 };
@@ -1896,13 +1962,15 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (ABC == 'A')
                 {
-                    cubeRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
+                    //cubeRoot_circle1ValueToUse_1 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
+                    cubeRoot_circle1ValueToUse_1 = Mathf.Pow(resultValue, 3);
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_1 + " as circle1 gives us result of " + resultValue);
                     operatorList_1.Add("cubeRoot");
                 }
                 else if (ABC == 'B')
                 {
-                    cubeRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
+                    //cubeRoot_circle1ValueToUse_2 = Mathf.RoundToInt(Mathf.Pow(resultValue, 3));
+                    cubeRoot_circle1ValueToUse_2 = Mathf.Pow(resultValue, 3);
                     //Debug.Log("cubeRoot is viable: " + cubeRoot_circle1ValueToUse_2 + " as circle1 gives us result of " + resultValue);
                     operatorList_2.Add("cubeRoot");
                 }
@@ -2029,21 +2097,24 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("exponent2", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_1;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
+                resultPartA = Mathf.Pow(circle1Value, 2);
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_1;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
+                resultPartA = Mathf.Pow(circle1Value, 3);
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_1;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
+                resultPartA = Mathf.Pow(circle1Value, 0.5f);
             }
             else if (operatorWeUse == "cubeRoot")
             {
@@ -2052,11 +2123,13 @@ public class PuzzleManager : MonoBehaviour
                 circle1Value = cubeRoot_circle1ValueToUse_1;
                 if (circle1Value < 0)
                 {
-                    resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
+                    //resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
+                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
                 }
                 else if (circle1Value > 0)
                 {
-                    resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
+                    //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
+                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
                 }
 
             }
@@ -2131,21 +2204,24 @@ public class PuzzleManager : MonoBehaviour
                 partA_operator = new Operator("exponent2", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent2_circle1ValueToUse_2;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 2));
+                resultPartA = Mathf.Pow(circle1Value, 2);
             }
             else if (operatorWeUse == "exponent3")
             {
                 partA_operator = new Operator("exponent3", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = exponent3_circle1ValueToUse_2;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 3));
+                resultPartA = Mathf.Pow(circle1Value, 3);
             }
             else if (operatorWeUse == "squareRoot")
             {
                 partA_operator = new Operator("squareRoot", 'A');
                 listOfAllOperators.Add(partA_operator);
                 circle1Value = squareRoot_circle1ValueToUse_2;
-                resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
+                //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 0.5f));
+                resultPartA = Mathf.Pow(circle1Value, 0.5f);
             }
             else if (operatorWeUse == "cubeRoot")
             {
@@ -2154,11 +2230,13 @@ public class PuzzleManager : MonoBehaviour
                 circle1Value = cubeRoot_circle1ValueToUse_2;
                 if (circle1Value < 0)
                 {
-                    resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
+                    //resultPartA = Mathf.RoundToInt(-Mathf.Pow(-circle1Value, 1f / 3f));
+                    resultPartA = -Mathf.Pow(-circle1Value, 1f / 3f);
                 }
                 else if (circle1Value > 0)
                 {
-                    resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
+                    //resultPartA = Mathf.RoundToInt(Mathf.Pow(circle1Value, 1f / 3f));
+                    resultPartA = Mathf.Pow(circle1Value, 1f / 3f);
                 }
             }
             if (circle1Value != 0)
@@ -2270,9 +2348,9 @@ public class PuzzleManager : MonoBehaviour
                 int denominator = -99999;
 
                 bool rationalFound = false;
-                for (int i = 1; i <= 70 && rationalFound == false; i++)
+                for (int i = 1; i <= 30 && rationalFound == false; i++)
                 {
-                    for (int j = 2; j <= 9 && rationalFound == false; j++)
+                    for (int j = 2; j <= 20 && rationalFound == false; j++)
                     {
                         if (CheckIfNumbersAreCloseEnough(value, (float)i / (float)j))
                         {
@@ -2510,7 +2588,7 @@ public class PuzzleManager : MonoBehaviour
         }
     }
     public void SetGoal(float value) {
-
+        
         Goal.GetComponent<Clickable>().valueOfThisCircle_orGoal = value;
 
         if (TestIfIsInteger(value))
@@ -2529,16 +2607,15 @@ public class PuzzleManager : MonoBehaviour
             if (value < 0)
             {
                 isNegative = true;
+                value = Mathf.Abs(value);
                 Debug.Log("um yah it is negative");
             }
-
-            value = Mathf.Abs(value);
 
             int numerator = -99999;
             int denominator = -99999;
 
             bool rationalFound = false;
-            for (int i = 1; i <= 70 && rationalFound == false; i++)
+            for (int i = 1; i <= 8 && rationalFound == false; i++)
             {
                 for (int j = 2; j <= 9 && rationalFound == false; j++)
                 {
@@ -3077,7 +3154,7 @@ public class PuzzleManager : MonoBehaviour
         {
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
-            inputCircleB = CreateRandomSecondCircleThatResultsInInt_orNot(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
+            inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
         }
         else if (oppy.type == "subtraction")
@@ -3085,7 +3162,7 @@ public class PuzzleManager : MonoBehaviour
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, false, negativeNumbersAllowed, false);
             // don't want circle1 to be 1, because 1 - x = B, where B MUST BE positive and not a fraction, is impossible
             inputCircleA = CreateRandomCircle(stuff);
-            inputCircleB = CreateRandomSecondCircleThatResultsInInt_orNot(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
+            inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, true, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
         }
         else if (oppy.type == "multiplication" || oppy.type == "division")
@@ -3093,7 +3170,7 @@ public class PuzzleManager : MonoBehaviour
             List<float> stuff = CreateListOfPossibleCircleValues_forArithmetic(upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
-            inputCircleB = CreateRandomSecondCircleThatResultsInInt_orNot(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
+            inputCircleB = CreateRandomSecondCircleThatResultsInInt(oppy, inputCircleA, upperLimitForResult, upperLimitForCircleValue, false, negativeNumbersAllowed, fractionsAllowed);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleB, oppy);
             Debug.Log("%%%%%%%%%%%%%%%% ok we did division, and inputCircleA.value = " + inputCircleA.value + ", and inputCircleB.value = " + inputCircleB.value);
         }
@@ -3112,8 +3189,8 @@ public class PuzzleManager : MonoBehaviour
                 }
                 else if (A_B_C == 'B')
                 {
-                    //stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
-                    stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+                    stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, false);
+                    //stuff = CreateListOfPossibleCircleValues_forExponent2(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
                 }
             }
             inputCircleA = CreateRandomCircle(stuff);
@@ -3129,7 +3206,15 @@ public class PuzzleManager : MonoBehaviour
             }
             else
             {
-                stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+                if (A_B_C == 'A')
+                {
+                    stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, fractionsAllowed);
+                } 
+                else if (A_B_C == 'B')
+                {
+                    stuff = CreateListOfPossibleCircleValues_forExponent3(upperLimitForResult, false, negativeNumbersAllowed, false); // now that we have 1/9&etc: need to specify no fractions
+                }
+
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
@@ -3146,8 +3231,8 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (A_B_C == 'B')
                 {
-                    //stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
-                    stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
+                    stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, false);
+                    //stuff = CreateListOfPossibleCircleValues_forSquareRoot(upperLimit_ValueToBeSquared, false, negativeNumbersAllowed, fractionsAllowed);
                 }
                 else if (A_B_C == 'A')
                 {
@@ -3167,18 +3252,26 @@ public class PuzzleManager : MonoBehaviour
             }
             else
             {
-                stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
+                if (A_B_C == 'A')
+                {
+                    stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, fractionsAllowed);
+                }
+                else if (A_B_C == 'B')
+                {
+                    stuff = CreateListOfPossibleCircleValues_forCubeRoot(upperLimit_ValueToBeCubed, false, negativeNumbersAllowed, false);
+                }
+
             }
             inputCircleA = CreateRandomCircle(stuff);
             //inputCircleB = CreateSpecificCircle(-999999999);
             outputCircle = CreateResultCircle(inputCircleA, inputCircleA, oppy);
         }
         Debug.Log("first value: " + inputCircleA.value);
-        Debug.Log("operator: " + oppy.type);
         if (inputCircleB != null)
         {
             Debug.Log("second value: " + inputCircleB.value);
         }
+        Debug.Log("operator: " + oppy.type);
         Debug.Log("result: " + outputCircle.value);
 
         // CREATE THE OTHER PART OF THE PROBLEM

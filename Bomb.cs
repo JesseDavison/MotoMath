@@ -91,7 +91,7 @@ public class Bomb : MonoBehaviour
                 {
                     gameObject.SetActive(false);
                     launched = false;
-                    GameManager.instance.EnemyExplodes();
+                    GameManager.instance.EnemyExplodes(true);
 
                 }
                 else if (transform.position.y <= 0.51f) {

@@ -261,6 +261,7 @@ public class GameManager : MonoBehaviour
         MissileDoor_Animator = MissileDoor_GameObject.GetComponent<Animator>();
         FlamethrowerNozzle_Animator = FlamethrowerNozzle_GameObject.GetComponent<Animator>();
         FlamethrowerFlame_Animator = FlamethrowerFlame_GameObject.GetComponent<Animator>();
+        fuelGaugeScript = FuelGauge.GetComponent<FuelGaugeScript>();
     }
 
     // Start is called before the first frame update
@@ -277,8 +278,6 @@ public class GameManager : MonoBehaviour
         instance = this;
         timerGlobal = GlobalTimer.GetComponent<TimerGlobal>();
         timerPuzzle = PuzzleTimerThatMoves.GetComponent<TimerPuzzle>();
-
-        fuelGaugeScript = FuelGauge.GetComponent<FuelGaugeScript>();
 
         nitrousBottle_animator = NitrousBottle.GetComponent<Animator>();
 
@@ -306,7 +305,54 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (usingNitrous == true) {
+        if (shootingBullets_atEnemy)
+        {
+            //GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
+            Gunfire_hitting_GameObject.transform.position = basicEnemy.transform.position + new Vector3(-1.98f, 0.54f, -2);
+
+            if (numberOfBulletsShot < numberOfBulletsBeingShot)
+            {
+                bulletDelayCounter += 1;
+                if (bulletDelayCounter >= delayBetweenBulletDecrease)
+                {
+                    bulletDelayCounter = 0;
+                    tempInventoryAmount -= 1;
+                    numberOfBulletsShot += 1;
+                    LevelUI_inventoryDisplay_bullets.text = tempInventoryAmount.ToString();
+
+                }
+            }
+            else if (numberOfBulletsShot == numberOfBulletsBeingShot)
+            {
+                numberOfBulletsBeingShot = -999;
+                // set the playerprefs int, so the amount remains correct
+                PlayerPrefs.SetInt(bulletsInInventory, tempInventoryAmount);
+                Debug.Log("bullet inventory updated");
+            }
+        }
+        else if (shootingFlamethrower_atEnemy)
+        {
+            //FlamethrowerFlame_GameObject.transform.position = playerVehicle.transform.position + new Vector3(0.31f, -1.39f, -2);
+
+            if (numberOfFlamethrowerShot < numberOfFlamethrowerBeingShot)
+            {
+                flamethrowerDelayCounter += 1;
+                if (flamethrowerDelayCounter >= delayBetweenFlamethrowerDecrease)
+                {
+                    flamethrowerDelayCounter = 0;
+                    tempInventoryAmount -= 1;
+                    numberOfFlamethrowerShot += 1;
+                    LevelUI_inventoryDisplay_flamethrower.text = tempInventoryAmount.ToString();
+                }
+            }
+            else if (numberOfFlamethrowerShot == numberOfFlamethrowerBeingShot)
+            {
+                numberOfFlamethrowerBeingShot = -999;
+                PlayerPrefs.SetInt(flamethrowerInInventory, tempInventoryAmount);
+                Debug.Log("flamethrower inventory updated, amount used: " + numberOfFlamethrowerShot);
+            }
+        }
+        else if (usingNitrous == true) {
             if (fullSpeedAchieved == false) 
             {
                 fuelGaugeScript.StopFuelConsumption();
@@ -336,209 +382,124 @@ public class GameManager : MonoBehaviour
 
                 }
             }
-            
-            
-            
-
         }
-        else if (playerSlowingDown && slowingDownFromBlownTire) 
+        else if (playerSlowingDown)
         {
-            if (Time.timeScale > 0.2f) {
-                Time.timeScale -= blownTireSlowdownAmountToSubtract;
-                Debug.Log("current timescale: " + Time.timeScale + " slowingDownFromBlownTire: " + slowingDownFromBlownTire);
-            } else if (Time.timeScale <= 0.25f) {
-                Time.timeScale = 0;
-
-                // animate puff of dust
-                PlayDustCloud();
-                fuelGaugeScript.StopFuelConsumption();
-                slowingDownFromBlownTire = false;
-                playerSlowingDown = false;
-
-
-                // set background speed to zero
-                backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
-
-
-                // be ready for background to be set to default speed
-
-                // set playerVehicle speed to 0
-                playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
-
-
-                // restore timescale to 1
-                Time.timeScale = 1;     // change timescale after the game restarts
-                //slowingDownFromBlownTire = false;
-
-
-
-                // now, have enemy drive by
-                basicEnemy_Script.BringVehicleBackOnScreen();
-                //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
-                basicEnemy.SetActive(true);
-                basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
-                basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
-
-                Debug.Log("enemy should be active");
-
-
-            }
-        
-        }
-        else if (playerSlowingDown && slowingDownFromPlayerExploding) 
-        {
-            if (Time.timeScale > 0.2f)
+            if (slowingDownFromBlownTire)
             {
-                Time.timeScale -= blownTireSlowdownAmountToSubtract;
-                Debug.Log("current timescale: " + Time.timeScale);
-            }
-            else if (Time.timeScale <= 0.25f)
-            {
-                Time.timeScale = 0;
+                if (Time.timeScale > 0.2f)
+                {
+                    Time.timeScale -= blownTireSlowdownAmountToSubtract;
+                    Debug.Log("current timescale: " + Time.timeScale + " slowingDownFromBlownTire: " + slowingDownFromBlownTire);
+                }
+                else if (Time.timeScale <= 0.25f)
+                {
+                    Time.timeScale = 0;
 
-                // animate puff of dust
-                PlayDustCloud();
-                fuelGaugeScript.StopFuelConsumption();
-                slowingDownFromPlayerExploding = false;
-                playerSlowingDown = false;
-
-
-                // set background speed to zero
-                backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    // animate puff of dust
+                    PlayDustCloud();
+                    fuelGaugeScript.StopFuelConsumption();
+                    slowingDownFromBlownTire = false;
+                    playerSlowingDown = false;
 
 
-                // be ready for background to be set to default speed
-
-                // set playerVehicle speed to 0
-                playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
-
-
-                // restore timescale to 1
-                Time.timeScale = 1;     // change timescale after the game restarts
-                //slowingDownFromBlownTire = false;
+                    // set background speed to zero
+                    backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
 
 
+                    // be ready for background to be set to default speed
 
-                // now, have enemy drive by
-                basicEnemy_Script.BringVehicleBackOnScreen();
-                //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
-                basicEnemy.SetActive(true);
-                basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
-                basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
-
-                Debug.Log("enemy should be active");
+                    // set playerVehicle speed to 0
+                    playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
 
 
-            }
-        }
-        else if (shootingBullets_atEnemy)
-        {
+                    // restore timescale to 1
+                    Time.timeScale = 1;     // change timescale after the game restarts
+                                            //slowingDownFromBlownTire = false;
 
-            //GunfireGameObject.transform.position = playerVehicle.transform.position + new Vector3(1.8f, 1.01f, 0);
-            Gunfire_hitting_GameObject.transform.position = basicEnemy.transform.position + new Vector3(-1.98f, 0.54f, -2);
 
-            if (numberOfBulletsShot < numberOfBulletsBeingShot) 
-            {
-                bulletDelayCounter += 1;
-                if (bulletDelayCounter >= delayBetweenBulletDecrease) {
-                    bulletDelayCounter = 0;
-                    tempInventoryAmount -= 1;
-                    numberOfBulletsShot += 1;
-                    LevelUI_inventoryDisplay_bullets.text = tempInventoryAmount.ToString();
+
+                    // now, have enemy drive by
+                    basicEnemy_Script.BringVehicleBackOnScreen();
+                    //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
+                    basicEnemy.SetActive(true);
+                    basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
+                    basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
+
+                    Debug.Log("enemy should be active");
+
 
                 }
-            } 
-            else if (numberOfBulletsShot == numberOfBulletsBeingShot) 
-            {
-                numberOfBulletsBeingShot = -999;
-                // set the playerprefs int, so the amount remains correct
-                PlayerPrefs.SetInt(bulletsInInventory, tempInventoryAmount);
-                Debug.Log("bullet inventory updated");
             }
-
-
-        }
-        else if (shootingFlamethrower_atEnemy)
-        {
-            //FlamethrowerFlame_GameObject.transform.position = playerVehicle.transform.position + new Vector3(0.31f, -1.39f, -2);
-
-            if (numberOfFlamethrowerShot < numberOfFlamethrowerBeingShot) 
+            else if (slowingDownFromOutOfFuel)
             {
-                flamethrowerDelayCounter += 1;
-                if (flamethrowerDelayCounter >= delayBetweenFlamethrowerDecrease) {
-                    flamethrowerDelayCounter = 0;
-                    tempInventoryAmount -= 1;
-                    numberOfFlamethrowerShot += 1;
-                    LevelUI_inventoryDisplay_flamethrower.text = tempInventoryAmount.ToString();
+                if (Time.timeScale > 0.2f)
+                {
+                    Time.timeScale -= blownTireSlowdownAmountToSubtract;
+                    if (Time.timeScale <= 0.2f)
+                    {
+                        slowingDownFromOutOfFuel = false;
+                        playerSlowingDown = false;
+                        BlowUpPlayerAfterOutOfFuel();
+                    }
+                    //Debug.Log("current timescale: " + Time.timeScale);
                 }
             }
-            else if (numberOfFlamethrowerShot == numberOfFlamethrowerBeingShot)
+            else if (slowingDownFromPlayerExploding)
             {
-                numberOfFlamethrowerBeingShot = -999;
-                PlayerPrefs.SetInt(flamethrowerInInventory, tempInventoryAmount);
-                Debug.Log("flamethrower inventory updated, amount used: " + numberOfFlamethrowerShot);
-            }
+                if (Time.timeScale > 0.2f)
+                {
+                    Time.timeScale -= blownTireSlowdownAmountToSubtract;
+                    Debug.Log("current timescale: " + Time.timeScale);
+                }
+                else if (Time.timeScale <= 0.25f)
+                {
+                    Time.timeScale = 0;
 
-        }
-        else if (playerSlowingDown && slowingDownFromOutOfFuel) 
-        {
-            if (Time.timeScale > 0.2f)
-            {
-                Time.timeScale -= blownTireSlowdownAmountToSubtract;
-                //Debug.Log("current timescale: " + Time.timeScale);
-            }
-            else if (Time.timeScale <= 0.25f)
-            {
-                Time.timeScale = 0;
-
-                // animate puff of dust
-                PlayDustCloud();
-                slowingDownFromOutOfFuel = false;
-                playerSlowingDown = false;
+                    // animate puff of dust
+                    PlayDustCloud();
+                    fuelGaugeScript.StopFuelConsumption();
+                    slowingDownFromPlayerExploding = false;
+                    playerSlowingDown = false;
 
 
-                // set background speed to zero
-                backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
-                backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    // set background speed to zero
+                    backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
+                    backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
 
 
-                // be ready for background to be set to default speed
+                    // be ready for background to be set to default speed
 
-                // set playerVehicle speed to 0
-                playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
+                    // set playerVehicle speed to 0
+                    playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
 
 
-                // restore timescale to 1
-                Time.timeScale = 1;     // change timescale after the game restarts
-                //slowingDownFromBlownTire = false;
+                    // restore timescale to 1
+                    Time.timeScale = 1;     // change timescale after the game restarts
+                                            //slowingDownFromBlownTire = false;
 
 
 
-                // now, have enemy drive by
-                basicEnemy.SetActive(true);
-                basicEnemyDriving.gameObject.SetActive(true);
-                basicEnemy_Script.BringVehicleBackOnScreen();
-                //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
+                    // now, have enemy drive by
+                    basicEnemy_Script.BringVehicleBackOnScreen();
+                    //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
+                    basicEnemy.SetActive(true);
+                    basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
+                    basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
 
-                basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
-                basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
-
-                Debug.Log("enemy should be active");
-
-
+                    Debug.Log("enemy should be active");
+                }
             }
         }
+
+
     }
     public void StartBlownTireSlowdown() {
         if (slowingDownFromBlownTire == false) {
@@ -585,8 +546,53 @@ public class GameManager : MonoBehaviour
         playerSlowingDown = true;
         slowingDownFromOutOfFuel = true;
 
+    }
+
+    public void CancelOfOutFuel_forQuitButton() {
+        playerSlowingDown = false;
+        slowingDownFromBlownTire = false;
+        slowingDownFromOutOfFuel = false;
+        slowingDownFromPlayerExploding = false;
+        Time.timeScale = 1;
+        fuelGaugeScript.DisableFuelIssuesForQuitButton();
+    }
+
+    public void BlowUpPlayerAfterOutOfFuel() {
+
+        // animate puff of dust
+        Time.timeScale = 0;
+        PlayDustCloud();
+
+        // set background speed to zero
+        backgroundThing_1.GetComponent<backgroundScroll>().SetSpeedToZero();
+        backgroundThing_2.GetComponent<backgroundScroll>().SetSpeedToZero();
+        backgroundThing_3.GetComponent<backgroundScroll>().SetSpeedToZero();
+        backgroundThing_4.GetComponent<backgroundScroll>().SetSpeedToZero();
+        backgroundThing_5.GetComponent<backgroundScroll>().SetSpeedToZero();
 
 
+        // be ready for background to be set to default speed
+
+        // set playerVehicle speed to 0
+        playerVehicle_Script.SetSpeedToZeroAfterBlownTire();
+
+
+        // restore timescale to 1
+        Time.timeScale = 1;     // change timescale after the game restarts
+                                //slowingDownFromBlownTire = false;
+
+        // now, have enemy drive by
+        basicEnemy.SetActive(true);
+        basicEnemyDriving.gameObject.SetActive(true);
+        basicEnemy_Script.BringVehicleBackOnScreen();
+        //basicEnemy.transform.position = new Vector2(-15, basicEnemy.transform.position.y);
+
+        basicEnemy.transform.position = new Vector2(-8.9f, basicEnemy.transform.position.y);
+        basicEnemy_Script.DriveAwayForward_andDropBombOnStoppedPlayer();
+
+        Debug.Log("enemy should be active");
+
+        
     }
 
     public void DisplayMainMenu()
@@ -893,10 +899,10 @@ public class GameManager : MonoBehaviour
         //PlayerPrefs.SetInt(flamethrowerInInventory, 0);
         fuelGaugeScript.ResetFuelToFullForNewGame();
 
-        //PuzzleManager.instance.TurnMultDivideOFF();
-        //PuzzleManager.instance.TurnNegativeNumbersOFF();
-        //PuzzleManager.instance.TurnFractionsOFF();
-        //PuzzleManager.instance.TurnExponentsOFF();
+        PuzzleManager.instance.TurnMultDivideOFF();
+        PuzzleManager.instance.TurnNegativeNumbersOFF();
+        PuzzleManager.instance.TurnFractionsOFF();
+        PuzzleManager.instance.TurnExponentsOFF();
 
         CirclesParent.SetActive(true);
         //MathInProgress.SetActive(false);
@@ -904,6 +910,7 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(true);
 
         EnableUseOfNOS();
+        //playerVehicle_Script.StartBounceLoop();
         basicEnemyHull.GetComponent<HullWrecking>().ResetHullForFutureUse();
         ResetAfter_PlayerExplodes();
         PuzzleManager.instance.UndoGameOver();
@@ -1237,11 +1244,11 @@ public class GameManager : MonoBehaviour
         {
             GameOverText.text = "GAME OVER";
 
-            TimeRemainingExplanation.text = "Puzzles Completed:   " + numberCompleted;
+            TimeRemainingExplanation.text = "Puzzles   Completed:    " + numberCompleted;
 
-            GameOverScore.text = "Puzzles Skipped:   " + numberSkipped;
+            GameOverScore.text = "Puzzles   Skipped:    " + numberSkipped;
 
-            GameOverScreen_BestScore.text = "Puzzles Failed:   " + numberFailed;
+            GameOverScreen_BestScore.text = "Puzzles   Failed:    " + numberFailed;
 
         }
 
@@ -1701,13 +1708,13 @@ public class GameManager : MonoBehaviour
         SmallFlameAnimation_onEnemy_1.gameObject.SetActive(false);
         SmallFlameAnimation_onEnemy_2.gameObject.SetActive(false);
         SmallFlameAnimation_onEnemy_3.gameObject.SetActive(false);
-        EnemyExplodes();
+        EnemyExplodes(true);
     }
     IEnumerator SmallFireDisableAfterAnimation() {
         yield return new WaitForSeconds(durationOfSmallFlame);
         SmallFlameAnimation_onEnemy_1.gameObject.SetActive(false);
         // now explode the enemy
-        EnemyExplodes();
+        EnemyExplodes(true);
     }
     public void EnemyAppears()
     {
@@ -1804,7 +1811,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void EnemyExplodes()
+    public void EnemyExplodes(bool SpawnLootThisTime)
     {
         //PuzzleManager.instance.MakePuzzleAppear();
         armThrowingBomb.SetActive(false);
@@ -1858,8 +1865,11 @@ public class GameManager : MonoBehaviour
 
 
 
+        if (SpawnLootThisTime) {
+            SpawnLoot(basicEnemyHull.transform.position);
+        }
 
-    SpawnLoot(basicEnemyHull.transform.position);
+
 
         enemyInRange = false;
 
@@ -2101,6 +2111,28 @@ public class GameManager : MonoBehaviour
 
 
     //  ************************************************************************************************************************************
+
+    public void PlayerExplodes_FromQuitButton() {
+        if (enemyInRange)
+        {
+            EnemyExplodes(false);
+        }
+        PlayerExplodes(true);
+        CirclesParent.SetActive(false);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        CancelOfOutFuel_forQuitButton();
+
+        //if (slowingDownFromBlownTire || slowingDownFromOutOfFuel || slowingDownFromPlayerExploding  )
+        //{
+
+        //}
+        //else
+        //{
+
+        //}
+ 
+    }
 
     public void PlayerExplodes(bool playerIsMoving)
     {

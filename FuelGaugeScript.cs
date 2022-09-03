@@ -53,8 +53,11 @@ public class FuelGaugeScript : MonoBehaviour
             transform.localScale = new Vector3(1, 1, 1);
 
             fuelAmount = 0;
-            StopFuelConsumption();
-            GameManager.instance.StartOutOfFuelSlowdown();
+            if (fuelBeingBurned) {
+                StopFuelConsumption();
+                GameManager.instance.StartOutOfFuelSlowdown();
+            }
+
 
         }
         else if (fuelAmount <= 1)
@@ -178,7 +181,7 @@ public class FuelGaugeScript : MonoBehaviour
     }
     public void ResetFuelToFullForNewGame() {
         GaugeCircle_RectTransform.localScale = new Vector3(1, 1, 1);
-        fuelAmount = 2;
+        fuelAmount = 100;
         Vector3 temp = transform.rotation.eulerAngles;
         PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
         GameManager.instance.ShowLevelUI_ammo_and_inventory_Display();
@@ -187,6 +190,10 @@ public class FuelGaugeScript : MonoBehaviour
 
         fuelBeingBurned = true;
 
+    }
+
+    public void DisableFuelIssuesForQuitButton() {
+        fuelAmount = 100;
     }
 
 

@@ -12,7 +12,7 @@ public class VehiclePlayer : MonoBehaviour
     public float currentYpos;
     public float minTimeBetweenBounce = 0.2f;
     public float maxTimeBetweenBounce = 2;
-    public bool midBounce = false;
+    //public bool midBounce = false;
     public float postBounceFallSpeed = 5;
     public float bounceHeight = 0.1f;
     public float flatTireBounceHeight = 0.2f;
@@ -125,7 +125,7 @@ public class VehiclePlayer : MonoBehaviour
         originalPos = transform.position;
         goalYpos = transform.position.y;
 
-        StartCoroutine(bounceLoop());
+        StartBounceLoop();
         driftForwardBackward(30);
 
         //vehicleSprite = transform.GetChild(0);
@@ -146,20 +146,16 @@ public class VehiclePlayer : MonoBehaviour
     {
         if (supposedToBeStill == false)
         {
-            if (midBounce)
-            {
+            //if (midBounce)
+            //{
+            //    if (Mathf.Abs(transform.position.y - originalPos.y) < 0.001f)
+            //    {
+            //        midBounce = false;
+            //        transform.position = new Vector3(transform.position.x, goalYpos, originalPos.z);
+            //        StartBounceLoop();
 
-
-
-
-                if (Mathf.Abs(transform.position.y - originalPos.y) < 0.001f)
-                {
-                    midBounce = false;
-                    transform.position = new Vector3(transform.position.x, goalYpos, originalPos.z);
-                    StartCoroutine(bounceLoop());
-
-                }
-            }
+            //    }
+            //}
 
             Vector3 newGoal = new Vector3(goalXpos, goalYpos, originalPos.z);
 
@@ -333,7 +329,7 @@ public class VehiclePlayer : MonoBehaviour
     }
     public void EndFiringMissile() {
         firingMissile = false;
-        StartCoroutine(bounceLoop());
+        //StartBounceLoop();
         GameManager.instance.EnableUseOfNOS();
     }
     public void EndFiringGatlingGun() { 
@@ -349,33 +345,37 @@ public class VehiclePlayer : MonoBehaviour
         GameManager.instance.EnableUseOfNOS();
     }
 
-    IEnumerator bounceLoop()
-    {
-
-        float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
-        yield return new WaitForSeconds(delay);
-        //Debug.Log("bouncing");
-        if (nitrousBoosting == false && rockingFromBlownTire == false && firingMissile == false) {
-            if (vehicleSprite.gameObject.activeSelf) {
-                bounce();
-            }
-
-        }
-
+    public void StartBounceLoop() {
+        StartCoroutine(bounceLoop());
     }
 
+    IEnumerator bounceLoop()
+    {
+        float delay = Random.Range(minTimeBetweenBounce, maxTimeBetweenBounce);
+        yield return new WaitForSeconds(delay);
+        bounce();
+    }
 
     void bounce()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y + bounceHeight, transform.position.z);
-        midBounce = true;
+        if (nitrousBoosting == false && rockingFromBlownTire == false && firingMissile == false)
+        {
+            if (vehicleSprite.gameObject.activeSelf)
+            {
 
-        // start animation change
-        whiteCar_Animator.Play("car_white_smallBump", -1, 0);
+                transform.position = new Vector3(transform.position.x, transform.position.y + bounceHeight, transform.position.z);
+                //midBounce = true;
 
-        
-        // also change the gatlingGun stuff so it bounces too
-        GameManager.instance.MakeGatlingGunBounceAfterSmallBump();
+                // start animation change
+                whiteCar_Animator.Play("car_white_smallBump", -1, 0);
+
+
+                // also change the gatlingGun stuff so it bounces too
+                GameManager.instance.MakeGatlingGunBounceAfterSmallBump();
+            }
+        }
+
+        StartCoroutine(bounceLoop());
     }
     //IEnumerator SendGatlingBump() {
 
@@ -531,7 +531,7 @@ public class VehiclePlayer : MonoBehaviour
     {
         nitrousBoosting = false;
         driftForwardBackward(0);
-        StartCoroutine(bounceLoop());
+        //StartBounceLoop();
         GameManager.instance.EnableUseOfNOS();
 
     }
@@ -685,7 +685,7 @@ public class VehiclePlayer : MonoBehaviour
         ////vehicleSprite.transform.Rotate(new Vector3(0, 0, 0));             // nope this nudges the rotation, doesn't SET the rotation
         //vehicleSprite.transform.rotation = Quaternion.Euler(0, 0, 0);
         rockingFromBlownTire = false;
-        StartCoroutine(bounceLoop());
+        //StartBounceLoop();
     }
     public void SetSpeedToZeroAfterBlownTire()
     {

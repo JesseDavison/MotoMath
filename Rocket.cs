@@ -75,7 +75,7 @@ public class Rocket : MonoBehaviour
 
                 if (transform.position.x > (targetXPOS - enemyIsTarget_xPosAdjustForDetonate))
                 {
-                    GameManager.instance.EnemyExplodes();
+                    GameManager.instance.EnemyExplodes(true);
                     gameObject.SetActive(false);
 
                 }
