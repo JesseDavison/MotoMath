@@ -8,6 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    int secretCounter = 0;
+    public GameObject cheatButton_NOS;
+    public GameObject cheatButton_fuel;
+
     public string gameType;
 
     public GameObject MainMenuUI;
@@ -16,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject LevelUI;
     public GameObject GameOverUI;
     public GameObject InventoryUI;
+    public GameObject HelpScreenUI;
 
     public TextMeshProUGUI MainMenu_BestScore_Timed;
     public TextMeshProUGUI MainMenu_BestScore_Endless;
@@ -210,6 +215,7 @@ public class GameManager : MonoBehaviour
     Animator GatlingGun_Animator;
     public GameObject GatlingShells_GameObject;
     Animator GatlingShells_Animator;
+    public AudioClip gatlingSound;
 
     public GameObject MissileDoor_GameObject;
     Animator MissileDoor_Animator;
@@ -292,8 +298,8 @@ public class GameManager : MonoBehaviour
         LOOT_bombs_script = LOOT_bombs_icon.GetComponent<LootAnimationScript>();
         LOOT_caltrops_script = LOOT_caltrops_icon.GetComponent<LootAnimationScript>();
         LOOT_flamethrower_script = LOOT_flamethrower_icon.GetComponent<LootAnimationScript>();
-        
 
+        PuzzleManager.instance.TurnDebugModeOFF();
         DisplayMainMenu();
     }
 
@@ -556,6 +562,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         fuelGaugeScript.DisableFuelIssuesForQuitButton();
     }
+    public void SetFuelToOnePercent() {
+        fuelGaugeScript.SetFuelToOnePercent();
+    }
+
 
     public void BlowUpPlayerAfterOutOfFuel() {
 
@@ -597,6 +607,9 @@ public class GameManager : MonoBehaviour
 
     public void DisplayMainMenu()
     {
+        secretCounter += 1;
+
+
         if (PlayerPrefs.HasKey("HighScore_Timed"))
         {
             int highScore = PlayerPrefs.GetInt("HighScore_Timed");
@@ -637,9 +650,17 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(false);
+
+        if (secretCounter > 9) {
+            DisplayOptions();
+            secretCounter = 0;
+        }
+
     }
     public void DisplayStats()
     {
+        secretCounter = 0;
 
         int numSpaces = 10;
 
@@ -823,6 +844,7 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(false);
     }
     public void DisplayOptions()
     {
@@ -836,9 +858,31 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(false);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(false);
+    }
+    public void DisplayHelp() {
+
+        secretCounter += 1;
+
+        MainMenuUI.SetActive(false);
+        StatsUI.SetActive(false);
+        OptionsUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        //MathInProgress.SetActive(true);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(true);
+
+
+
     }
     public void DisplayLevel()
     {
+        secretCounter = 0;
+
         MainMenuUI.SetActive(false);
         StatsUI.SetActive(false);
         OptionsUI.SetActive(false);
@@ -849,12 +893,23 @@ public class GameManager : MonoBehaviour
         GoalParent.SetActive(true);
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(false);
 
         // update & display ammo levels
         ShowLevelUI_ammo_and_inventory_Display();
 
 
 
+    }
+
+    public void TurnOnCheatButton() {
+        cheatButton_NOS.SetActive(true);
+        cheatButton_fuel.SetActive(true);
+        // allows instant 100% nitrous
+    }
+    public void TurnOffCheatButton() {
+        cheatButton_NOS.SetActive(false);
+        cheatButton_fuel.SetActive(false);
     }
 
     public void StartTimedGame()
@@ -891,6 +946,7 @@ public class GameManager : MonoBehaviour
     }
     public void StartEndlessGame()
     {
+        
         // reset player inventory
         PlayerPrefs.SetFloat(nitrousInInventory, 0);
         //PlayerPrefs.SetInt(bulletsInInventory, 3);
@@ -1242,7 +1298,7 @@ public class GameManager : MonoBehaviour
         }
         else if (gameType == "endless" || gameType == "kiddy")
         {
-            GameOverText.text = "GAME OVER";
+            GameOverText.text = "GAME    OVER";
 
             TimeRemainingExplanation.text = "Puzzles   Completed:    " + numberCompleted;
 
@@ -1407,7 +1463,7 @@ public class GameManager : MonoBehaviour
         //    PlayerPrefs.SetInt(XP_amount, tempy - 10);
 
         //    // add bullets to inventory
-        PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 2);
+        //PlayerPrefs.SetInt(rocketsInInventory, PlayerPrefs.GetInt(rocketsInInventory) + 2);
 
         //if (Time.timeScale == 1) {
         //    Time.timeScale = 2;
@@ -1423,9 +1479,9 @@ public class GameManager : MonoBehaviour
         //    Debug.Log("timescale is 1");
         //}
 
-        PlayerPrefs.SetInt(bulletsInInventory, 1000);
+        //PlayerPrefs.SetInt(bulletsInInventory, 1000);
         PlayerPrefs.SetFloat(nitrousInInventory, 100);
-        PlayerPrefs.SetInt(flamethrowerInInventory, 1000);
+        //PlayerPrefs.SetInt(flamethrowerInInventory, 1000);
         ShowLevelUI_ammo_and_inventory_Display();
 
         Time.timeScale = 1;
@@ -1477,13 +1533,16 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         GatlingGun_Animator.Play("lever arm TURNING", -1, 0);
         //Time.timeScale = 0.1f;
-
+        
 
         basicEnemy_Script.AnimateGettingShot();
 
 
-        yield return new WaitForSeconds(delayBeforeGatlingStarts);
+        yield return new WaitForSeconds(delayBeforeGatlingStarts / 2f);
+        SoundManager.Instance.Play_GatlingSound();
+        yield return new WaitForSeconds(delayBeforeGatlingStarts / 2f);
         shootingBullets_atEnemy = true;
+
         GatlingShells_Animator.Play("shells - FIRST SHELLS", -1, 0f);
         Gunfire_hitting.gameObject.SetActive(true);
         Gunfire_hitting.Play("sparks", -1, 0f);

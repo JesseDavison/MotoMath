@@ -196,5 +196,9 @@ public class FuelGaugeScript : MonoBehaviour
         fuelAmount = 100;
     }
 
+    public void SetFuelToOnePercent() {
+        fuelAmount = 1.2f;
+    }
+
 
 }
