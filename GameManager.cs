@@ -973,9 +973,9 @@ public class GameManager : MonoBehaviour
     }
     public void StartEndlessGame()
     {
-        
+
         // reset player inventory
-        //PlayerPrefs.SetFloat(nitrousInInventory, 0);
+        PlayerPrefs.SetFloat(nitrousInInventory, 0);
         //PlayerPrefs.SetInt(bulletsInInventory, 3);
         //PlayerPrefs.SetInt(rocketsInInventory, 0);
         //PlayerPrefs.SetInt(bombsInInventory, 0);
@@ -1718,7 +1718,8 @@ public class GameManager : MonoBehaviour
         // bullets, rockets, bombs, caltrops, flamethrower
 
         int numMoney = PlayerPrefs.GetInt(moneyInInventory, 0);
-        float numFuel = PlayerPrefs.GetFloat(fuelInInventory, 0);
+        //float numFuel = PlayerPrefs.GetFloat(fuelInInventory, 0);
+        float numFuel = fuelGaugeScript.GetFuelAmount();
         float numNitrous = PlayerPrefs.GetFloat(nitrousInInventory, 0);
         int numScrapMetal = PlayerPrefs.GetInt(scrapmetalInInventory, 0);
         int numElectronics = PlayerPrefs.GetInt(electronicsInInventory, 0);
