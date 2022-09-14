@@ -300,6 +300,7 @@ public class Clickable_circle : MonoBehaviour
                 {
                     transform.position = defaultPosition;
                     PuzzleManager.instance.ResumeFuelConsumption();
+                    GameManager.instance.EnableUseOfNOS();
                 }
                 else if (destinationText == "goal")
                 {

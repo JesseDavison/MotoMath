@@ -3694,6 +3694,7 @@ public class PuzzleManager : MonoBehaviour
                 value1 = GetValueOfClickedCircle(gameObjectClicked);
                 HighlightCircleGameObject(gameObjectClicked, 1);
                 circle1selected = true;
+                GameManager.instance.DisableUseOfNOS();
                 Debug.Log("circle1selected just set to true");
             }
             else if (gameObjectClicked.CompareTag("operator"))
@@ -3720,6 +3721,7 @@ public class PuzzleManager : MonoBehaviour
                     value1 = 0;
                     UNHighlightCircleGameObject(highlightedCircle1);
                     circle1selected = false;
+                    GameManager.instance.EnableUseOfNOS();
                     Debug.Log("circle1selected just set to false");
                     highlightedCircle1 = null;
                 }
@@ -3766,6 +3768,7 @@ public class PuzzleManager : MonoBehaviour
                     UNHighlightCircleGameObject(highlightedCircle1);
                     circle1selected = false;
                     highlightedCircle1 = null;
+                    GameManager.instance.EnableUseOfNOS();
                     UNHighlightOperatorGameObject(highlightedOperator);
                     highlightedOperator = null;
                     operatorSelected = false;

@@ -104,7 +104,7 @@ public class FuelGaugeScript : MonoBehaviour
 
             fuelAmount -= Time.deltaTime * (fuelConsumptionRate / 100f);
             Vector3 temp = transform.rotation.eulerAngles;
-            PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
+            //PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
             GameManager.instance.ShowLevelUI_ammo_and_inventory_Display();
             temp.z = ((-2f * angle) / 100f) * fuelAmount + angle;
             transform.rotation = Quaternion.Euler(temp);
@@ -183,7 +183,7 @@ public class FuelGaugeScript : MonoBehaviour
         GaugeCircle_RectTransform.localScale = new Vector3(1, 1, 1);
         fuelAmount = 100;
         Vector3 temp = transform.rotation.eulerAngles;
-        PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
+        //PlayerPrefs.SetFloat("fuelInInventory", fuelAmount);
         GameManager.instance.ShowLevelUI_ammo_and_inventory_Display();
         temp.z = ((-2f * angle) / 100f) * fuelAmount + angle;
         transform.rotation = Quaternion.Euler(temp);
@@ -199,6 +199,8 @@ public class FuelGaugeScript : MonoBehaviour
     public void SetFuelToOnePercent() {
         fuelAmount = 1.2f;
     }
-
+    public float GetFuelAmount() {
+        return fuelAmount;
+    }
 
 }

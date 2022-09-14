@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject GameOverUI;
     public GameObject InventoryUI;
     public GameObject HelpScreenUI;
+    public GameObject AboutScreenUI;
 
     public TextMeshProUGUI MainMenu_BestScore_Timed;
     public TextMeshProUGUI MainMenu_BestScore_Endless;
@@ -163,6 +164,9 @@ public class GameManager : MonoBehaviour
     public GameObject LOOT_fuel_icon;
     LootAnimationScript LOOT_fuel_script;
     int LOOT_fuel_quantity;
+
+    int minFuelToSpawn;
+    int maxFuelToSpawn;
 
     public GameObject LOOT_nitrous_icon;
     LootAnimationScript LOOT_nitrous_script;
@@ -651,6 +655,7 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         HelpScreenUI.SetActive(false);
+        AboutScreenUI.SetActive(false);
 
         if (secretCounter > 9) {
             DisplayOptions();
@@ -845,6 +850,7 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         HelpScreenUI.SetActive(false);
+        AboutScreenUI.SetActive(false);
     }
     public void DisplayOptions()
     {
@@ -859,6 +865,7 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         HelpScreenUI.SetActive(false);
+        AboutScreenUI.SetActive(false);
     }
     public void DisplayHelp() {
 
@@ -875,9 +882,28 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         HelpScreenUI.SetActive(true);
+        AboutScreenUI.SetActive(false);
 
 
 
+    }
+    
+    public void DisplayAbout() {
+
+        secretCounter = 0;
+
+        MainMenuUI.SetActive(false);
+        StatsUI.SetActive(false);
+        OptionsUI.SetActive(false);
+        LevelUI.SetActive(false);
+        CirclesParent.SetActive(false);
+        //MathInProgress.SetActive(true);
+        OperatorsParent.SetActive(false);
+        GoalParent.SetActive(false);
+        GameOverUI.SetActive(false);
+        InventoryUI.SetActive(false);
+        HelpScreenUI.SetActive(false);
+        AboutScreenUI.SetActive(true);
     }
     public void DisplayLevel()
     {
@@ -894,6 +920,7 @@ public class GameManager : MonoBehaviour
         GameOverUI.SetActive(false);
         InventoryUI.SetActive(false);
         HelpScreenUI.SetActive(false);
+        AboutScreenUI.SetActive(false);
 
         // update & display ammo levels
         ShowLevelUI_ammo_and_inventory_Display();
@@ -948,12 +975,15 @@ public class GameManager : MonoBehaviour
     {
         
         // reset player inventory
-        PlayerPrefs.SetFloat(nitrousInInventory, 0);
+        //PlayerPrefs.SetFloat(nitrousInInventory, 0);
         //PlayerPrefs.SetInt(bulletsInInventory, 3);
         //PlayerPrefs.SetInt(rocketsInInventory, 0);
         //PlayerPrefs.SetInt(bombsInInventory, 0);
         //PlayerPrefs.SetInt(flamethrowerInInventory, 0);
         fuelGaugeScript.ResetFuelToFullForNewGame();
+
+        minFuelToSpawn = 8;
+        maxFuelToSpawn = 15;
 
         PuzzleManager.instance.TurnMultDivideOFF();
         PuzzleManager.instance.TurnNegativeNumbersOFF();
@@ -1054,9 +1084,14 @@ public class GameManager : MonoBehaviour
         //e.g., if there are 2 puzzles left & 50 seconds left, then it reduces by 25 seconds
         //e.g., base case: if there is 1 puzzle left, then it reduces by ALL seconds
 
-        Debug.Log("SkipPuzzle() invoked... nitrous level is: " + PlayerPrefs.GetFloat(nitrousInInventory));
+        //Debug.Log("SkipPuzzle() invoked... nitrous level is: " + PlayerPrefs.GetFloat(nitrousInInventory));
 
-        if (PlayerPrefs.GetFloat(nitrousInInventory) >= 100 && ableToUseNOS == true) {
+
+
+        //if (fuelGaugeScript.GetFuelAmount() >= 100 && ableToUseNOS == true) {
+
+        if (PlayerPrefs.GetFloat(nitrousInInventory) >= 100 && ableToUseNOS == true)
+        {
 
             PlayerPrefs.SetFloat(nitrousInInventory, 0);
             ShowLevelUI_ammo_and_inventory_Display();
@@ -1192,7 +1227,34 @@ public class GameManager : MonoBehaviour
             {
                 PuzzleManager.instance.TurnFractionsON();
             }
-
+            else if (numberCompleted == 10)
+            {
+                minFuelToSpawn = 6;
+                maxFuelToSpawn = 13;
+            }
+            else if (numberCompleted == 15)
+            {
+                minFuelToSpawn = 4;
+                maxFuelToSpawn = 11;
+            }
+            else if (numberCompleted == 20)
+            {
+                minFuelToSpawn = 2;
+                maxFuelToSpawn = 9;
+            }
+            else if (numberCompleted == 25)
+            {
+                minFuelToSpawn = 1;
+                maxFuelToSpawn = 7;
+            }
+            else if (numberCompleted == 30)
+            {
+                maxFuelToSpawn = 5;
+            }
+            else if (numberCompleted == 50)
+            {
+                maxFuelToSpawn = 3;
+            }
 
 
 
@@ -1981,7 +2043,8 @@ public class GameManager : MonoBehaviour
         //LOOT_money_script.StartMovement(LOOT_money_quantity, spot1);
 
         // always fuel
-        LOOT_fuel_quantity = Random.Range(8, 15);
+        //LOOT_fuel_quantity = Random.Range(8, 15);
+        LOOT_fuel_quantity = Random.Range(minFuelToSpawn, maxFuelToSpawn);
         LOOT_fuel_icon.SetActive(true);
         LOOT_fuel_icon.transform.position = positionWhereEnemyExplodes + new Vector2(0, 0.5f);
         LOOT_fuel_script.StartMovement(LOOT_fuel_quantity, spot1);
